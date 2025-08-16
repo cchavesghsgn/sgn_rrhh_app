@@ -211,64 +211,48 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             {employees.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
-                {employees.slice(0, 9).map((employee) => {
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 max-h-96 overflow-y-auto">
+                {employees.slice(0, 12).map((employee) => {
                   const vacationTaken = (employee.totalVacationDays || 20) - (employee.vacationDays || 0);
                   const personalTaken = (employee.totalPersonalDays || 12) - (employee.personalDays || 0);
                   const remoteTaken = (employee.totalRemoteDays || 12) - (employee.remoteDays || 0);
                   const hoursTaken = (employee.totalAvailableHours || 16) - (employee.availableHours || 0);
                   
+                  const totalLicensesTaken = vacationTaken + personalTaken + remoteTaken;
+                  
                   return (
                     <Card key={employee.id} className="hover:shadow-md transition-shadow">
-                      <CardContent className="p-4">
-                        <div className="flex justify-between items-start mb-3">
-                          <div>
-                            <h4 className="font-semibold text-sm text-sgn-dark">
-                              {employee.firstName} {employee.lastName}
-                            </h4>
-                            <p className="text-xs text-gray-600">
-                              {employee.position}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {employee.area?.name || 'Sin área'}
-                            </p>
-                          </div>
-                          <Badge variant={employee.user?.role === 'ADMIN' ? 'secondary' : 'default'} className="text-xs">
+                      <CardContent className="p-3">
+                        <div className="mb-2">
+                          <h4 className="font-semibold text-xs text-sgn-dark leading-tight">
+                            {employee.firstName} {employee.lastName}
+                          </h4>
+                          <p className="text-xs text-gray-600 truncate">
+                            {employee.position}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">
+                            {employee.area?.name || 'Sin área'}
+                          </p>
+                          <Badge variant={employee.user?.role === 'ADMIN' ? 'secondary' : 'default'} className="text-xs mt-1">
                             {employee.user?.role === 'ADMIN' ? 'Admin' : 'Empleado'}
                           </Badge>
                         </div>
                         
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-xs">
-                            <span className="text-gray-600">Vacaciones:</span>
-                            <div className="text-right">
-                              <span className="font-medium text-sgn-dark">{vacationTaken} tomadas</span>
-                              <span className="text-gray-500"> / {employee.totalVacationDays || 20}</span>
-                            </div>
+                        <div className="space-y-1 text-xs">
+                          <div className="text-sgn-dark font-medium">
+                            Licencias: {totalLicensesTaken} días
                           </div>
-                          
-                          <div className="flex justify-between text-xs">
-                            <span className="text-gray-600">Personales:</span>
-                            <div className="text-right">
-                              <span className="font-medium text-sgn-dark">{personalTaken} tomadas</span>
-                              <span className="text-gray-500"> / {employee.totalPersonalDays || 12}</span>
-                            </div>
+                          <div className="text-gray-600">
+                            Vacaciones: {employee.vacationDays || 0} de {employee.totalVacationDays || 20} días
                           </div>
-                          
-                          <div className="flex justify-between text-xs">
-                            <span className="text-gray-600">Remotos:</span>
-                            <div className="text-right">
-                              <span className="font-medium text-sgn-dark">{remoteTaken} tomados</span>
-                              <span className="text-gray-500"> / {employee.totalRemoteDays || 12}</span>
-                            </div>
+                          <div className="text-gray-600">
+                            Personales: {employee.personalDays || 0} de {employee.totalPersonalDays || 12} días
                           </div>
-                          
-                          <div className="flex justify-between text-xs">
-                            <span className="text-gray-600">Horas:</span>
-                            <div className="text-right">
-                              <span className="font-medium text-sgn-dark">{hoursTaken} tomadas</span>
-                              <span className="text-gray-500"> / {employee.totalAvailableHours || 16}</span>
-                            </div>
+                          <div className="text-gray-600">
+                            Remotos: {employee.remoteDays || 0} de {employee.totalRemoteDays || 12} días
+                          </div>
+                          <div className="text-gray-600">
+                            Horas: {employee.availableHours || 0} de {employee.totalAvailableHours || 16} horas
                           </div>
                         </div>
                       </CardContent>
