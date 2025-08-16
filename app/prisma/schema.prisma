@@ -1,0 +1,159 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/sgn_rrhh_app/app/node_modules/.prisma/client"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// NextAuth Schema
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String?
+  emailVerified DateTime?
+  image         String?
+  role          UserRole  @default(EMPLOYEE)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  employee Employee?
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Main Application Schema
+model Area {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  
+  employees Employee[]
+}
+
+model Employee {
+  id                   String        @id @default(cuid())
+  userId               String        @unique
+  dni                  String        @unique
+  firstName            String
+  lastName             String
+  birthDate            DateTime
+  hireDate             DateTime
+  areaId               String
+  position             String
+  phone                String?
+  photo                String?
+  
+  // Available days/hours (updated based on requests)
+  vacationDays         Int           @default(20)
+  personalDays         Int           @default(12)
+  remoteDays          Int           @default(12)
+  availableHours      Int           @default(16)
+  
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  
+  // Relations
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  area                Area           @relation(fields: [areaId], references: [id])
+  leaveRequests       LeaveRequest[]
+  
+  @@map("employees")
+}
+
+model LeaveRequest {
+  id            String            @id @default(cuid())
+  employeeId    String
+  type          LeaveRequestType
+  startDate     DateTime
+  endDate       DateTime
+  isHalfDay     Boolean           @default(false)
+  hours         Int?              // For HOURS type requests
+  reason        String
+  status        RequestStatus     @default(PENDING)
+  adminNotes    String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  
+  // Relations
+  employee      Employee          @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  attachments   Attachment[]
+  
+  @@map("leave_requests")
+}
+
+model Attachment {
+  id            String       @id @default(cuid())
+  leaveRequestId String
+  fileName      String
+  originalName  String
+  filePath      String
+  fileType      String
+  fileSize      Int
+  createdAt     DateTime     @default(now())
+  
+  // Relations
+  leaveRequest  LeaveRequest @relation(fields: [leaveRequestId], references: [id], onDelete: Cascade)
+  
+  @@map("attachments")
+}
+
+// Enums
+enum UserRole {
+  EMPLOYEE
+  ADMIN
+}
+
+enum LeaveRequestType {
+  LICENSE      // Licencias (enfermedad, examen, etc) - sin límite
+  PERSONAL     // Días particulares - limitado por año
+  REMOTE       // Días remotos - limitado por año
+  HOURS        // Pedido de horas - limitado por año
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

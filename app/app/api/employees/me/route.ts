@@ -1,0 +1,44 @@
+
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerAuthSession } from '../../../../lib/auth';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getServerAuthSession();
+    
+    if (!session?.user) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
+    const employee = await prisma.employee.findUnique({
+      where: { userId: session.user.id },
+      include: {
+        user: {
+          select: { email: true, role: true }
+        },
+        area: true,
+        leaveRequests: {
+          orderBy: { createdAt: 'desc' },
+          take: 10
+        }
+      }
+    });
+
+    if (!employee) {
+      return NextResponse.json({ error: 'Empleado no encontrado' }, { status: 404 });
+    }
+
+    return NextResponse.json(employee);
+  } catch (error) {
+    console.error('Get employee profile error:', error);
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 }
+    );
+  }
+}
