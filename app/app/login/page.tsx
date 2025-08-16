@@ -15,7 +15,7 @@ export default async function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="relative w-64 h-32 mx-auto mb-6">
+          <div className="relative w-80 h-40 mx-auto mb-6">
             <Image
               src="/sgn-logo.png"
               alt="SGN Logo"

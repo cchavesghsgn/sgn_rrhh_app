@@ -24,7 +24,7 @@ export default function Header() {
         <div className="flex h-20 items-center justify-between px-4">
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center space-x-3">
-            <div className="relative w-48 h-12">
+            <div className="relative w-60 h-16">
               <Image
                 src="/sgn-logo.png"
                 alt="SGN Logo"

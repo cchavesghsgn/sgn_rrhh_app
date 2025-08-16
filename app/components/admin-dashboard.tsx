@@ -145,7 +145,7 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="space-y-8">
         {/* Recent Requests */}
         <Card className="sgn-card">
           <CardHeader className="flex flex-row items-center justify-between">
@@ -196,7 +196,7 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        {/* Employee List */}
+        {/* Employee Cards */}
         <Card className="sgn-card">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2">
@@ -211,33 +211,70 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             {employees.length > 0 ? (
-              <div className="space-y-3 max-h-80 overflow-y-auto">
-                {employees.slice(0, 8).map((employee) => (
-                  <div
-                    key={employee.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                  >
-                    <div className="flex-1">
-                      <p className="font-medium text-sm">
-                        {employee.firstName} {employee.lastName}
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        {employee.position} • {employee.area?.name}
-                      </p>
-                      <div className="grid grid-cols-2 gap-2 mt-2 text-xs text-gray-600">
-                        <span>Vacaciones: {employee.vacationDays}/{employee.totalVacationDays}</span>
-                        <span>Personales: {employee.personalDays}/{employee.totalPersonalDays}</span>
-                        <span>Remotos: {employee.remoteDays}/{employee.totalRemoteDays}</span>
-                        <span>Horas: {employee.availableHours}/{employee.totalAvailableHours}</span>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <Badge variant={employee.user?.role === 'ADMIN' ? 'secondary' : 'default'}>
-                        {employee.user?.role === 'ADMIN' ? 'Admin' : 'Empleado'}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+                {employees.slice(0, 9).map((employee) => {
+                  const vacationTaken = (employee.totalVacationDays || 20) - (employee.vacationDays || 0);
+                  const personalTaken = (employee.totalPersonalDays || 12) - (employee.personalDays || 0);
+                  const remoteTaken = (employee.totalRemoteDays || 12) - (employee.remoteDays || 0);
+                  const hoursTaken = (employee.totalAvailableHours || 16) - (employee.availableHours || 0);
+                  
+                  return (
+                    <Card key={employee.id} className="hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <h4 className="font-semibold text-sm text-sgn-dark">
+                              {employee.firstName} {employee.lastName}
+                            </h4>
+                            <p className="text-xs text-gray-600">
+                              {employee.position}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {employee.area?.name || 'Sin área'}
+                            </p>
+                          </div>
+                          <Badge variant={employee.user?.role === 'ADMIN' ? 'secondary' : 'default'} className="text-xs">
+                            {employee.user?.role === 'ADMIN' ? 'Admin' : 'Empleado'}
+                          </Badge>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-xs">
+                            <span className="text-gray-600">Vacaciones:</span>
+                            <div className="text-right">
+                              <span className="font-medium text-sgn-dark">{vacationTaken} tomadas</span>
+                              <span className="text-gray-500"> / {employee.totalVacationDays || 20}</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex justify-between text-xs">
+                            <span className="text-gray-600">Personales:</span>
+                            <div className="text-right">
+                              <span className="font-medium text-sgn-dark">{personalTaken} tomadas</span>
+                              <span className="text-gray-500"> / {employee.totalPersonalDays || 12}</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex justify-between text-xs">
+                            <span className="text-gray-600">Remotos:</span>
+                            <div className="text-right">
+                              <span className="font-medium text-sgn-dark">{remoteTaken} tomados</span>
+                              <span className="text-gray-500"> / {employee.totalRemoteDays || 12}</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex justify-between text-xs">
+                            <span className="text-gray-600">Horas:</span>
+                            <div className="text-right">
+                              <span className="font-medium text-sgn-dark">{hoursTaken} tomadas</span>
+                              <span className="text-gray-500"> / {employee.totalAvailableHours || 16}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             ) : (
               <p className="text-gray-600 text-center py-6">
