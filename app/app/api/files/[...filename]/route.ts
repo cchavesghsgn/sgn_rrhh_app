@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { readFileSync, existsSync } from 'fs';
+import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { lookup } from 'mime-types';
 
@@ -9,24 +9,20 @@ export async function GET(
   { params }: { params: { filename: string[] } }
 ) {
   try {
-    const filename = params.filename.join('/');
-    const filePath = join(process.cwd(), '..', 'uploads', filename);
-
-    if (!existsSync(filePath)) {
-      return NextResponse.json({ error: 'Archivo no encontrado' }, { status: 404 });
-    }
-
-    const fileBuffer = readFileSync(filePath);
-    const mimeType = lookup(filePath) || 'application/octet-stream';
-
-    return new NextResponse(fileBuffer, {
+    const filepath = params.filename.join('/');
+    const fullPath = join(process.cwd(), '..', 'uploads', filepath);
+    
+    const file = await readFile(fullPath);
+    const mimeType = lookup(filepath) || 'application/octet-stream';
+    
+    return new NextResponse(file, {
       headers: {
         'Content-Type': mimeType,
-        'Content-Length': fileBuffer.length.toString(),
+        'Cache-Control': 'public, max-age=31536000',
       },
     });
   } catch (error) {
     console.error('Error serving file:', error);
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+    return new NextResponse('File not found', { status: 404 });
   }
 }

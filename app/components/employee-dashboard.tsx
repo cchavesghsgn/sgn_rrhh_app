@@ -19,6 +19,7 @@ import {
   Mail,
   Building2
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Employee, LeaveRequest, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS } from '../lib/types';
 
@@ -111,7 +112,9 @@ export default function EmployeeDashboard() {
         <Card className="sgn-card">
           <CardContent className="p-6 text-center">
             <Calendar className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
-            <p className="text-2xl font-bold text-sgn-dark">{employee.vacationDays}</p>
+            <p className="text-2xl font-bold text-sgn-dark">
+              {employee.vacationDays} de {employee.totalVacationDays}
+            </p>
             <p className="text-sm text-gray-600">Días de vacaciones</p>
           </CardContent>
         </Card>
@@ -119,7 +122,9 @@ export default function EmployeeDashboard() {
         <Card className="sgn-card">
           <CardContent className="p-6 text-center">
             <User className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
-            <p className="text-2xl font-bold text-sgn-dark">{employee.personalDays}</p>
+            <p className="text-2xl font-bold text-sgn-dark">
+              {employee.personalDays} de {employee.totalPersonalDays}
+            </p>
             <p className="text-sm text-gray-600">Días personales</p>
           </CardContent>
         </Card>
@@ -127,7 +132,9 @@ export default function EmployeeDashboard() {
         <Card className="sgn-card">
           <CardContent className="p-6 text-center">
             <Laptop className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
-            <p className="text-2xl font-bold text-sgn-dark">{employee.remoteDays}</p>
+            <p className="text-2xl font-bold text-sgn-dark">
+              {employee.remoteDays} de {employee.totalRemoteDays}
+            </p>
             <p className="text-sm text-gray-600">Días remotos</p>
           </CardContent>
         </Card>
@@ -135,7 +142,9 @@ export default function EmployeeDashboard() {
         <Card className="sgn-card">
           <CardContent className="p-6 text-center">
             <Clock className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
-            <p className="text-2xl font-bold text-sgn-dark">{employee.availableHours}</p>
+            <p className="text-2xl font-bold text-sgn-dark">
+              {employee.availableHours} de {employee.totalAvailableHours}
+            </p>
             <p className="text-sm text-gray-600">Horas disponibles</p>
           </CardContent>
         </Card>
@@ -151,6 +160,23 @@ export default function EmployeeDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Employee Photo */}
+            <div className="flex justify-center mb-4">
+              <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-200">
+                {employee.photo ? (
+                  <Image
+                    src={employee.photo}
+                    alt={`${employee.firstName} ${employee.lastName}`}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <User className="h-10 w-10 text-gray-400" />
+                  </div>
+                )}
+              </div>
+            </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-gray-600">DNI</p>

@@ -25,7 +25,7 @@ export default function AdminDashboard() {
     approvedRequests: 0,
     rejectedRequests: 0
   });
-  const [recentRequests, setRecentRequests] = useState<LeaveRequest[]>([]);
+  const [pendingRequests, setPendingRequests] = useState<LeaveRequest[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -45,9 +45,10 @@ export default function AdminDashboard() {
 
         if (requestsRes.ok) {
           const requestsData = await requestsRes.json();
-          setRecentRequests(requestsData.slice(0, 10));
+          const pendingOnly = requestsData.filter((r: LeaveRequest) => r.status === 'PENDING');
+          setPendingRequests(pendingOnly.slice(0, 10));
           
-          const pendingCount = requestsData.filter((r: LeaveRequest) => r.status === 'PENDING').length;
+          const pendingCount = pendingOnly.length;
           const approvedCount = requestsData.filter((r: LeaveRequest) => r.status === 'APPROVED').length;
           const rejectedCount = requestsData.filter((r: LeaveRequest) => r.status === 'REJECTED').length;
           
@@ -150,7 +151,7 @@ export default function AdminDashboard() {
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5 text-sgn-blue" />
-              Solicitudes Recientes
+              Solicitudes Pendientes
             </CardTitle>
             <Link href="/admin/requests">
               <Button size="sm" variant="outline">
@@ -159,9 +160,9 @@ export default function AdminDashboard() {
             </Link>
           </CardHeader>
           <CardContent>
-            {recentRequests.length > 0 ? (
+            {pendingRequests.length > 0 ? (
               <div className="space-y-3 max-h-80 overflow-y-auto">
-                {recentRequests.map((request) => (
+                {pendingRequests.map((request) => (
                   <div
                     key={request.id}
                     className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
@@ -178,31 +179,29 @@ export default function AdminDashboard() {
                       <Badge variant={getStatusBadgeVariant(request.status)}>
                         {REQUEST_STATUS_LABELS[request.status]}
                       </Badge>
-                      {request.status === 'PENDING' && (
-                        <Link href={`/admin/requests/${request.id}`}>
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-3 w-3" />
-                          </Button>
-                        </Link>
-                      )}
+                      <Link href={`/admin/requests/${request.id}`}>
+                        <Button size="sm" variant="outline">
+                          <Eye className="h-3 w-3" />
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
               <p className="text-gray-600 text-center py-6">
-                No hay solicitudes recientes
+                No hay solicitudes pendientes
               </p>
             )}
           </CardContent>
         </Card>
 
-        {/* Recent Employees */}
+        {/* Employee List */}
         <Card className="sgn-card">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Users className="h-5 w-5 text-sgn-blue" />
-              Empleados Recientes
+              Lista de Empleados
             </CardTitle>
             <Link href="/admin/employees">
               <Button size="sm" variant="outline">
@@ -218,17 +217,25 @@ export default function AdminDashboard() {
                     key={employee.id}
                     className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                   >
-                    <div>
+                    <div className="flex-1">
                       <p className="font-medium text-sm">
                         {employee.firstName} {employee.lastName}
                       </p>
                       <p className="text-xs text-gray-600">
                         {employee.position} • {employee.area?.name}
                       </p>
+                      <div className="grid grid-cols-2 gap-2 mt-2 text-xs text-gray-600">
+                        <span>Vacaciones: {employee.vacationDays}/{employee.totalVacationDays}</span>
+                        <span>Personales: {employee.personalDays}/{employee.totalPersonalDays}</span>
+                        <span>Remotos: {employee.remoteDays}/{employee.totalRemoteDays}</span>
+                        <span>Horas: {employee.availableHours}/{employee.totalAvailableHours}</span>
+                      </div>
                     </div>
-                    <Badge variant={employee.user?.role === 'ADMIN' ? 'secondary' : 'default'}>
-                      {employee.user?.role === 'ADMIN' ? 'Admin' : 'Empleado'}
-                    </Badge>
+                    <div className="flex flex-col items-end gap-1">
+                      <Badge variant={employee.user?.role === 'ADMIN' ? 'secondary' : 'default'}>
+                        {employee.user?.role === 'ADMIN' ? 'Admin' : 'Empleado'}
+                      </Badge>
+                    </div>
                   </div>
                 ))}
               </div>

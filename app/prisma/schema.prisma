@@ -91,6 +91,12 @@ model Employee {
   remoteDays          Int           @default(12)
   availableHours      Int           @default(16)
   
+  // Total days/hours assigned per year (never change)
+  totalVacationDays    Int           @default(20)
+  totalPersonalDays    Int           @default(12)
+  totalRemoteDays      Int           @default(12)
+  totalAvailableHours  Int           @default(16)
+  
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
   

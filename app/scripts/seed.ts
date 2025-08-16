@@ -80,7 +80,11 @@ async function main() {
       vacationDays: 25,
       personalDays: 15,
       remoteDays: 15,
-      availableHours: 20
+      availableHours: 20,
+      totalVacationDays: 25,
+      totalPersonalDays: 15,
+      totalRemoteDays: 15,
+      totalAvailableHours: 20
     }
   });
 
@@ -197,7 +201,11 @@ async function main() {
         hireDate: data.hireDate,
         areaId: data.areaId,
         position: data.position,
-        phone: data.phone
+        phone: data.phone,
+        totalVacationDays: 20,
+        totalPersonalDays: 12,
+        totalRemoteDays: 12,
+        totalAvailableHours: 16
       }
     });
 

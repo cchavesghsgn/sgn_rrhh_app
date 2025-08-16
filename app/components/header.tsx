@@ -21,10 +21,10 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-200">
       <div className="container max-w-6xl mx-auto">
-        <div className="flex h-16 items-center justify-between px-4">
+        <div className="flex h-20 items-center justify-between px-4">
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center space-x-3">
-            <div className="relative w-32 h-8">
+            <div className="relative w-48 h-12">
               <Image
                 src="/sgn-logo.png"
                 alt="SGN Logo"

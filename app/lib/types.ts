@@ -25,6 +25,10 @@ export interface Employee {
   personalDays: number;
   remoteDays: number;
   availableHours: number;
+  totalVacationDays: number;
+  totalPersonalDays: number;
+  totalRemoteDays: number;
+  totalAvailableHours: number;
   createdAt: Date;
   updatedAt: Date;
   user?: User;
