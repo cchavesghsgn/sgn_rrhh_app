@@ -1,0 +1,34 @@
+
+version: 1
+applications:
+  - appRoot: app
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - echo "Installing dependencies..."
+            - yarn install --frozen-lockfile
+            - echo "Setting up Prisma..."
+            - npx prisma generate
+        build:
+          commands:
+            - echo "Building Next.js application..."
+            - yarn build
+        postBuild:
+          commands:
+            - echo "Running database migrations..."
+            - npx prisma db push --skip-generate
+            - echo "Build completed successfully!"
+      artifacts:
+        baseDirectory: .next
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
+          - .next/cache/**/*
+    backend:
+      phases:
+        build:
+          commands:
+            - echo "No backend build required for Next.js"
