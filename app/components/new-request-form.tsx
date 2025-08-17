@@ -41,19 +41,22 @@ export default function NewRequestForm() {
   });
 
   // Calculate hours automatically based on start and end time
-  const calculateHours = (startTime: string, endTime: string): number => {
-    if (!startTime || !endTime) return 0;
+  const calculateHours = (startHour: string, endHour: string): number => {
+    if (!startHour || !endHour) return 0;
     
-    const start = new Date(`2000-01-01T${startTime}`);
-    const end = new Date(`2000-01-01T${endTime}`);
+    const start = parseInt(startHour);
+    const end = parseInt(endHour);
     
     if (end <= start) return 0;
     
-    const diffMs = end.getTime() - start.getTime();
-    const diffHours = diffMs / (1000 * 60 * 60);
-    
-    return Math.round(diffHours * 2) / 2; // Round to nearest 0.5 hour
+    return end - start;
   };
+
+  // Generate hour options (00 to 23)
+  const hourOptions = Array.from({ length: 24 }, (_, i) => {
+    const hour = i.toString().padStart(2, '0');
+    return { value: hour, label: `${hour}:00` };
+  });
 
   // Update hours automatically when start/end time changes
   useEffect(() => {
@@ -243,7 +246,7 @@ export default function NewRequestForm() {
                       </span>
                     </div>
                     <p className="text-xs text-blue-600 mt-1">
-                      Calculado automáticamente desde {formData.startTime} hasta {formData.endTime}
+                      Calculado automáticamente desde {formData.startTime}:00 hasta {formData.endTime}:00
                     </p>
                   </div>
                 </div>
@@ -362,31 +365,43 @@ export default function NewRequestForm() {
                   {/* Start Time */}
                   <div className="space-y-2">
                     <Label htmlFor="startTime">Hora de Inicio *</Label>
-                    <div className="relative">
-                      <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                      <Input
-                        id="startTime"
-                        type="time"
-                        value={formData.startTime}
-                        onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                        className="pl-10"
-                      />
-                    </div>
+                    <Select 
+                      value={formData.startTime || "none"} 
+                      onValueChange={(value) => setFormData({ ...formData, startTime: value === "none" ? "" : value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar hora" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Seleccionar hora</SelectItem>
+                        {hourOptions.map(({ value, label }) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {/* End Time */}
                   <div className="space-y-2">
                     <Label htmlFor="endTime">Hora de Fin *</Label>
-                    <div className="relative">
-                      <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                      <Input
-                        id="endTime"
-                        type="time"
-                        value={formData.endTime}
-                        onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                        className="pl-10"
-                      />
-                    </div>
+                    <Select 
+                      value={formData.endTime || "none"} 
+                      onValueChange={(value) => setFormData({ ...formData, endTime: value === "none" ? "" : value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar hora" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Seleccionar hora</SelectItem>
+                        {hourOptions.map(({ value, label }) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </>
