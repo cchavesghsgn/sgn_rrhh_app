@@ -6,19 +6,23 @@ applications:
       phases:
         preBuild:
           commands:
-            - echo "Installing dependencies..."
+            - echo "🔍 Validating environment variables..."
             - yarn install --frozen-lockfile
-            - echo "Setting up Prisma..."
+            - yarn db:validate
+            - echo "📦 Installing dependencies..."
+            - echo "🔧 Setting up Prisma..."
             - npx prisma generate
         build:
           commands:
-            - echo "Building Next.js application..."
+            - echo "🏗️  Building Next.js application..."
             - yarn build
         postBuild:
           commands:
-            - echo "Running database migrations..."
+            - echo "🔄 Running safe database migrations..."
             - npx prisma db push --skip-generate
-            - echo "Build completed successfully!"
+            - echo "🌱 Setting up initial data (safe for production)..."
+            - yarn db:seed-production
+            - echo "✅ Build completed successfully!"
       artifacts:
         baseDirectory: .next
         files:
@@ -31,4 +35,4 @@ applications:
       phases:
         build:
           commands:
-            - echo "No backend build required for Next.js"
+            - echo "ℹ️  No backend build required for Next.js"

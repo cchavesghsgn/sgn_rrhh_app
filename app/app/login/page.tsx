@@ -17,8 +17,8 @@ export default async function LoginPage() {
         <div className="text-center mb-8">
           <div className="relative w-96 h-60 mx-auto mb-6">
             <Image
-              src="/sgn-logo.png"
-              alt="SGN Logo"
+              src="/sgn-logo-new.png"
+              alt="SGN Logo - Soluciones de Negocios"
               fill
               className="object-contain"
               priority

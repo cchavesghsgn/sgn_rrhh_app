@@ -5,10 +5,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:migrate": "prisma db push --skip-generate",
+    "db:migrate-safe": "tsx scripts/migrate-safe.ts && prisma db push --skip-generate",
+    "db:seed": "tsx --require dotenv/config scripts/seed-development.ts",
+    "db:seed-production": "tsx --require dotenv/config scripts/seed-production.ts",
+    "db:backup": "tsx scripts/backup-db.ts",
+    "db:validate": "tsx scripts/validate-env.ts",
+    "deploy:prepare": "yarn db:validate && yarn db:backup",
+    "deploy:safe": "yarn deploy:prepare && yarn db:migrate-safe && yarn db:seed-production"
   },
   "prisma": {
-    "seed": "tsx --require dotenv/config scripts/seed.ts"
+    "seed": "tsx --require dotenv/config scripts/seed-development.ts"
   },
   "devDependencies": {
     "@next/swc-wasm-nodejs": "13.5.1",

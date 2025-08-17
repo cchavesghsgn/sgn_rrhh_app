@@ -66,8 +66,8 @@ export default function Header() {
           <Link href="/dashboard" className="flex items-center space-x-3">
             <div className="relative w-60 sm:w-80 h-16 sm:h-20">
               <Image
-                src="/sgn-logo.png"
-                alt="SGN Logo"
+                src="/sgn-logo-new.png"
+                alt="SGN Logo - Soluciones de Negocios"
                 fill
                 className="object-contain"
                 priority
