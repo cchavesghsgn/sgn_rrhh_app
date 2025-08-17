@@ -40,6 +40,29 @@ export default function NewRequestForm() {
     reason: ''
   });
 
+  // Calculate hours automatically based on start and end time
+  const calculateHours = (startTime: string, endTime: string): number => {
+    if (!startTime || !endTime) return 0;
+    
+    const start = new Date(`2000-01-01T${startTime}`);
+    const end = new Date(`2000-01-01T${endTime}`);
+    
+    if (end <= start) return 0;
+    
+    const diffMs = end.getTime() - start.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+    
+    return Math.round(diffHours * 2) / 2; // Round to nearest 0.5 hour
+  };
+
+  // Update hours automatically when start/end time changes
+  useEffect(() => {
+    if (formData.type === 'HOURS' && formData.startTime && formData.endTime) {
+      const calculatedHours = calculateHours(formData.startTime, formData.endTime);
+      setFormData(prev => ({ ...prev, hours: calculatedHours.toString() }));
+    }
+  }, [formData.startTime, formData.endTime, formData.type]);
+
   useEffect(() => {
     const fetchAvailableDays = async () => {
       try {
@@ -73,8 +96,17 @@ export default function NewRequestForm() {
 
       // Validation based on request type
       if (formData.type === 'HOURS') {
-        if (!formData.startDate || !formData.hours || (!formData.endTime && !formData.startTime)) {
-          toast.error('Para pedido de horas debes completar día, horas y horarios');
+        if (!formData.startDate || !formData.startTime || !formData.endTime) {
+          toast.error('Para pedido de horas debes completar día, hora de inicio y hora de fin');
+          return;
+        }
+        const calculatedHours = calculateHours(formData.startTime, formData.endTime);
+        if (calculatedHours <= 0) {
+          toast.error('La hora de fin debe ser posterior a la hora de inicio');
+          return;
+        }
+        if (calculatedHours > availableDays.hours) {
+          toast.error(`No puedes solicitar más de ${availableDays.hours} horas disponibles`);
           return;
         }
       } else if (formData.type === 'PERSONAL' || formData.type === 'REMOTE') {
@@ -199,22 +231,20 @@ export default function NewRequestForm() {
                 )}
               </div>
 
-              {/* Additional fields based on type */}
-              {formData.type === 'HOURS' && (
+              {/* Hours calculation display */}
+              {formData.type === 'HOURS' && formData.startTime && formData.endTime && (
                 <div className="space-y-2">
-                  <Label htmlFor="hours">Cantidad de Horas *</Label>
-                  <div className="relative">
-                    <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      id="hours"
-                      type="number"
-                      min="1"
-                      max={availableDays.hours}
-                      value={formData.hours}
-                      onChange={(e) => setFormData({ ...formData, hours: e.target.value })}
-                      className="pl-10"
-                      placeholder="Ej: 4"
-                    />
+                  <Label>Horas Calculadas</Label>
+                  <div className="p-3 bg-blue-50 rounded-md border border-blue-200">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm font-medium text-blue-800">
+                        {calculateHours(formData.startTime, formData.endTime)} horas
+                      </span>
+                    </div>
+                    <p className="text-xs text-blue-600 mt-1">
+                      Calculado automáticamente desde {formData.startTime} hasta {formData.endTime}
+                    </p>
                   </div>
                 </div>
               )}
