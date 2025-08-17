@@ -124,6 +124,11 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
             phone: employeeData.phone || '',
             role: employeeData.user.role
           });
+
+          // Set existing profile image if available
+          if (employeeData.profileImage) {
+            setImagePreview(employeeData.profileImage);
+          }
         } else {
           toast.error('Error al cargar los datos del empleado');
           router.push('/admin/employees');

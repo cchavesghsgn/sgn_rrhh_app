@@ -3,6 +3,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '../../../../lib/auth';
 import { PrismaClient } from '@prisma/client';
+import path from 'path';
+import fs from 'fs/promises';
 
 const prisma = new PrismaClient();
 
@@ -78,7 +80,39 @@ export async function PUT(
       return NextResponse.json({ error: 'Sin permisos' }, { status: 403 });
     }
 
-    const data = await request.json();
+    // Handle both FormData and JSON
+    let data: any;
+    let profileImage: File | null = null;
+
+    const contentType = request.headers.get('content-type');
+    
+    if (contentType && contentType.includes('multipart/form-data')) {
+      // Handle FormData (when image is included)
+      const formData = await request.formData();
+      
+      data = {
+        email: formData.get('email') as string,
+        dni: formData.get('dni') as string,
+        firstName: formData.get('firstName') as string,
+        lastName: formData.get('lastName') as string,
+        birthDate: formData.get('birthDate') as string,
+        hireDate: formData.get('hireDate') as string,
+        areaId: formData.get('areaId') as string,
+        position: formData.get('position') as string,
+        phone: formData.get('phone') as string,
+        role: formData.get('role') as string
+      };
+
+      // Get profile image if uploaded
+      const imageFile = formData.get('profileImage') as File;
+      if (imageFile && imageFile.size > 0) {
+        profileImage = imageFile;
+      }
+    } else {
+      // Handle JSON
+      data = await request.json();
+    }
+
     const {
       email,
       dni,
@@ -141,6 +175,32 @@ export async function PUT(
       }
     }
 
+    // Handle profile image upload
+    let profileImagePath: string | null = null;
+
+    if (profileImage) {
+      try {
+        // Ensure uploads directory exists
+        const uploadsDir = path.join(process.cwd(), 'uploads');
+        await fs.mkdir(uploadsDir, { recursive: true });
+        
+        // Generate unique filename
+        const fileExtension = profileImage.name.split('.').pop();
+        const fileName = `employee-${params.id}-${Date.now()}.${fileExtension}`;
+        profileImagePath = `/uploads/${fileName}`;
+        
+        // Save file
+        const bytes = await profileImage.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        await fs.writeFile(path.join(uploadsDir, fileName), buffer);
+        
+        console.log('Profile image saved:', profileImagePath);
+      } catch (imageError) {
+        console.error('Error saving profile image:', imageError);
+        // Continue without image if upload fails
+      }
+    }
+
     // Update employee and user in a transaction
     const result = await prisma.$transaction(async (prisma: any) => {
       // Update user
@@ -153,19 +213,27 @@ export async function PUT(
         }
       });
 
+      // Prepare employee update data
+      const employeeUpdateData: any = {
+        dni,
+        firstName,
+        lastName,
+        birthDate: new Date(birthDate),
+        hireDate: new Date(hireDate),
+        areaId,
+        position,
+        phone: phone || null
+      };
+
+      // Add profile image path if uploaded
+      if (profileImagePath) {
+        employeeUpdateData.profileImage = profileImagePath;
+      }
+
       // Update employee
       const updatedEmployee = await prisma.employees.update({
         where: { id: params.id },
-        data: {
-          dni,
-          firstName,
-          lastName,
-          birthDate: new Date(birthDate),
-          hireDate: new Date(hireDate),
-          areaId,
-          position,
-          phone: phone || null
-        },
+        data: employeeUpdateData,
         include: {
           User: {
             select: { email: true, role: true }
