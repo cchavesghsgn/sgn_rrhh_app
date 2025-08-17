@@ -81,12 +81,11 @@ export default function EmployeesList() {
     });
   };
 
-  const handleDeleteEmployee = async (employeeId: string, employeeName: string, force = false) => {
+  const handleDeleteEmployee = async (employeeId: string, employeeName: string) => {
     setDeleteLoading(employeeId);
     
     try {
-      const url = force ? `/api/employees/${employeeId}?force=true` : `/api/employees/${employeeId}`;
-      const response = await fetch(url, {
+      const response = await fetch(`/api/employees/${employeeId}`, {
         method: 'DELETE',
       });
 
@@ -104,19 +103,7 @@ export default function EmployeesList() {
         ));
       } else {
         const errorData = await response.json();
-        
-        if (response.status === 409 && errorData.hasRequests) {
-          // Show confirmation dialog for employee with requests
-          const confirmMessage = `${employeeName} tiene ${errorData.requestCount} solicitud(es) de licencia registradas.\n\n¿Estás seguro que deseas eliminar al empleado y TODAS sus solicitudes?\n\nEsta acción no se puede deshacer.`;
-          
-          if (window.confirm(confirmMessage)) {
-            // Retry with force=true
-            await handleDeleteEmployee(employeeId, employeeName, true);
-            return;
-          }
-        } else {
-          toast.error(errorData.error || 'Error al eliminar el empleado');
-        }
+        toast.error(errorData.error || 'Error al eliminar el empleado');
       }
     } catch (error) {
       console.error('Error deleting employee:', error);
@@ -263,24 +250,7 @@ export default function EmployeesList() {
                             {employee.firstName} {employee.lastName}
                           </span>
                           ?
-                          {employee.leaveRequests && employee.leaveRequests.length > 0 ? (
-                            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded text-sm">
-                              <div className="flex items-center gap-2 font-semibold text-red-800 mb-2">
-                                <AlertTriangle className="h-4 w-4" />
-                                ¡Atención!
-                              </div>
-                              <p className="text-red-700">
-                                Este empleado tiene <strong>{employee.leaveRequests.length}</strong> solicitud(es) 
-                                de licencia registradas. Al eliminar el empleado, también se eliminarán 
-                                <strong> todas sus solicitudes</strong>.
-                              </p>
-                              <p className="text-red-700 mt-2 font-medium">
-                                Esta acción no se puede deshacer.
-                              </p>
-                            </div>
-                          ) : (
-                            <p className="mt-2 text-gray-600">Esta acción no se puede deshacer.</p>
-                          )}
+                          <p className="mt-2 text-gray-600">Esta acción no se puede deshacer.</p>
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -289,10 +259,7 @@ export default function EmployeesList() {
                           onClick={() => handleDeleteEmployee(employee.id, `${employee.firstName} ${employee.lastName}`)}
                           className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
                         >
-                          {employee.leaveRequests && employee.leaveRequests.length > 0 
-                            ? 'Eliminar Empleado y Solicitudes' 
-                            : 'Eliminar Empleado'
-                          }
+                          Eliminar Empleado
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>

@@ -193,9 +193,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Sin permisos' }, { status: 403 });
     }
 
-    // Get force parameter from URL
-    const url = new URL(request.url);
-    const force = url.searchParams.get('force') === 'true';
+    // No need for force parameter - always delete
 
     // Check if employee exists
     const existingEmployee = await prisma.employee.findUnique({
@@ -213,18 +211,7 @@ export async function DELETE(
       );
     }
 
-    // If employee has leave requests and force is not true, return error with details
-    if (existingEmployee.leaveRequests.length > 0 && !force) {
-      return NextResponse.json(
-        { 
-          error: 'El empleado tiene solicitudes de licencia registradas',
-          hasRequests: true,
-          requestCount: existingEmployee.leaveRequests.length,
-          message: 'Para eliminar este empleado y todas sus solicitudes, confirma la acción.'
-        },
-        { status: 409 }
-      );
-    }
+    // Always proceed with deletion, regardless of leave requests
 
     // Delete employee, user and all leave requests in a transaction
     await prisma.$transaction(async (prisma) => {
