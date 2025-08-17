@@ -453,7 +453,7 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
             <Button 
               type="submit" 
               disabled={loading}
-              className="flex-1 bg-sgn-primary hover:bg-sgn-primary/90"
+              className="flex-1"
             >
               {loading ? (
                 <>
