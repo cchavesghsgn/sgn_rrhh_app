@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Test</title>
+</head>
+<body>
+    <script>
+        // Fill login form and submit
+        setTimeout(() => {
+            const emailInput = document.querySelector('input[type="email"]');
+            const passwordInput = document.querySelector('input[type="password"]');
+            const submitButton = document.querySelector('button[type="submit"]');
+            
+            if (emailInput && passwordInput && submitButton) {
+                emailInput.value = 'john@doe.com';
+                passwordInput.value = 'johndoe123';
+                
+                // Trigger change events
+                emailInput.dispatchEvent(new Event('change'));
+                passwordInput.dispatchEvent(new Event('change'));
+                
+                setTimeout(() => {
+                    submitButton.click();
+                }, 1000);
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

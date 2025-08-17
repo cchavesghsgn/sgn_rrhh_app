@@ -1,17 +1,18 @@
 
-import nodemailer from 'nodemailer';
+// import nodemailer from 'nodemailer';
 
 // Configuración del transportador de correo
 const createTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
+  // return nodemailer.createTransport({
+  //   host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  //   port: parseInt(process.env.SMTP_PORT || '587'),
+  //   secure: false, // true for 465, false for other ports
+  //   auth: {
+  //     user: process.env.SMTP_USER,
+  //     pass: process.env.SMTP_PASS,
+  //   },
+  // });
+  return null;
 };
 
 // Interfaces para los datos de correo

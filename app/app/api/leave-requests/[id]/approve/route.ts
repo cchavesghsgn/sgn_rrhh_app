@@ -68,7 +68,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     }
 
     // Update request status and employee available days/hours
-    const result = await prisma.$transaction(async (prisma) => {
+    const result = await prisma.$transaction(async (prisma: any) => {
       // Update leave request
       const updatedRequest = await prisma.leave_requests.update({
         where: { id: params.id },

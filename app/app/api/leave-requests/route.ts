@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
       });
 
       if (admins.length > 0) {
-        const adminEmails = admins.map(admin => admin.email);
+        const adminEmails = admins.map((admin: any) => admin.email);
         
         // Formatear la fecha para mostrar
         let displayDate = new Date(startDate).toLocaleDateString('es-ES');

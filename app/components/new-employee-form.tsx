@@ -193,21 +193,16 @@ export default function NewEmployeeForm() {
     setLoading(true);
 
     try {
-      const submitData = new FormData();
-      
-      // Add all form fields
-      Object.keys(formData).forEach((key) => {
-        const value = formData[key as keyof NewEmployeeFormData];
-        if (key === 'profileImage' && value instanceof File) {
-          submitData.append(key, value);
-        } else if (key !== 'profileImage' && value !== null) {
-          submitData.append(key, value as string);
-        }
-      });
+      // Always use JSON for now (image upload to be implemented later)
+      const submitData = { ...formData };
+      delete submitData.profileImage;
 
       const response = await fetch('/api/employees', {
         method: 'POST',
-        body: submitData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submitData),
       });
 
       if (response.ok) {

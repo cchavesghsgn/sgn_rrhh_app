@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Format response to match frontend expectations (lowercase field names)
-    const formattedEmployees = employees.map(employee => ({
+    const formattedEmployees = employees.map((employee: any) => ({
       ...employee,
       user: employee.User, // Lowercase for frontend compatibility
       area: employee.Area, // Lowercase for frontend compatibility
@@ -65,24 +65,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Sin permisos' }, { status: 403 });
     }
 
-    // Handle both JSON and FormData
-    let data: any;
-    const contentType = request.headers.get('content-type');
-    
-    if (contentType?.includes('application/json')) {
-      data = await request.json();
-    } else {
-      // Handle FormData
-      const formData = await request.formData();
-      data = {};
-      for (const [key, value] of formData.entries()) {
-        if (key === 'profileImage' && value instanceof File) {
-          // Handle file upload later if needed
-          continue;
-        }
-        data[key] = value;
-      }
-    }
+    // Handle JSON data
+    const data = await request.json();
 
     const {
       email,
@@ -134,7 +118,7 @@ export async function POST(request: NextRequest) {
     const bcrypt = require('bcryptjs');
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const result = await prisma.$transaction(async (prisma) => {
+    const result = await prisma.$transaction(async (prisma: any) => {
       const user = await prisma.user.create({
         data: {
           id: crypto.randomUUID(),

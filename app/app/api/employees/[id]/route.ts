@@ -142,7 +142,7 @@ export async function PUT(
     }
 
     // Update employee and user in a transaction
-    const result = await prisma.$transaction(async (prisma) => {
+    const result = await prisma.$transaction(async (prisma: any) => {
       // Update user
       await prisma.user.update({
         where: { id: existingEmployee.userId },
@@ -223,7 +223,7 @@ export async function DELETE(
     // Always proceed with deletion, regardless of leave requests
 
     // Delete employee, user and all leave requests in a transaction
-    await prisma.$transaction(async (prisma) => {
+    await prisma.$transaction(async (prisma: any) => {
       // Delete leave requests first
       if (existingEmployee.leave_requests.length > 0) {
         await prisma.leave_requests.deleteMany({
