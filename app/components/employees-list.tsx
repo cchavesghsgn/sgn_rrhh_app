@@ -12,16 +12,32 @@ import {
   Phone,
   Building2,
   Calendar,
-  Search
+  Search,
+  Edit,
+  Trash2,
+  AlertTriangle
 } from 'lucide-react';
 import Link from 'next/link';
 import { Input } from './ui/input';
 import { Employee } from '../lib/types';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './ui/alert-dialog';
+import toast from 'react-hot-toast';
 
 export default function EmployeesList() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -63,6 +79,37 @@ export default function EmployeesList() {
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  const handleDeleteEmployee = async (employeeId: string, employeeName: string) => {
+    setDeleteLoading(employeeId);
+    
+    try {
+      const response = await fetch(`/api/employees/${employeeId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        toast.success(`Empleado ${employeeName} eliminado exitosamente`);
+        // Refetch employees to update the list
+        const newEmployees = employees.filter(emp => emp.id !== employeeId);
+        setEmployees(newEmployees);
+        setFilteredEmployees(newEmployees.filter(employee =>
+          `${employee.firstName} ${employee.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          employee.dni.includes(searchTerm) ||
+          employee.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          employee.area?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        ));
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Error al eliminar el empleado');
+      }
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+      toast.error('Error al eliminar el empleado');
+    } finally {
+      setDeleteLoading(null);
+    }
   };
 
   if (loading) {
@@ -161,11 +208,66 @@ export default function EmployeesList() {
                   </div>
                 </div>
 
-                {/* <div className="mt-4 flex gap-2">
-                  <Button size="sm" variant="outline" className="flex-1">
-                    Ver Detalle
-                  </Button>
-                </div> */}
+                <div className="mt-4 flex gap-2">
+                  <Link href={`/admin/employees/${employee.id}/edit`} className="flex-1">
+                    <Button size="sm" variant="outline" className="w-full">
+                      <Edit className="h-4 w-4 mr-2" />
+                      Editar
+                    </Button>
+                  </Link>
+                  
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="flex-1 text-red-600 hover:text-red-700 hover:border-red-300"
+                        disabled={deleteLoading === employee.id}
+                      >
+                        {deleteLoading === employee.id ? (
+                          <>
+                            <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-transparent border-t-current" />
+                            Eliminando...
+                          </>
+                        ) : (
+                          <>
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Eliminar
+                          </>
+                        )}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center gap-2">
+                          <AlertTriangle className="h-5 w-5 text-red-500" />
+                          Confirmar Eliminación
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          ¿Estás seguro que deseas eliminar al empleado{' '}
+                          <span className="font-semibold">
+                            {employee.firstName} {employee.lastName}
+                          </span>
+                          ? Esta acción no se puede deshacer.
+                          {employee.leaveRequests && employee.leaveRequests.length > 0 && (
+                            <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm">
+                              <strong>Nota:</strong> Este empleado tiene solicitudes de licencia registradas.
+                            </div>
+                          )}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDeleteEmployee(employee.id, `${employee.firstName} ${employee.lastName}`)}
+                          className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+                        >
+                          Eliminar Empleado
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </CardContent>
             </Card>
           ))}

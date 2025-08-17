@@ -1,10 +1,15 @@
 
-import { getServerAuthSession } from '../../../../lib/auth';
-import { redirect } from 'next/navigation';
-import Header from '../../../../components/header';
-import NewEmployeeForm from '../../../../components/new-employee-form';
 
-export default async function NewEmployeePage() {
+import { getServerAuthSession } from '../../../../../lib/auth';
+import { redirect } from 'next/navigation';
+import Header from '../../../../../components/header';
+import EditEmployeeForm from '../../../../../components/edit-employee-form';
+
+interface EditEmployeePageProps {
+  params: { id: string };
+}
+
+export default async function EditEmployeePage({ params }: EditEmployeePageProps) {
   const session = await getServerAuthSession();
 
   if (!session) {
@@ -21,13 +26,13 @@ export default async function NewEmployeePage() {
       <main className="container max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-sgn-dark mb-2">
-            Nuevo Empleado
+            Editar Empleado
           </h1>
           <p className="text-gray-600">
-            Completa el formulario para registrar un nuevo empleado
+            Modifica la información del empleado
           </p>
         </div>
-        <NewEmployeeForm />
+        <EditEmployeeForm employeeId={params.id} />
       </main>
     </div>
   );
