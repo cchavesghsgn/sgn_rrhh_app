@@ -9,48 +9,54 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-// NextAuth Schema
 model Account {
-  id                String  @id @default(cuid())
+  id                String  @id
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
+model Area {
+  id          String      @id
+  name        String      @unique
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime
+  employees   employees[]
+}
+
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
+  id            String     @id
+  email         String     @unique
   password      String
   name          String?
   emailVerified DateTime?
   image         String?
-  role          UserRole  @default(EMPLOYEE)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  accounts Account[]
-  sessions Session[]
-  employee Employee?
+  role          UserRole   @default(EMPLOYEE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime
+  Account       Account[]
+  Session       Session[]
+  employees     employees?
 }
 
 model VerificationToken {
@@ -61,109 +67,76 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// Main Application Schema
-model Area {
-  id          String     @id @default(cuid())
-  name        String     @unique
-  description String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  
-  employees Employee[]
-}
-
-model Employee {
-  id                   String        @id @default(cuid())
-  userId               String        @unique
-  dni                  String        @unique
-  firstName            String
-  lastName             String
-  birthDate            DateTime
-  hireDate             DateTime
-  areaId               String
-  position             String
-  phone                String?
-  photo                String?
-  
-  // Available days/hours (updated based on requests)
-  vacationDays         Int           @default(20)
-  personalHours        Int           @default(96)    // 12 días × 8 horas = 96 horas
-  remoteHours          Int           @default(96)    // 12 días × 8 horas = 96 horas
-  availableHours       Int           @default(16)
-  
-  // Total days/hours assigned per year (never change)
-  totalVacationDays    Int           @default(20)
-  totalPersonalHours   Int           @default(96)    // 12 días × 8 horas = 96 horas
-  totalRemoteHours     Int           @default(96)    // 12 días × 8 horas = 96 horas
-  totalAvailableHours  Int           @default(16)
-  
-  createdAt           DateTime       @default(now())
-  updatedAt           DateTime       @updatedAt
-  
-  // Relations
-  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  area                Area           @relation(fields: [areaId], references: [id])
-  leaveRequests       LeaveRequest[]
-  
-  @@map("employees")
-}
-
-model LeaveRequest {
-  id            String            @id @default(cuid())
-  employeeId    String
-  type          LeaveRequestType
-  startDate     DateTime
-  endDate       DateTime
-  isHalfDay     Boolean           @default(false)
-  
-  // For HOURS type requests
-  hours         Int?              
-  startTime     String?           // Format: "HH:mm" (e.g., "09:00")
-  endTime       String?           // Format: "HH:mm" (e.g., "13:00")
-  
-  // For PERSONAL/REMOTE requests - shift (mañana/tarde/todo el día)
-  shift         DayShift?         
-  
-  reason        String
-  status        RequestStatus     @default(PENDING)
-  adminNotes    String?
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  
-  // Relations
-  employee      Employee          @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  attachments   Attachment[]
-  
-  @@map("leave_requests")
-}
-
-model Attachment {
-  id            String       @id @default(cuid())
+model attachments {
+  id             String         @id
   leaveRequestId String
-  fileName      String
-  originalName  String
-  filePath      String
-  fileType      String
-  fileSize      Int
-  createdAt     DateTime     @default(now())
-  
-  // Relations
-  leaveRequest  LeaveRequest @relation(fields: [leaveRequestId], references: [id], onDelete: Cascade)
-  
-  @@map("attachments")
+  fileName       String
+  originalName   String
+  filePath       String
+  fileType       String
+  fileSize       Int
+  createdAt      DateTime       @default(now())
+  leave_requests leave_requests @relation(fields: [leaveRequestId], references: [id], onDelete: Cascade)
 }
 
-// Enums
-enum UserRole {
-  EMPLOYEE
-  ADMIN
+model employees {
+  id                  String           @id
+  userId              String           @unique
+  dni                 String           @unique
+  firstName           String
+  lastName            String
+  birthDate           DateTime
+  hireDate            DateTime
+  areaId              String
+  position            String
+  phone               String?
+  photo               String?
+  vacationDays        Int              @default(20)
+  personalHours       Int              @default(96)
+  remoteHours         Int              @default(96)
+  availableHours      Int              @default(16)
+  totalVacationDays   Int              @default(20)
+  totalPersonalHours  Int              @default(96)
+  totalRemoteHours    Int              @default(96)
+  totalAvailableHours Int              @default(16)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime
+  Area                Area             @relation(fields: [areaId], references: [id])
+  User                User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leave_requests      leave_requests[]
+}
+
+model leave_requests {
+  id          String           @id
+  employeeId  String
+  type        LeaveRequestType
+  startDate   DateTime
+  endDate     DateTime
+  isHalfDay   Boolean          @default(false)
+  hours       Int?
+  startTime   String?
+  endTime     String?
+  shift       DayShift?
+  reason      String
+  status      RequestStatus    @default(PENDING)
+  adminNotes  String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime
+  attachments attachments[]
+  employees   employees        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+enum DayShift {
+  MORNING
+  AFTERNOON
+  FULL_DAY
 }
 
 enum LeaveRequestType {
-  LICENSE      // Licencias (enfermedad, examen, etc) - sin límite
-  PERSONAL     // Días particulares - limitado por año
-  REMOTE       // Días remotos - limitado por año
-  HOURS        // Pedido de horas - limitado por año
+  LICENSE
+  PERSONAL
+  REMOTE
+  HOURS
 }
 
 enum RequestStatus {
@@ -172,8 +145,7 @@ enum RequestStatus {
   REJECTED
 }
 
-enum DayShift {
-  MORNING     // Mañana
-  AFTERNOON   // Tarde
-  FULL_DAY    // Todo el día
+enum UserRole {
+  EMPLOYEE
+  ADMIN
 }
