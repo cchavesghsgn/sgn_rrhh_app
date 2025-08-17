@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '../../../lib/auth';
 import { PrismaClient } from '@prisma/client';
 import crypto from 'crypto';
+import path from 'path';
+import fs from 'fs/promises';
 
 const prisma = new PrismaClient();
 
@@ -65,8 +67,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Sin permisos' }, { status: 403 });
     }
 
-    // Handle JSON data
-    const data = await request.json();
+    // Handle both FormData and JSON
+    let data: any;
+    let profileImage: File | null = null;
+
+    const contentType = request.headers.get('content-type');
+    
+    if (contentType && contentType.includes('multipart/form-data')) {
+      // Handle FormData (when image is included)
+      const formData = await request.formData();
+      
+      data = {
+        email: formData.get('email') as string,
+        password: formData.get('password') as string,
+        dni: formData.get('dni') as string,
+        firstName: formData.get('firstName') as string,
+        lastName: formData.get('lastName') as string,
+        birthDate: formData.get('birthDate') as string,
+        hireDate: formData.get('hireDate') as string,
+        areaId: formData.get('areaId') as string,
+        position: formData.get('position') as string,
+        phone: formData.get('phone') as string,
+        role: formData.get('role') as string || 'EMPLOYEE'
+      };
+
+      // Get profile image if uploaded
+      const imageFile = formData.get('profileImage') as File;
+      if (imageFile && imageFile.size > 0) {
+        profileImage = imageFile;
+      }
+    } else {
+      // Handle JSON
+      data = await request.json();
+    }
 
     const {
       email,
@@ -114,6 +147,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Generate employee ID first (needed for image filename)
+    const employeeId = crypto.randomUUID();
+
+    // Handle profile image upload
+    let profileImagePath: string | null = null;
+
+    if (profileImage) {
+      try {
+        // Ensure uploads directory exists
+        const uploadsDir = path.join(process.cwd(), 'uploads');
+        await fs.mkdir(uploadsDir, { recursive: true });
+        
+        // Generate unique filename
+        const fileExtension = profileImage.name.split('.').pop();
+        const fileName = `employee-${employeeId}-${Date.now()}.${fileExtension}`;
+        profileImagePath = `/uploads/${fileName}`;
+        
+        // Save file
+        const bytes = await profileImage.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        await fs.writeFile(path.join(uploadsDir, fileName), buffer);
+        
+        console.log('Profile image saved:', profileImagePath);
+      } catch (imageError) {
+        console.error('Error saving profile image:', imageError);
+        // Continue without image if upload fails
+      }
+    }
+
     // Create user and employee in a transaction
     const bcrypt = require('bcryptjs');
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -130,20 +192,28 @@ export async function POST(request: NextRequest) {
         }
       });
 
+      // Prepare employee data
+      const employeeData: any = {
+        id: employeeId,
+        userId: user.id,
+        dni,
+        firstName,
+        lastName,
+        birthDate: new Date(birthDate),
+        hireDate: new Date(hireDate),
+        areaId,
+        position,
+        phone: phone || null,
+        updatedAt: new Date()
+      };
+
+      // Add profile image path if uploaded
+      if (profileImagePath) {
+        employeeData.profileImage = profileImagePath;
+      }
+
       const employee = await prisma.employees.create({
-        data: {
-          id: crypto.randomUUID(),
-          userId: user.id,
-          dni,
-          firstName,
-          lastName,
-          birthDate: new Date(birthDate),
-          hireDate: new Date(hireDate),
-          areaId,
-          position,
-          phone: phone || null,
-          updatedAt: new Date()
-        },
+        data: employeeData,
         include: {
           User: true,
           Area: true

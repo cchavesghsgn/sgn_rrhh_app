@@ -193,17 +193,39 @@ export default function NewEmployeeForm() {
     setLoading(true);
 
     try {
-      // Always use JSON for now (image upload to be implemented later)
-      const submitData = { ...formData };
-      delete submitData.profileImage;
+      let response: Response;
+      
+      // Use FormData if image is present, otherwise JSON
+      if (formData.profileImage) {
+        const submitData = new FormData();
+        
+        // Add all form fields
+        Object.keys(formData).forEach((key) => {
+          const value = formData[key as keyof NewEmployeeFormData];
+          if (key === 'profileImage' && value instanceof File) {
+            submitData.append(key, value);
+          } else if (key !== 'profileImage' && value !== null) {
+            submitData.append(key, value as string);
+          }
+        });
 
-      const response = await fetch('/api/employees', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submitData),
-      });
+        response = await fetch('/api/employees', {
+          method: 'POST',
+          body: submitData,
+        });
+      } else {
+        // Use JSON when no image
+        const submitData = { ...formData };
+        delete submitData.profileImage;
+
+        response = await fetch('/api/employees', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(submitData),
+        });
+      }
 
       if (response.ok) {
         toast.success('Empleado creado exitosamente');
