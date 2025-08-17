@@ -56,7 +56,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Sin permisos' }, { status: 403 });
     }
 
-    const data = await request.json();
+    // Handle both JSON and FormData
+    let data: any;
+    const contentType = request.headers.get('content-type');
+    
+    if (contentType?.includes('application/json')) {
+      data = await request.json();
+    } else {
+      // Handle FormData
+      const formData = await request.formData();
+      data = {};
+      for (const [key, value] of formData.entries()) {
+        if (key === 'profileImage' && value instanceof File) {
+          // Handle file upload later if needed
+          continue;
+        }
+        data[key] = value;
+      }
+    }
+
     const {
       email,
       password,
