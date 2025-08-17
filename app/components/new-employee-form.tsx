@@ -199,15 +199,20 @@ export default function NewEmployeeForm() {
       if (formData.profileImage) {
         const submitData = new FormData();
         
-        // Add all form fields
-        Object.keys(formData).forEach((key) => {
-          const value = formData[key as keyof NewEmployeeFormData];
-          if (key === 'profileImage' && value instanceof File) {
-            submitData.append(key, value);
-          } else if (key !== 'profileImage' && value !== null) {
-            submitData.append(key, value as string);
+        // Add only the necessary form fields (exclude confirmPassword and null values)
+        const fieldsToInclude = ['email', 'password', 'dni', 'firstName', 'lastName', 'birthDate', 'hireDate', 'areaId', 'position', 'phone', 'role'];
+        
+        fieldsToInclude.forEach((field) => {
+          const value = formData[field as keyof NewEmployeeFormData];
+          if (value !== null && value !== '' && value !== undefined) {
+            submitData.append(field, value as string);
           }
         });
+
+        // Add the profile image
+        if (formData.profileImage) {
+          submitData.append('profileImage', formData.profileImage);
+        }
 
         response = await fetch('/api/employees', {
           method: 'POST',
@@ -215,8 +220,19 @@ export default function NewEmployeeForm() {
         });
       } else {
         // Use JSON when no image
-        const submitData = { ...formData };
-        delete submitData.profileImage;
+        const submitData = {
+          email: formData.email,
+          password: formData.password,
+          dni: formData.dni,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          birthDate: formData.birthDate,
+          hireDate: formData.hireDate,
+          areaId: formData.areaId,
+          position: formData.position,
+          phone: formData.phone,
+          role: formData.role
+        };
 
         response = await fetch('/api/employees', {
           method: 'POST',

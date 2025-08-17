@@ -234,22 +234,54 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
     setLoading(true);
 
     try {
-      const submitData = new FormData();
+      let response: Response;
       
-      // Add all form fields
-      Object.keys(formData).forEach((key) => {
-        const value = formData[key as keyof EditEmployeeFormData];
-        if (key === 'profileImage' && value instanceof File) {
-          submitData.append(key, value);
-        } else if (key !== 'profileImage' && value !== null) {
-          submitData.append(key, value as string);
-        }
-      });
+      // Use FormData if image is present, otherwise JSON  
+      if (formData.profileImage) {
+        const submitData = new FormData();
+        
+        // Add only the necessary form fields (exclude null values)
+        const fieldsToInclude = ['email', 'dni', 'firstName', 'lastName', 'birthDate', 'hireDate', 'areaId', 'position', 'phone', 'role'];
+        
+        fieldsToInclude.forEach((field) => {
+          const value = formData[field as keyof EditEmployeeFormData];
+          if (value !== null && value !== '' && value !== undefined) {
+            submitData.append(field, value as string);
+          }
+        });
 
-      const response = await fetch(`/api/employees/${employeeId}`, {
-        method: 'PUT',
-        body: submitData,
-      });
+        // Add the profile image
+        if (formData.profileImage) {
+          submitData.append('profileImage', formData.profileImage);
+        }
+
+        response = await fetch(`/api/employees/${employeeId}`, {
+          method: 'PUT',
+          body: submitData,
+        });
+      } else {
+        // Use JSON when no image
+        const submitData = {
+          email: formData.email,
+          dni: formData.dni,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          birthDate: formData.birthDate,
+          hireDate: formData.hireDate,
+          areaId: formData.areaId,
+          position: formData.position,
+          phone: formData.phone,
+          role: formData.role
+        };
+
+        response = await fetch(`/api/employees/${employeeId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(submitData),
+        });
+      }
 
       if (response.ok) {
         toast.success('Empleado actualizado exitosamente');

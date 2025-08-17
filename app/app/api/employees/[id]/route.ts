@@ -84,33 +84,48 @@ export async function PUT(
     let data: any;
     let profileImage: File | null = null;
 
-    const contentType = request.headers.get('content-type');
+    const contentType = request.headers.get('content-type') || '';
     
-    if (contentType && contentType.includes('multipart/form-data')) {
-      // Handle FormData (when image is included)
-      const formData = await request.formData();
-      
-      data = {
-        email: formData.get('email') as string,
-        dni: formData.get('dni') as string,
-        firstName: formData.get('firstName') as string,
-        lastName: formData.get('lastName') as string,
-        birthDate: formData.get('birthDate') as string,
-        hireDate: formData.get('hireDate') as string,
-        areaId: formData.get('areaId') as string,
-        position: formData.get('position') as string,
-        phone: formData.get('phone') as string,
-        role: formData.get('role') as string
-      };
+    // Try to handle as FormData first, then fallback to JSON
+    try {
+      if (contentType.includes('multipart/form-data') || contentType.includes('form-data')) {
+        // Handle FormData (when image is included)
+        const formData = await request.formData();
+        
+        data = {
+          email: formData.get('email') as string,
+          dni: formData.get('dni') as string,
+          firstName: formData.get('firstName') as string,
+          lastName: formData.get('lastName') as string,
+          birthDate: formData.get('birthDate') as string,
+          hireDate: formData.get('hireDate') as string,
+          areaId: formData.get('areaId') as string,
+          position: formData.get('position') as string,
+          phone: formData.get('phone') as string,
+          role: formData.get('role') as string
+        };
 
-      // Get profile image if uploaded
-      const imageFile = formData.get('profileImage') as File;
-      if (imageFile && imageFile.size > 0) {
-        profileImage = imageFile;
+        // Get profile image if uploaded
+        const imageFile = formData.get('profileImage') as File;
+        if (imageFile && imageFile.size > 0) {
+          profileImage = imageFile;
+        }
+      } else {
+        // Handle JSON
+        data = await request.json();
       }
-    } else {
-      // Handle JSON
-      data = await request.json();
+    } catch (formDataError) {
+      console.log('FormData parsing failed, trying JSON...', formDataError);
+      try {
+        // Fallback to JSON if FormData parsing fails
+        data = await request.json();
+      } catch (jsonError) {
+        console.error('Both FormData and JSON parsing failed:', { formDataError, jsonError });
+        return NextResponse.json(
+          { error: 'Formato de datos inválido' },
+          { status: 400 }
+        );
+      }
     }
 
     const {
