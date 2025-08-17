@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '../../../../../lib/auth';
 import { PrismaClient } from '@prisma/client';
 import { sendRequestStatusNotification, RequestStatusEmailData } from '../../../../../lib/email';
+import { createCalendarEvent } from '../../../../../lib/calendar';
 import { LEAVE_REQUEST_TYPE_LABELS } from '../../../../../lib/types';
 
 const prisma = new PrismaClient();
@@ -129,6 +130,22 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     } catch (emailError) {
       console.error('Error preparando notificación por correo:', emailError);
       // No fallar la aprobación por errores de correo
+    }
+
+    // Crear evento en Google Calendar de forma asíncrona
+    try {
+      createCalendarEvent(result as any).then(calendarResult => {
+        if (calendarResult.success) {
+          console.log('Evento creado exitosamente en Google Calendar:', calendarResult.eventId);
+        } else {
+          console.error('Error creando evento en Google Calendar:', calendarResult.error);
+        }
+      }).catch(calendarError => {
+        console.error('Error creando evento en Google Calendar:', calendarError);
+      });
+    } catch (calendarError) {
+      console.error('Error preparando evento de calendario:', calendarError);
+      // No fallar la aprobación por errores de calendario
     }
 
     return NextResponse.json(result);
