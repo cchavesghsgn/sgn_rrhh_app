@@ -22,6 +22,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { Employee, LeaveRequest, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS } from '../lib/types';
+import { formatAvailableTime, getTimeBreakdown } from '../lib/time-utils';
 
 export default function EmployeeDashboard() {
   const { data: session } = useSession();
@@ -123,7 +124,10 @@ export default function EmployeeDashboard() {
           <CardContent className="p-6 text-center">
             <User className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
             <p className="text-2xl font-bold text-sgn-dark">
-              {employee.personalDays} de {employee.totalPersonalDays}
+              {formatAvailableTime(employee.personalHours)}
+            </p>
+            <p className="text-xs text-gray-500 mb-1">
+              {employee.personalHours}h de {employee.totalPersonalHours}h
             </p>
             <p className="text-sm text-gray-600">Días personales</p>
           </CardContent>
@@ -133,7 +137,10 @@ export default function EmployeeDashboard() {
           <CardContent className="p-6 text-center">
             <Laptop className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
             <p className="text-2xl font-bold text-sgn-dark">
-              {employee.remoteDays} de {employee.totalRemoteDays}
+              {formatAvailableTime(employee.remoteHours)}
+            </p>
+            <p className="text-xs text-gray-500 mb-1">
+              {employee.remoteHours}h de {employee.totalRemoteHours}h
             </p>
             <p className="text-sm text-gray-600">Días remotos</p>
           </CardContent>

@@ -78,12 +78,12 @@ async function main() {
       position: 'Director de RRHH',
       phone: '+54 9 11 1234-5678',
       vacationDays: 25,
-      personalDays: 15,
-      remoteDays: 15,
+      personalHours: 120, // 15 días × 8 horas = 120 horas
+      remoteHours: 120,   // 15 días × 8 horas = 120 horas
       availableHours: 20,
       totalVacationDays: 25,
-      totalPersonalDays: 15,
-      totalRemoteDays: 15,
+      totalPersonalHours: 120, // 15 días × 8 horas = 120 horas
+      totalRemoteHours: 120,   // 15 días × 8 horas = 120 horas
       totalAvailableHours: 20
     }
   });
@@ -203,8 +203,8 @@ async function main() {
         position: data.position,
         phone: data.phone,
         totalVacationDays: 20,
-        totalPersonalDays: 12,
-        totalRemoteDays: 12,
+        totalPersonalHours: 96, // 12 días × 8 horas = 96 horas
+        totalRemoteHours: 96,   // 12 días × 8 horas = 96 horas
         totalAvailableHours: 16
       }
     });

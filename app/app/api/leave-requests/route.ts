@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '../../../lib/auth';
 import { PrismaClient } from '@prisma/client';
+import { calculateHoursToDeduct, formatAvailableTime } from '../../../lib/time-utils';
 import { sendNewRequestNotification, NewRequestEmailData } from '../../../lib/email';
 import { LEAVE_REQUEST_TYPE_LABELS } from '../../../lib/types';
 
@@ -135,19 +136,25 @@ export async function POST(request: NextRequest) {
       daysRequested = (shift === 'MORNING' || shift === 'AFTERNOON') ? 0.5 : 1;
     }
 
-    // Validate available resources
-    if (type === 'PERSONAL' && employee.personalDays < daysRequested) {
-      return NextResponse.json(
-        { error: `No tienes suficientes días personales disponibles. Disponibles: ${employee.personalDays}` },
-        { status: 400 }
-      );
+    // Validate available resources using hours
+    if (type === 'PERSONAL') {
+      const hoursRequired = shift ? calculateHoursToDeduct(shift) : 8; // Default to full day
+      if (employee.personalHours < hoursRequired) {
+        return NextResponse.json(
+          { error: `No tienes suficientes horas personales disponibles. Disponibles: ${formatAvailableTime(employee.personalHours)}` },
+          { status: 400 }
+        );
+      }
     }
 
-    if (type === 'REMOTE' && employee.remoteDays < daysRequested) {
-      return NextResponse.json(
-        { error: `No tienes suficientes días remotos disponibles. Disponibles: ${employee.remoteDays}` },
-        { status: 400 }
-      );
+    if (type === 'REMOTE') {
+      const hoursRequired = shift ? calculateHoursToDeduct(shift) : 8; // Default to full day
+      if (employee.remoteHours < hoursRequired) {
+        return NextResponse.json(
+          { error: `No tienes suficientes horas remotas disponibles. Disponibles: ${formatAvailableTime(employee.remoteHours)}` },
+          { status: 400 }
+        );
+      }
     }
 
     if (type === 'HOURS' && employee.availableHours < hours) {

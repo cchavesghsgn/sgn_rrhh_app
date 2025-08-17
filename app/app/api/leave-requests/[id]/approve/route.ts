@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import { sendRequestStatusNotification, RequestStatusEmailData } from '../../../../../lib/email';
 import { createCalendarEvent } from '../../../../../lib/calendar';
 import { LEAVE_REQUEST_TYPE_LABELS } from '../../../../../lib/types';
+import { calculateHoursToDeduct } from '../../../../../lib/time-utils';
 
 const prisma = new PrismaClient();
 
@@ -38,13 +39,32 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       return NextResponse.json({ error: 'La solicitud ya fue procesada' }, { status: 400 });
     }
 
-    // Calculate days/hours to deduct
+    // Calculate days/hours to deduct based on request type and shift
     const start = new Date(leaveRequest.startDate);
     const end = new Date(leaveRequest.endDate);
     let daysToDeduct = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    let hoursToDeduct = 0;
     
-    if (leaveRequest.isHalfDay && daysToDeduct === 1) {
-      daysToDeduct = 0.5;
+    // For LICENSE (vacation days), keep old logic with days
+    if (leaveRequest.type === 'LICENSE') {
+      if (leaveRequest.isHalfDay && daysToDeduct === 1) {
+        daysToDeduct = 0.5;
+      }
+    }
+    
+    // For PERSONAL/REMOTE, calculate hours based on shift
+    if (leaveRequest.type === 'PERSONAL' || leaveRequest.type === 'REMOTE') {
+      if (leaveRequest.shift) {
+        hoursToDeduct = calculateHoursToDeduct(leaveRequest.shift);
+      } else {
+        // Fallback: if no shift specified, assume full day
+        hoursToDeduct = 8;
+      }
+    }
+    
+    // For HOURS type, use the hours specified in the request
+    if (leaveRequest.type === 'HOURS') {
+      hoursToDeduct = leaveRequest.hours || 0;
     }
 
     // Update request status and employee available days/hours
@@ -70,16 +90,22 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       const updateData: any = {};
       
       switch (leaveRequest.type) {
+        case 'LICENSE':
+          // LICENSE deducts vacation days (keep existing logic)
+          updateData.vacationDays = leaveRequest.employee.vacationDays - daysToDeduct;
+          break;
         case 'PERSONAL':
-          updateData.personalDays = leaveRequest.employee.personalDays - daysToDeduct;
+          // PERSONAL deducts from personalHours
+          updateData.personalHours = leaveRequest.employee.personalHours - hoursToDeduct;
           break;
         case 'REMOTE':
-          updateData.remoteDays = leaveRequest.employee.remoteDays - daysToDeduct;
+          // REMOTE deducts from remoteHours
+          updateData.remoteHours = leaveRequest.employee.remoteHours - hoursToDeduct;
           break;
         case 'HOURS':
-          updateData.availableHours = leaveRequest.employee.availableHours - (leaveRequest.hours || 0);
+          // HOURS deducts from availableHours
+          updateData.availableHours = leaveRequest.employee.availableHours - hoursToDeduct;
           break;
-        // LICENSE doesn't deduct from available days
       }
 
       if (Object.keys(updateData).length > 0) {

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { Employee, LeaveRequest, Area, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS } from '../lib/types';
+import { formatAvailableTime } from '../lib/time-utils';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -214,8 +215,8 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 max-h-96 overflow-y-auto">
                 {employees.slice(0, 12).map((employee) => {
                   const vacationTaken = (employee.totalVacationDays || 20) - (employee.vacationDays || 0);
-                  const personalTaken = (employee.totalPersonalDays || 12) - (employee.personalDays || 0);
-                  const remoteTaken = (employee.totalRemoteDays || 12) - (employee.remoteDays || 0);
+                  const personalTaken = (employee.totalPersonalHours || 96) - (employee.personalHours || 0);
+                  const remoteTaken = (employee.totalRemoteHours || 96) - (employee.remoteHours || 0);
                   const hoursTaken = (employee.totalAvailableHours || 16) - (employee.availableHours || 0);
                   
                   const totalLicensesTaken = vacationTaken + personalTaken + remoteTaken;
@@ -246,10 +247,10 @@ export default function AdminDashboard() {
                             Vacaciones: {employee.vacationDays || 0} de {employee.totalVacationDays || 20} días
                           </div>
                           <div className="text-gray-600">
-                            Personales: {employee.personalDays || 0} de {employee.totalPersonalDays || 12} días
+                            Personales: {formatAvailableTime(employee.personalHours || 0)} disponibles
                           </div>
                           <div className="text-gray-600">
-                            Remotos: {employee.remoteDays || 0} de {employee.totalRemoteDays || 12} días
+                            Remotos: {formatAvailableTime(employee.remoteHours || 0)} disponibles
                           </div>
                           <div className="text-gray-600">
                             Horas: {employee.availableHours || 0} de {employee.totalAvailableHours || 16} horas

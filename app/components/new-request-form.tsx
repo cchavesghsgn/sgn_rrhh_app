@@ -18,13 +18,14 @@ import {
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { LEAVE_REQUEST_TYPE_LABELS, LeaveRequestType, DayShift, DAY_SHIFT_LABELS } from '../lib/types';
+import { formatAvailableTime, hoursToDays, canRequestShift, getTimeBreakdown } from '../lib/time-utils';
 
 export default function NewRequestForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [availableDays, setAvailableDays] = useState({
-    personal: 0,
-    remote: 0,
+    personalHours: 0,
+    remoteHours: 0,
     hours: 0
   });
 
@@ -73,8 +74,8 @@ export default function NewRequestForm() {
         if (response.ok) {
           const employee = await response.json();
           setAvailableDays({
-            personal: employee.personalDays,
-            remote: employee.remoteDays,
+            personalHours: employee.personalHours,
+            remoteHours: employee.remoteHours,
             hours: employee.availableHours
           });
         }
@@ -115,6 +116,19 @@ export default function NewRequestForm() {
       } else if (formData.type === 'PERSONAL' || formData.type === 'REMOTE') {
         if (!formData.startDate || !formData.shift) {
           toast.error('Para días personales/remotos debes completar día y turno');
+          return;
+        }
+        
+        // Validate available hours for the requested shift
+        const availableHours = getAvailableHoursForType();
+        if (!canRequestShift(availableHours, formData.shift)) {
+          const shiftNames = {
+            'MORNING': 'una mañana (5h)',
+            'AFTERNOON': 'una tarde (3h)',
+            'FULL_DAY': 'un día completo (8h)'
+          };
+          const shiftName = shiftNames[formData.shift as keyof typeof shiftNames] || formData.shift;
+          toast.error(`No tienes suficientes horas para solicitar ${shiftName}. Disponible: ${formatAvailableTime(availableHours)}`);
           return;
         }
       } else if (formData.type === 'LICENSE') {
@@ -175,10 +189,20 @@ export default function NewRequestForm() {
 
   const getAvailableForType = () => {
     switch (formData.type) {
-      case 'PERSONAL': return availableDays.personal;
-      case 'REMOTE': return availableDays.remote;
+      case 'PERSONAL': return formatAvailableTime(availableDays.personalHours);
+      case 'REMOTE': return formatAvailableTime(availableDays.remoteHours);
       case 'HOURS': return availableDays.hours;
       default: return null;
+    }
+  };
+
+  // Get raw hours for validation
+  const getAvailableHoursForType = () => {
+    switch (formData.type) {
+      case 'PERSONAL': return availableDays.personalHours;
+      case 'REMOTE': return availableDays.remoteHours;
+      case 'HOURS': return availableDays.hours;
+      default: return 0;
     }
   };
 
@@ -217,10 +241,10 @@ export default function NewRequestForm() {
                       {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.LICENSE]} (Sin límite)
                     </SelectItem>
                     <SelectItem value={LeaveRequestType.PERSONAL}>
-                      {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.PERSONAL]} (Disponibles: {availableDays.personal})
+                      {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.PERSONAL]} (Disponibles: {formatAvailableTime(availableDays.personalHours)})
                     </SelectItem>
                     <SelectItem value={LeaveRequestType.REMOTE}>
-                      {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.REMOTE]} (Disponibles: {availableDays.remote})
+                      {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.REMOTE]} (Disponibles: {formatAvailableTime(availableDays.remoteHours)})
                     </SelectItem>
                     <SelectItem value={LeaveRequestType.HOURS}>
                       {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.HOURS]} (Disponibles: {availableDays.hours}h)
@@ -229,7 +253,7 @@ export default function NewRequestForm() {
                 </Select>
                 {getAvailableForType() !== null && formData.type !== 'LICENSE' && (
                   <p className="text-xs text-gray-600">
-                    Tienes {getAvailableForType()} {formData.type === 'HOURS' ? 'horas' : 'días'} disponibles
+                    Tienes {getAvailableForType()} disponibles
                   </p>
                 )}
               </div>

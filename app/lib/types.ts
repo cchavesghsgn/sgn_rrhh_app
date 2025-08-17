@@ -22,12 +22,12 @@ export interface Employee {
   phone?: string;
   photo?: string;
   vacationDays: number;
-  personalDays: number;
-  remoteDays: number;
+  personalHours: number;
+  remoteHours: number;
   availableHours: number;
   totalVacationDays: number;
-  totalPersonalDays: number;
-  totalRemoteDays: number;
+  totalPersonalHours: number;
+  totalRemoteHours: number;
   totalAvailableHours: number;
   createdAt: Date;
   updatedAt: Date;

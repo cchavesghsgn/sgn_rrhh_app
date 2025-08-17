@@ -20,6 +20,7 @@ import {
 import Link from 'next/link';
 import { Input } from './ui/input';
 import { Employee } from '../lib/types';
+import { formatAvailableTime } from '../lib/time-utils';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -198,10 +199,10 @@ export default function EmployeesList() {
                       <span className="font-medium">Vacaciones:</span> {employee.vacationDays}
                     </div>
                     <div>
-                      <span className="font-medium">Personales:</span> {employee.personalDays}
+                      <span className="font-medium">Personales:</span> {formatAvailableTime(employee.personalHours)}
                     </div>
                     <div>
-                      <span className="font-medium">Remotos:</span> {employee.remoteDays}
+                      <span className="font-medium">Remotos:</span> {formatAvailableTime(employee.remoteHours)}
                     </div>
                     <div>
                       <span className="font-medium">Horas:</span> {employee.availableHours}

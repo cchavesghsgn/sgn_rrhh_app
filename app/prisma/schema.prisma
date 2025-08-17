@@ -87,14 +87,14 @@ model Employee {
   
   // Available days/hours (updated based on requests)
   vacationDays         Int           @default(20)
-  personalDays         Int           @default(12)
-  remoteDays          Int           @default(12)
-  availableHours      Int           @default(16)
+  personalHours        Int           @default(96)    // 12 días × 8 horas = 96 horas
+  remoteHours          Int           @default(96)    // 12 días × 8 horas = 96 horas
+  availableHours       Int           @default(16)
   
   // Total days/hours assigned per year (never change)
   totalVacationDays    Int           @default(20)
-  totalPersonalDays    Int           @default(12)
-  totalRemoteDays      Int           @default(12)
+  totalPersonalHours   Int           @default(96)    // 12 días × 8 horas = 96 horas
+  totalRemoteHours     Int           @default(96)    // 12 días × 8 horas = 96 horas
   totalAvailableHours  Int           @default(16)
   
   createdAt           DateTime       @default(now())
