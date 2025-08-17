@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '../../../lib/auth';
 import { PrismaClient } from '@prisma/client';
+import { sendNewRequestNotification, NewRequestEmailData } from '../../../lib/email';
+import { LEAVE_REQUEST_TYPE_LABELS } from '../../../lib/types';
 
 const prisma = new PrismaClient();
 
@@ -178,6 +180,57 @@ export async function POST(request: NextRequest) {
         }
       }
     });
+
+    // Enviar notificación por correo a administradores
+    try {
+      // Obtener todos los administradores
+      const admins = await prisma.user.findMany({
+        where: { role: 'ADMIN' },
+        select: { email: true }
+      });
+
+      if (admins.length > 0) {
+        const adminEmails = admins.map(admin => admin.email);
+        
+        // Formatear la fecha para mostrar
+        let displayDate = new Date(startDate).toLocaleDateString('es-ES');
+        if (endDate && endDate !== startDate) {
+          displayDate += ` - ${new Date(endDate).toLocaleDateString('es-ES')}`;
+        }
+
+        // Si es solicitud de horas, agregar información del horario
+        if (type === 'HOURS' && startTime && endTime) {
+          displayDate += ` (${startTime}:00 - ${endTime}:00)`;
+        }
+
+        // Si tiene turno, agregarlo
+        if (shift) {
+          const shiftLabels = {
+            'MORNING': 'Mañana',
+            'AFTERNOON': 'Tarde', 
+            'FULL_DAY': 'Todo el día'
+          };
+          displayDate += ` - ${shiftLabels[shift as keyof typeof shiftLabels] || shift}`;
+        }
+
+        const emailData: NewRequestEmailData = {
+          employeeName: leaveRequest.employee.user.name || 'Usuario',
+          employeeEmail: leaveRequest.employee.user.email,
+          requestType: LEAVE_REQUEST_TYPE_LABELS[type as keyof typeof LEAVE_REQUEST_TYPE_LABELS] || type,
+          requestDate: displayDate,
+          reason: reason,
+          requestId: leaveRequest.id
+        };
+
+        // Enviar correo de forma asíncrona para no bloquear la respuesta
+        sendNewRequestNotification(adminEmails, emailData).catch(error => {
+          console.error('Error enviando notificación por correo:', error);
+        });
+      }
+    } catch (emailError) {
+      console.error('Error preparando notificación por correo:', emailError);
+      // No fallar la creación de la solicitud por errores de correo
+    }
 
     return NextResponse.json(leaveRequest, { status: 201 });
   } catch (error) {

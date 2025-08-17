@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '../../../../../lib/auth';
 import { PrismaClient } from '@prisma/client';
+import { sendRequestStatusNotification, RequestStatusEmailData } from '../../../../../lib/email';
+import { LEAVE_REQUEST_TYPE_LABELS } from '../../../../../lib/types';
 
 const prisma = new PrismaClient();
 
@@ -48,6 +50,46 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         }
       }
     });
+
+    // Enviar notificación por correo al empleado
+    try {
+      // Formatear la fecha para mostrar
+      let displayDate = new Date(updatedRequest.startDate).toLocaleDateString('es-ES');
+      if (updatedRequest.endDate && updatedRequest.endDate.getTime() !== updatedRequest.startDate.getTime()) {
+        displayDate += ` - ${new Date(updatedRequest.endDate).toLocaleDateString('es-ES')}`;
+      }
+
+      // Si es solicitud de horas, agregar información del horario
+      if (updatedRequest.type === 'HOURS' && updatedRequest.startTime && updatedRequest.endTime) {
+        displayDate += ` (${updatedRequest.startTime} - ${updatedRequest.endTime})`;
+      }
+
+      // Si tiene turno, agregarlo
+      if (updatedRequest.shift) {
+        const shiftLabels = {
+          'MORNING': 'Mañana',
+          'AFTERNOON': 'Tarde', 
+          'FULL_DAY': 'Todo el día'
+        };
+        displayDate += ` - ${shiftLabels[updatedRequest.shift as keyof typeof shiftLabels] || updatedRequest.shift}`;
+      }
+
+      const emailData: RequestStatusEmailData = {
+        employeeName: updatedRequest.employee.user.name || 'Usuario',
+        requestType: LEAVE_REQUEST_TYPE_LABELS[updatedRequest.type as keyof typeof LEAVE_REQUEST_TYPE_LABELS] || updatedRequest.type,
+        requestDate: displayDate,
+        status: 'rejected',
+        adminComment: adminNotes || undefined
+      };
+
+      // Enviar correo de forma asíncrona para no bloquear la respuesta
+      sendRequestStatusNotification(updatedRequest.employee.user.email, emailData).catch(error => {
+        console.error('Error enviando notificación por correo:', error);
+      });
+    } catch (emailError) {
+      console.error('Error preparando notificación por correo:', emailError);
+      // No fallar el rechazo por errores de correo
+    }
 
     return NextResponse.json(updatedRequest);
   } catch (error) {

@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '../../../../../lib/auth';
 import { PrismaClient } from '@prisma/client';
+import { sendRequestStatusNotification, RequestStatusEmailData } from '../../../../../lib/email';
+import { LEAVE_REQUEST_TYPE_LABELS } from '../../../../../lib/types';
 
 const prisma = new PrismaClient();
 
@@ -88,6 +90,46 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
       return updatedRequest;
     });
+
+    // Enviar notificación por correo al empleado
+    try {
+      // Formatear la fecha para mostrar
+      let displayDate = new Date(result.startDate).toLocaleDateString('es-ES');
+      if (result.endDate && result.endDate.getTime() !== result.startDate.getTime()) {
+        displayDate += ` - ${new Date(result.endDate).toLocaleDateString('es-ES')}`;
+      }
+
+      // Si es solicitud de horas, agregar información del horario
+      if (result.type === 'HOURS' && result.startTime && result.endTime) {
+        displayDate += ` (${result.startTime} - ${result.endTime})`;
+      }
+
+      // Si tiene turno, agregarlo
+      if (result.shift) {
+        const shiftLabels = {
+          'MORNING': 'Mañana',
+          'AFTERNOON': 'Tarde', 
+          'FULL_DAY': 'Todo el día'
+        };
+        displayDate += ` - ${shiftLabels[result.shift as keyof typeof shiftLabels] || result.shift}`;
+      }
+
+      const emailData: RequestStatusEmailData = {
+        employeeName: result.employee.user.name || 'Usuario',
+        requestType: LEAVE_REQUEST_TYPE_LABELS[result.type as keyof typeof LEAVE_REQUEST_TYPE_LABELS] || result.type,
+        requestDate: displayDate,
+        status: 'approved',
+        adminComment: adminNotes || undefined
+      };
+
+      // Enviar correo de forma asíncrona para no bloquear la respuesta
+      sendRequestStatusNotification(result.employee.user.email, emailData).catch(error => {
+        console.error('Error enviando notificación por correo:', error);
+      });
+    } catch (emailError) {
+      console.error('Error preparando notificación por correo:', emailError);
+      // No fallar la aprobación por errores de correo
+    }
 
     return NextResponse.json(result);
   } catch (error) {
