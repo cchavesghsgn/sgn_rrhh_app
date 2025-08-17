@@ -44,7 +44,16 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(employee);
+    // Format response to match frontend expectations (lowercase field names)
+    const formattedEmployee = {
+      ...employee,
+      user: employee.User, // Lowercase for frontend compatibility
+      area: employee.Area, // Lowercase for frontend compatibility
+      User: undefined, // Remove uppercase version
+      Area: undefined  // Remove uppercase version
+    };
+
+    return NextResponse.json(formattedEmployee);
   } catch (error) {
     console.error('Get employee error:', error);
     return NextResponse.json(

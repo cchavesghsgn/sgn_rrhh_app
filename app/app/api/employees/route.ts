@@ -34,7 +34,16 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' }
     });
 
-    return NextResponse.json(employees);
+    // Format response to match frontend expectations (lowercase field names)
+    const formattedEmployees = employees.map(employee => ({
+      ...employee,
+      user: employee.User, // Lowercase for frontend compatibility
+      area: employee.Area, // Lowercase for frontend compatibility
+      User: undefined, // Remove uppercase version
+      Area: undefined  // Remove uppercase version
+    }));
+
+    return NextResponse.json(formattedEmployees);
   } catch (error) {
     console.error('Get employees error:', error);
     return NextResponse.json(
