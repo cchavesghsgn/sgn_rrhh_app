@@ -21,9 +21,12 @@ import {
   Eye,
   EyeOff,
   ArrowLeft,
-  Loader2
+  Loader2,
+  Upload,
+  Camera
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import toast from 'react-hot-toast';
 
 interface Area {
@@ -45,6 +48,7 @@ interface NewEmployeeFormData {
   position: string;
   phone: string;
   role: 'ADMIN' | 'EMPLOYEE';
+  profileImage?: File | null;
 }
 
 export default function NewEmployeeForm() {
@@ -53,6 +57,7 @@ export default function NewEmployeeForm() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [formData, setFormData] = useState<NewEmployeeFormData>({
     email: '',
     password: '',
@@ -65,7 +70,8 @@ export default function NewEmployeeForm() {
     areaId: '',
     position: '',
     phone: '',
-    role: 'EMPLOYEE'
+    role: 'EMPLOYEE',
+    profileImage: null
   });
   const [errors, setErrors] = useState<Partial<NewEmployeeFormData>>({});
 
@@ -150,6 +156,32 @@ export default function NewEmployeeForm() {
     }
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Por favor selecciona una imagen válida');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('La imagen no debe superar los 5MB');
+        return;
+      }
+      
+      setFormData(prev => ({ ...prev, profileImage: file }));
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -161,12 +193,21 @@ export default function NewEmployeeForm() {
     setLoading(true);
 
     try {
+      const submitData = new FormData();
+      
+      // Add all form fields
+      Object.keys(formData).forEach((key) => {
+        const value = formData[key as keyof NewEmployeeFormData];
+        if (key === 'profileImage' && value instanceof File) {
+          submitData.append(key, value);
+        } else if (key !== 'profileImage' && value !== null) {
+          submitData.append(key, value as string);
+        }
+      });
+
       const response = await fetch('/api/employees', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: submitData,
       });
 
       if (response.ok) {
@@ -365,6 +406,51 @@ export default function NewEmployeeForm() {
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                   placeholder="+54 11 1234-5678"
                 />
+              </div>
+
+              {/* Profile Image */}
+              <div className="space-y-2">
+                <Label htmlFor="profileImage" className="flex items-center gap-2">
+                  <Camera className="h-4 w-4" />
+                  Foto de Perfil
+                </Label>
+                <div className="flex items-center gap-4">
+                  {imagePreview ? (
+                    <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
+                      <Image
+                        src={imagePreview}
+                        alt="Vista previa"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center">
+                      <User className="h-8 w-8 text-gray-400" />
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <Input
+                      id="profileImage"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => document.getElementById('profileImage')?.click()}
+                      className="w-full"
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Seleccionar Imagen
+                    </Button>
+                    <p className="text-sm text-gray-500 mt-1">
+                      JPG, PNG o GIF (máx. 5MB)
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

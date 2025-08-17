@@ -66,6 +66,19 @@
   }
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+  }
+  html {
+    overflow-x: hidden; /* Prevent horizontal scroll */
+  }
+}
+
+/* Mobile responsive fixes */
+@media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 

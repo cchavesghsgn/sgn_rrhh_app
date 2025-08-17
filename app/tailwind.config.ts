@@ -10,8 +10,19 @@ const config: Config = {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1rem",
+        sm: "1.5rem", 
+        md: "2rem",
+        lg: "2rem",
+        xl: "2rem",
+        "2xl": "2rem"
+      },
       screens: {
+        sm: "640px",
+        md: "768px", 
+        lg: "1024px",
+        xl: "1280px",
         "2xl": "1200px",
       },
     },
@@ -30,6 +41,7 @@ const config: Config = {
         // SGN Corporate Colors
         'sgn-dark': 'rgb(44, 42, 52)', // R:44 G:42 B:52
         'sgn-blue': 'rgb(22, 130, 176)', // R:22 G:130 B:176
+        'sgn-red': 'rgb(239, 68, 68)', // Red accent for buttons
         'sgn-dark-rgb': '44, 42, 52',
         'sgn-blue-rgb': '22, 130, 176',
         

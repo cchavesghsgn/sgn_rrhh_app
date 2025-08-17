@@ -2,7 +2,7 @@
 'use client';
 
 import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from './ui/button';
@@ -13,12 +13,15 @@ import {
   Users,
   FileText,
   Home,
-  Building2
+  Building2,
+  ArrowLeft,
+  Menu
 } from 'lucide-react';
 
 export default function Header() {
   const { data: session } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     try {
@@ -32,13 +35,36 @@ export default function Header() {
     }
   };
 
+  const getBackPath = () => {
+    if (pathname?.includes('/admin/employees/')) return '/admin/employees';
+    if (pathname?.includes('/admin/areas/')) return '/admin/areas';
+    if (pathname?.includes('/admin/')) return '/dashboard';
+    if (pathname?.includes('/requests/')) return '/requests';
+    return '/dashboard';
+  };
+
+  const shouldShowBackButton = () => {
+    return pathname && pathname !== '/dashboard' && pathname !== '/login';
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-200">
       <div className="container max-w-6xl mx-auto">
         <div className="flex h-24 items-center justify-between px-4">
+          {/* Mobile Back Button */}
+          {shouldShowBackButton() && (
+            <div className="md:hidden">
+              <Link href={getBackPath()}>
+                <Button variant="ghost" size="sm">
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+          )}
+          
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center space-x-3">
-            <div className="relative w-80 h-20">
+            <div className="relative w-60 sm:w-80 h-16 sm:h-20">
               <Image
                 src="/sgn-logo.png"
                 alt="SGN Logo"
