@@ -23,7 +23,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     const { adminNotes } = await request.json();
 
-    const leaveRequest = await prisma.leaveRequest.findUnique({
+    const leaveRequest = await prisma.leave_requests.findUnique({
       where: { id: params.id }
     });
 
@@ -35,17 +35,17 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       return NextResponse.json({ error: 'La solicitud ya fue procesada' }, { status: 400 });
     }
 
-    const updatedRequest = await prisma.leaveRequest.update({
+    const updatedRequest = await prisma.leave_requests.update({
       where: { id: params.id },
       data: {
         status: 'REJECTED',
         adminNotes: adminNotes || null
       },
       include: {
-        employee: {
+        employees: {
           include: {
-            area: true,
-            user: true
+            Area: true,
+            User: true
           }
         }
       }
@@ -75,7 +75,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       }
 
       const emailData: RequestStatusEmailData = {
-        employeeName: updatedRequest.employee.user.name || 'Usuario',
+        employeeName: updatedRequest.employees.User.name || 'Usuario',
         requestType: LEAVE_REQUEST_TYPE_LABELS[updatedRequest.type as keyof typeof LEAVE_REQUEST_TYPE_LABELS] || updatedRequest.type,
         requestDate: displayDate,
         status: 'rejected',
@@ -83,7 +83,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       };
 
       // Enviar correo de forma asíncrona para no bloquear la respuesta
-      sendRequestStatusNotification(updatedRequest.employee.user.email, emailData).catch(error => {
+      sendRequestStatusNotification(updatedRequest.employees.User.email, emailData).catch(error => {
         console.error('Error enviando notificación por correo:', error);
       });
     } catch (emailError) {

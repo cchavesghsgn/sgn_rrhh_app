@@ -11,7 +11,7 @@ async function testLogin() {
     // Buscar el usuario admin
     const user = await prisma.user.findUnique({
       where: { email: 'john@doe.com' },
-      include: { employee: true }
+      include: { employees: true }
     });
 
     if (!user) {
@@ -40,12 +40,12 @@ async function testLogin() {
     }
 
     // Mostrar información del empleado asociado
-    if (user.employee) {
+    if (user.employees) {
       console.log('\n👥 Información del empleado:');
-      console.log('   Nombre:', user.employee.firstName, user.employee.lastName);
-      console.log('   DNI:', user.employee.dni);
-      console.log('   Área:', user.employee.areaId);
-      console.log('   Posición:', user.employee.position);
+      console.log('   Nombre:', user.employees.firstName, user.employees.lastName);
+      console.log('   DNI:', user.employees.dni);
+      console.log('   Área:', user.employees.areaId);
+      console.log('   Posición:', user.employees.position);
     }
 
   } catch (error) {

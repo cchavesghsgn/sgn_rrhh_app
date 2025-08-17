@@ -1,5 +1,6 @@
 
 import { PrismaClient } from '@prisma/client';
+import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -39,8 +40,10 @@ async function main() {
     if (!existingArea) {
       const area = await prisma.area.create({
         data: {
+          id: crypto.randomUUID(),
           name: areaName,
-          description: `Área de ${areaName}`
+          description: `Área de ${areaName}`,
+          updatedAt: new Date()
         }
       });
       areas.push(area);
@@ -62,15 +65,18 @@ async function main() {
     
     const adminUser = await prisma.user.create({
       data: {
+        id: crypto.randomUUID(),
         email: adminEmail,
         password: testPasswordHash,
         name: 'John Doe',
-        role: 'ADMIN'
+        role: 'ADMIN',
+        updatedAt: new Date()
       }
     });
 
-    const adminEmployee = await prisma.employee.create({
+    const adminEmployee = await prisma.employees.create({
       data: {
+        id: crypto.randomUUID(),
         userId: adminUser.id,
         dni: '12345678',
         firstName: 'John',
@@ -87,7 +93,8 @@ async function main() {
         totalVacationDays: 25,
         totalPersonalHours: 120,
         totalRemoteHours: 120,
-        totalAvailableHours: 20
+        totalAvailableHours: 20,
+        updatedAt: new Date()
       }
     });
 

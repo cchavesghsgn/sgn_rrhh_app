@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import { calculateHoursToDeduct, formatAvailableTime } from '../../../lib/time-utils';
 import { sendNewRequestNotification, NewRequestEmailData } from '../../../lib/email';
 import { LEAVE_REQUEST_TYPE_LABELS } from '../../../lib/types';
+import crypto from 'crypto';
 
 const prisma = new PrismaClient();
 
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     if (session.user.role === 'EMPLOYEE') {
       // Get user's employee record
-      const employee = await prisma.employee.findUnique({
+      const employee = await prisma.employees.findUnique({
         where: { userId: session.user.id }
       });
 
@@ -45,13 +46,13 @@ export async function GET(request: NextRequest) {
       whereClause.employeeId = employeeId;
     }
 
-    const leaveRequests = await prisma.leaveRequest.findMany({
+    const leaveRequests = await prisma.leave_requests.findMany({
       where: whereClause,
       include: {
-        employee: {
+        employees: {
           include: {
-            area: true,
-            user: true
+            Area: true,
+            User: true
           }
         },
         attachments: true
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get user's employee record
-    const employee = await prisma.employee.findUnique({
+    const employee = await prisma.employees.findUnique({
       where: { userId: session.user.id }
     });
 
@@ -164,8 +165,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const leaveRequest = await prisma.leaveRequest.create({
+    const leaveRequest = await prisma.leave_requests.create({
       data: {
+        id: crypto.randomUUID(),
         employeeId: employee.id,
         type,
         startDate: new Date(startDate),
@@ -176,13 +178,14 @@ export async function POST(request: NextRequest) {
         endTime: type === 'HOURS' ? endTime : null,
         shift: (type === 'PERSONAL' || type === 'REMOTE') ? shift : null,
         reason,
-        status: 'PENDING'
+        status: 'PENDING',
+        updatedAt: new Date()
       },
       include: {
-        employee: {
+        employees: {
           include: {
-            area: true,
-            user: true
+            Area: true,
+            User: true
           }
         }
       }
@@ -221,8 +224,8 @@ export async function POST(request: NextRequest) {
         }
 
         const emailData: NewRequestEmailData = {
-          employeeName: leaveRequest.employee.user.name || 'Usuario',
-          employeeEmail: leaveRequest.employee.user.email,
+          employeeName: leaveRequest.employees.User.name || 'Usuario',
+          employeeEmail: leaveRequest.employees.User.email,
           requestType: LEAVE_REQUEST_TYPE_LABELS[type as keyof typeof LEAVE_REQUEST_TYPE_LABELS] || type,
           requestDate: displayDate,
           reason: reason,

@@ -1,5 +1,6 @@
 
 import { PrismaClient } from '@prisma/client';
+import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -8,9 +9,9 @@ async function main() {
   console.log('🌱 Iniciando seed de la base de datos...');
 
   // Limpiar datos existentes (opcional)
-  await prisma.attachment.deleteMany();
-  await prisma.leaveRequest.deleteMany();
-  await prisma.employee.deleteMany();
+  await prisma.attachments.deleteMany();
+  await prisma.leave_requests.deleteMany();
+  await prisma.employees.deleteMany();
   await prisma.user.deleteMany();
   await prisma.area.deleteMany();
 
@@ -20,32 +21,42 @@ async function main() {
   const areas = await Promise.all([
     prisma.area.create({
       data: {
+        id: crypto.randomUUID(),
         name: 'Recursos Humanos',
-        description: 'Gestión de personal y administración'
+        description: 'Gestión de personal y administración',
+        updatedAt: new Date()
       }
     }),
     prisma.area.create({
       data: {
+        id: crypto.randomUUID(),
         name: 'Tecnología',
-        description: 'Desarrollo y sistemas informaticos'
+        description: 'Desarrollo y sistemas informaticos',
+        updatedAt: new Date()
       }
     }),
     prisma.area.create({
       data: {
+        id: crypto.randomUUID(),
         name: 'Finanzas',
-        description: 'Contabilidad y gestión financiera'
+        description: 'Contabilidad y gestión financiera',
+        updatedAt: new Date()
       }
     }),
     prisma.area.create({
       data: {
+        id: crypto.randomUUID(),
         name: 'Marketing',
-        description: 'Publicidad y comunicación'
+        description: 'Publicidad y comunicación',
+        updatedAt: new Date()
       }
     }),
     prisma.area.create({
       data: {
+        id: crypto.randomUUID(),
         name: 'Operaciones',
-        description: 'Gestión operativa y logística'
+        description: 'Gestión operativa y logística',
+        updatedAt: new Date()
       }
     })
   ]);
@@ -59,15 +70,18 @@ async function main() {
   // Admin principal
   const adminUser = await prisma.user.create({
     data: {
+        id: crypto.randomUUID(),
       email: 'john@doe.com',
       password: testPasswordHash,
       name: 'John Doe',
-      role: 'ADMIN'
+      role: 'ADMIN',
+        updatedAt: new Date()
     }
   });
 
-  const adminEmployee = await prisma.employee.create({
+  const adminEmployee = await prisma.employees.create({
     data: {
+        id: crypto.randomUUID(),
       userId: adminUser.id,
       dni: '12345678',
       firstName: 'John',
@@ -84,7 +98,8 @@ async function main() {
       totalVacationDays: 25,
       totalPersonalHours: 120, // 15 días × 8 horas = 120 horas
       totalRemoteHours: 120,   // 15 días × 8 horas = 120 horas
-      totalAvailableHours: 20
+      totalAvailableHours: 20,
+      updatedAt: new Date()
     }
   });
 
@@ -184,15 +199,18 @@ async function main() {
   for (const data of employeeData) {
     const user = await prisma.user.create({
       data: {
+        id: crypto.randomUUID(),
         email: data.email,
         password: passwordHash,
         name: `${data.firstName} ${data.lastName}`,
-        role: 'EMPLOYEE'
+        role: 'EMPLOYEE',
+        updatedAt: new Date()
       }
     });
 
-    const employee = await prisma.employee.create({
+    const employee = await prisma.employees.create({
       data: {
+        id: crypto.randomUUID(),
         userId: user.id,
         dni: data.dni,
         firstName: data.firstName,
@@ -205,7 +223,8 @@ async function main() {
         totalVacationDays: 20,
         totalPersonalHours: 96, // 12 días × 8 horas = 96 horas
         totalRemoteHours: 96,   // 12 días × 8 horas = 96 horas
-        totalAvailableHours: 16
+        totalAvailableHours: 16,
+        updatedAt: new Date()
       }
     });
 
@@ -261,7 +280,7 @@ async function main() {
   ];
 
   for (const requestData of sampleRequests) {
-    await prisma.leaveRequest.create({
+    await prisma.leave_requests.create({
       data: requestData as any
     });
   }

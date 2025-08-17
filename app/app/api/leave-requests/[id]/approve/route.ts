@@ -26,9 +26,9 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     const { adminNotes } = await request.json();
 
     // Get the leave request
-    const leaveRequest = await prisma.leaveRequest.findUnique({
+    const leaveRequest = await prisma.leave_requests.findUnique({
       where: { id: params.id },
-      include: { employee: true }
+      include: { employees: true }
     });
 
     if (!leaveRequest) {
@@ -70,17 +70,17 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     // Update request status and employee available days/hours
     const result = await prisma.$transaction(async (prisma) => {
       // Update leave request
-      const updatedRequest = await prisma.leaveRequest.update({
+      const updatedRequest = await prisma.leave_requests.update({
         where: { id: params.id },
         data: {
           status: 'APPROVED',
           adminNotes: adminNotes || null
         },
         include: {
-          employee: {
+          employees: {
             include: {
-              area: true,
-              user: true
+              Area: true,
+              User: true
             }
           }
         }
@@ -92,24 +92,24 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       switch (leaveRequest.type) {
         case 'LICENSE':
           // LICENSE deducts vacation days (keep existing logic)
-          updateData.vacationDays = leaveRequest.employee.vacationDays - daysToDeduct;
+          updateData.vacationDays = leaveRequest.employees.vacationDays - daysToDeduct;
           break;
         case 'PERSONAL':
           // PERSONAL deducts from personalHours
-          updateData.personalHours = leaveRequest.employee.personalHours - hoursToDeduct;
+          updateData.personalHours = leaveRequest.employees.personalHours - hoursToDeduct;
           break;
         case 'REMOTE':
           // REMOTE deducts from remoteHours
-          updateData.remoteHours = leaveRequest.employee.remoteHours - hoursToDeduct;
+          updateData.remoteHours = leaveRequest.employees.remoteHours - hoursToDeduct;
           break;
         case 'HOURS':
           // HOURS deducts from availableHours
-          updateData.availableHours = leaveRequest.employee.availableHours - hoursToDeduct;
+          updateData.availableHours = leaveRequest.employees.availableHours - hoursToDeduct;
           break;
       }
 
       if (Object.keys(updateData).length > 0) {
-        await prisma.employee.update({
+        await prisma.employees.update({
           where: { id: leaveRequest.employeeId },
           data: updateData
         });
@@ -142,7 +142,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       }
 
       const emailData: RequestStatusEmailData = {
-        employeeName: result.employee.user.name || 'Usuario',
+        employeeName: result.employees.User.name || 'Usuario',
         requestType: LEAVE_REQUEST_TYPE_LABELS[result.type as keyof typeof LEAVE_REQUEST_TYPE_LABELS] || result.type,
         requestDate: displayDate,
         status: 'approved',
@@ -150,7 +150,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       };
 
       // Enviar correo de forma asíncrona para no bloquear la respuesta
-      sendRequestStatusNotification(result.employee.user.email, emailData).catch(error => {
+      sendRequestStatusNotification(result.employees.User.email, emailData).catch(error => {
         console.error('Error enviando notificación por correo:', error);
       });
     } catch (emailError) {

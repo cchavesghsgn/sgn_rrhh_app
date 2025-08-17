@@ -23,14 +23,14 @@ export async function GET(
       return NextResponse.json({ error: 'Sin permisos' }, { status: 403 });
     }
 
-    const employee = await prisma.employee.findUnique({
+    const employee = await prisma.employees.findUnique({
       where: { id: params.id },
       include: {
-        user: {
+        User: {
           select: { email: true, role: true }
         },
-        area: true,
-        leaveRequests: {
+        Area: true,
+        leave_requests: {
           orderBy: { createdAt: 'desc' },
           take: 10
         }
@@ -92,9 +92,9 @@ export async function PUT(
     }
 
     // Check if employee exists
-    const existingEmployee = await prisma.employee.findUnique({
+    const existingEmployee = await prisma.employees.findUnique({
       where: { id: params.id },
-      include: { user: true }
+      include: { User: true }
     });
 
     if (!existingEmployee) {
@@ -105,7 +105,7 @@ export async function PUT(
     }
 
     // Check if email is already used by another user
-    if (email !== existingEmployee.user.email) {
+    if (email !== existingEmployee.User.email) {
       const existingUser = await prisma.user.findUnique({
         where: { email }
       });
@@ -120,7 +120,7 @@ export async function PUT(
 
     // Check if DNI is already used by another employee
     if (dni !== existingEmployee.dni) {
-      const existingDNIEmployee = await prisma.employee.findUnique({
+      const existingDNIEmployee = await prisma.employees.findUnique({
         where: { dni }
       });
 
@@ -140,12 +140,12 @@ export async function PUT(
         data: {
           email,
           name: `${firstName} ${lastName}`,
-          role: role || existingEmployee.user.role
+          role: role || existingEmployee.User.role
         }
       });
 
       // Update employee
-      const updatedEmployee = await prisma.employee.update({
+      const updatedEmployee = await prisma.employees.update({
         where: { id: params.id },
         data: {
           dni,
@@ -158,10 +158,10 @@ export async function PUT(
           phone: phone || null
         },
         include: {
-          user: {
+          User: {
             select: { email: true, role: true }
           },
-          area: true
+          Area: true
         }
       });
 
@@ -196,11 +196,11 @@ export async function DELETE(
     // No need for force parameter - always delete
 
     // Check if employee exists
-    const existingEmployee = await prisma.employee.findUnique({
+    const existingEmployee = await prisma.employees.findUnique({
       where: { id: params.id },
       include: {
-        user: true,
-        leaveRequests: true
+        User: true,
+        leave_requests: true
       }
     });
 
@@ -216,14 +216,14 @@ export async function DELETE(
     // Delete employee, user and all leave requests in a transaction
     await prisma.$transaction(async (prisma) => {
       // Delete leave requests first
-      if (existingEmployee.leaveRequests.length > 0) {
-        await prisma.leaveRequest.deleteMany({
+      if (existingEmployee.leave_requests.length > 0) {
+        await prisma.leave_requests.deleteMany({
           where: { employeeId: params.id }
         });
       }
 
       // Delete employee (this will also delete related records due to cascade)
-      await prisma.employee.delete({
+      await prisma.employees.delete({
         where: { id: params.id }
       });
 
@@ -233,8 +233,8 @@ export async function DELETE(
       });
     });
 
-    const message = existingEmployee.leaveRequests.length > 0 
-      ? `Empleado eliminado exitosamente junto con ${existingEmployee.leaveRequests.length} solicitud(es) de licencia`
+    const message = existingEmployee.leave_requests.length > 0 
+      ? `Empleado eliminado exitosamente junto con ${existingEmployee.leave_requests.length} solicitud(es) de licencia`
       : 'Empleado eliminado exitosamente';
 
     return NextResponse.json({ message });

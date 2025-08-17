@@ -15,14 +15,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const employee = await prisma.employee.findUnique({
+    const employee = await prisma.employees.findUnique({
       where: { userId: session.user.id },
       include: {
-        user: {
+        User: {
           select: { email: true, role: true }
         },
-        area: true,
-        leaveRequests: {
+        Area: true,
+        leave_requests: {
           orderBy: { createdAt: 'desc' },
           take: 10
         }

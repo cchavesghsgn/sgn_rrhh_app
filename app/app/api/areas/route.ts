@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '../../../lib/auth';
 import { PrismaClient } from '@prisma/client';
+import crypto from 'crypto';
 
 const prisma = new PrismaClient();
 
@@ -57,8 +58,10 @@ export async function POST(request: NextRequest) {
 
     const area = await prisma.area.create({
       data: {
+        id: crypto.randomUUID(),
         name,
-        description: description || null
+        description: description || null,
+        updatedAt: new Date()
       }
     });
 

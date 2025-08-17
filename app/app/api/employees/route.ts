@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '../../../lib/auth';
 import { PrismaClient } from '@prisma/client';
+import crypto from 'crypto';
 
 const prisma = new PrismaClient();
 
@@ -19,13 +20,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Sin permisos' }, { status: 403 });
     }
 
-    const employees = await prisma.employee.findMany({
+    const employees = await prisma.employees.findMany({
       include: {
-        user: {
+        User: {
           select: { email: true, role: true }
         },
-        area: true,
-        leaveRequests: {
+        Area: true,
+        leave_requests: {
           orderBy: { createdAt: 'desc' },
           take: 5
         }
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if DNI already exists
-    const existingEmployee = await prisma.employee.findUnique({
+    const existingEmployee = await prisma.employees.findUnique({
       where: { dni }
     });
 
@@ -109,15 +110,18 @@ export async function POST(request: NextRequest) {
     const result = await prisma.$transaction(async (prisma) => {
       const user = await prisma.user.create({
         data: {
+          id: crypto.randomUUID(),
           email,
           password: hashedPassword,
           name: `${firstName} ${lastName}`,
-          role
+          role,
+          updatedAt: new Date()
         }
       });
 
-      const employee = await prisma.employee.create({
+      const employee = await prisma.employees.create({
         data: {
+          id: crypto.randomUUID(),
           userId: user.id,
           dni,
           firstName,
@@ -126,11 +130,12 @@ export async function POST(request: NextRequest) {
           hireDate: new Date(hireDate),
           areaId,
           position,
-          phone: phone || null
+          phone: phone || null,
+          updatedAt: new Date()
         },
         include: {
-          user: true,
-          area: true
+          User: true,
+          Area: true
         }
       });
 

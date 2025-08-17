@@ -27,7 +27,7 @@ export const authOptions: NextAuthOptions = {
         try {
           const user = await prisma.user.findUnique({
             where: { email: credentials.email },
-            include: { employee: true }
+            include: { employees: true }
           });
 
           console.log('👤 User found:', user ? 'YES' : 'NO');
@@ -48,9 +48,9 @@ export const authOptions: NextAuthOptions = {
           const authUser = {
             id: user.id,
             email: user.email,
-            name: user.name || `${user.employee?.firstName} ${user.employee?.lastName}` || user.email,
+            name: user.name || `${user.employees?.firstName} ${user.employees?.lastName}` || user.email,
             role: user.role,
-            image: user.employee?.photo
+            image: user.employees?.photo
           };
 
           console.log('✅ Authentication successful for:', authUser.email);

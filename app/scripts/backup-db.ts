@@ -25,8 +25,8 @@ async function main() {
     // Obtener datos críticos
     const users = await prisma.user.findMany();
     const areas = await prisma.area.findMany();
-    const employees = await prisma.employee.findMany();
-    const leaveRequests = await prisma.leaveRequest.findMany();
+    const employees = await prisma.employees.findMany();
+    const leaveRequests = await prisma.leave_requests.findMany();
     
     const backupData = {
       timestamp: new Date().toISOString(),

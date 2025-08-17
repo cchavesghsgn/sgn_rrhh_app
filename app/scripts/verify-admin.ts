@@ -13,7 +13,7 @@ async function main() {
       email: 'john@doe.com'
     },
     include: {
-      employee: true
+      employees: true
     }
   });
 
@@ -29,8 +29,8 @@ async function main() {
   console.log('- ID:', adminUser.id);
   console.log('- Password Hash:', adminUser.password ? 'Presente' : 'AUSENTE');
   
-  if (adminUser.employee) {
-    console.log('- Empleado vinculado:', adminUser.employee.firstName, adminUser.employee.lastName);
+  if (adminUser.employees) {
+    console.log('- Empleado vinculado:', adminUser.employees.firstName, adminUser.employees.lastName);
   }
 
   // Verificar si la contraseña es correcta
