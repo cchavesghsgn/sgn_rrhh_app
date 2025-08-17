@@ -53,6 +53,9 @@ export interface LeaveRequest {
   endDate: Date;
   isHalfDay: boolean;
   hours?: number;
+  startTime?: string;
+  endTime?: string;
+  shift?: DayShift;
   reason: string;
   status: RequestStatus;
   adminNotes?: string;
@@ -91,6 +94,12 @@ export enum RequestStatus {
   REJECTED = 'REJECTED'
 }
 
+export enum DayShift {
+  MORNING = 'MORNING',
+  AFTERNOON = 'AFTERNOON',
+  FULL_DAY = 'FULL_DAY'
+}
+
 export interface DashboardStats {
   totalEmployees: number;
   pendingRequests: number;
@@ -120,4 +129,10 @@ export const REQUEST_STATUS_LABELS = {
   [RequestStatus.PENDING]: 'Pendiente',
   [RequestStatus.APPROVED]: 'Aprobada',
   [RequestStatus.REJECTED]: 'Rechazada'
+};
+
+export const DAY_SHIFT_LABELS = {
+  [DayShift.MORNING]: 'Mañana',
+  [DayShift.AFTERNOON]: 'Tarde',
+  [DayShift.FULL_DAY]: 'Todo el día'
 };

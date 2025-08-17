@@ -14,7 +14,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import Link from 'next/link';
-import { LeaveRequest, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS } from '../lib/types';
+import { LeaveRequest, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS, DAY_SHIFT_LABELS } from '../lib/types';
 
 export default function RequestsList() {
   const [requests, setRequests] = useState<LeaveRequest[]>([]);
@@ -116,17 +116,30 @@ export default function RequestsList() {
                       <div className="flex items-center gap-2 text-gray-600">
                         <Calendar className="h-4 w-4" />
                         <span className="text-sm">
-                          {formatDate(request.startDate.toString())} - {formatDate(request.endDate.toString())}
+                          {request.type === 'LICENSE' 
+                            ? `${formatDate(request.startDate.toString())} - ${formatDate(request.endDate.toString())}`
+                            : formatDate(request.startDate.toString())
+                          }
                         </span>
                       </div>
 
                       <div className="flex items-center gap-2 text-gray-600">
                         <Clock className="h-4 w-4" />
                         <span className="text-sm">
-                          {request.type === 'HOURS' 
-                            ? `${request.hours} horas`
-                            : calculateDays(request.startDate.toString(), request.endDate.toString(), request.isHalfDay)
-                          }
+                          {request.type === 'HOURS' && (
+                            <>
+                              {request.hours} horas
+                              {request.startTime && request.endTime && (
+                                <span className="ml-2">({request.startTime} - {request.endTime})</span>
+                              )}
+                            </>
+                          )}
+                          {(request.type === 'PERSONAL' || request.type === 'REMOTE') && request.shift && (
+                            DAY_SHIFT_LABELS[request.shift as keyof typeof DAY_SHIFT_LABELS]
+                          )}
+                          {request.type === 'LICENSE' && (
+                            calculateDays(request.startDate.toString(), request.endDate.toString(), request.isHalfDay)
+                          )}
                         </span>
                       </div>
                     </div>

@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { LeaveRequest, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS } from '../lib/types';
+import { LeaveRequest, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS, DAY_SHIFT_LABELS } from '../lib/types';
 
 interface RequestDetailViewProps {
   requestId: string;
@@ -195,22 +195,71 @@ export default function RequestDetailView({ requestId }: RequestDetailViewProps)
               <p className="text-sm text-gray-600">Tipo de Solicitud</p>
               <p className="font-medium">{LEAVE_REQUEST_TYPE_LABELS[request.type]}</p>
             </div>
-            <div>
-              <p className="text-sm text-gray-600">Fecha de Inicio</p>
-              <p className="font-medium">{formatDate(request.startDate.toString())}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Fecha de Fin</p>
-              <p className="font-medium">{formatDate(request.endDate.toString())}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600">Duración</p>
-              <p className="font-medium">
-                {request.type === 'HOURS' ? `${request.hours} horas` : 
-                 request.isHalfDay ? '0.5 días' : 
-                 `${Math.ceil((new Date(request.endDate).getTime() - new Date(request.startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1} días`}
-              </p>
-            </div>
+
+            {/* License type shows date range */}
+            {request.type === 'LICENSE' && (
+              <>
+                <div>
+                  <p className="text-sm text-gray-600">Fecha de Inicio</p>
+                  <p className="font-medium">{formatDate(request.startDate.toString())}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Fecha de Fin</p>
+                  <p className="font-medium">{formatDate(request.endDate.toString())}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Duración</p>
+                  <p className="font-medium">
+                    {request.isHalfDay ? '0.5 días' : 
+                     `${Math.ceil((new Date(request.endDate).getTime() - new Date(request.startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1} días`}
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* Personal/Remote type shows single day and shift */}
+            {(request.type === 'PERSONAL' || request.type === 'REMOTE') && (
+              <>
+                <div>
+                  <p className="text-sm text-gray-600">Día</p>
+                  <p className="font-medium">{formatDate(request.startDate.toString())}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Turno</p>
+                  <p className="font-medium">
+                    {request.shift ? DAY_SHIFT_LABELS[request.shift as keyof typeof DAY_SHIFT_LABELS] : 'No especificado'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Duración</p>
+                  <p className="font-medium">
+                    {(request.shift === 'MORNING' || request.shift === 'AFTERNOON') ? '0.5 días' : '1 día'}
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* Hours type shows day, hours and time range */}
+            {request.type === 'HOURS' && (
+              <>
+                <div>
+                  <p className="text-sm text-gray-600">Día</p>
+                  <p className="font-medium">{formatDate(request.startDate.toString())}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Cantidad</p>
+                  <p className="font-medium">{request.hours} horas</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Horario</p>
+                  <p className="font-medium">
+                    {request.startTime && request.endTime ? 
+                      `${request.startTime} - ${request.endTime}` : 
+                      'No especificado'}
+                  </p>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Employee Info */}

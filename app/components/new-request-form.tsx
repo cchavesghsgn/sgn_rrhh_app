@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { LEAVE_REQUEST_TYPE_LABELS, LeaveRequestType } from '../lib/types';
+import { LEAVE_REQUEST_TYPE_LABELS, LeaveRequestType, DayShift, DAY_SHIFT_LABELS } from '../lib/types';
 
 export default function NewRequestForm() {
   const router = useRouter();
@@ -34,6 +34,9 @@ export default function NewRequestForm() {
     endDate: '',
     isHalfDay: false,
     hours: '',
+    startTime: '',
+    endTime: '',
+    shift: '',
     reason: ''
   });
 
@@ -63,19 +66,37 @@ export default function NewRequestForm() {
 
     try {
       // Validation
-      if (!formData.type || !formData.startDate || !formData.endDate || !formData.reason) {
+      if (!formData.type || !formData.reason) {
         toast.error('Por favor completa todos los campos requeridos');
         return;
       }
 
-      if (formData.type === 'HOURS' && !formData.hours) {
-        toast.error('Por favor especifica las horas para este tipo de solicitud');
-        return;
+      // Validation based on request type
+      if (formData.type === 'HOURS') {
+        if (!formData.startDate || !formData.hours || (!formData.endTime && !formData.startTime)) {
+          toast.error('Para pedido de horas debes completar día, horas y horarios');
+          return;
+        }
+      } else if (formData.type === 'PERSONAL' || formData.type === 'REMOTE') {
+        if (!formData.startDate || !formData.shift) {
+          toast.error('Para días personales/remotos debes completar día y turno');
+          return;
+        }
+      } else if (formData.type === 'LICENSE') {
+        if (!formData.startDate || !formData.endDate) {
+          toast.error('Para licencias debes completar fecha de inicio y fin');
+          return;
+        }
       }
 
       const payload = {
         ...formData,
-        hours: formData.hours ? parseInt(formData.hours) : null
+        hours: formData.hours ? parseInt(formData.hours) : null,
+        shift: formData.shift || null,
+        startTime: formData.startTime || null,
+        endTime: formData.endTime || null,
+        // For non-vacation requests, set endDate same as startDate if not provided
+        endDate: formData.endDate || formData.startDate
       };
 
       const response = await fetch('/api/leave-requests', {
@@ -178,7 +199,7 @@ export default function NewRequestForm() {
                 )}
               </div>
 
-              {/* Hours (only for HOURS type) */}
+              {/* Additional fields based on type */}
               {formData.type === 'HOURS' && (
                 <div className="space-y-2">
                   <Label htmlFor="hours">Cantidad de Horas *</Label>
@@ -199,7 +220,8 @@ export default function NewRequestForm() {
               )}
             </div>
 
-            {formData.type !== 'HOURS' && (
+            {/* Date fields based on type */}
+            {formData.type === 'LICENSE' && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Start Date */}
@@ -233,23 +255,7 @@ export default function NewRequestForm() {
                   </div>
                 </div>
 
-                {/* Half Day Option */}
-                {calculateDaysNeeded() === 1 && (
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="isHalfDay"
-                      checked={formData.isHalfDay}
-                      onChange={(e) => setFormData({ ...formData, isHalfDay: e.target.checked })}
-                      className="rounded border-gray-300 text-sgn-blue focus:ring-sgn-blue"
-                    />
-                    <Label htmlFor="isHalfDay" className="text-sm">
-                      Es medio día
-                    </Label>
-                  </div>
-                )}
-
-                {/* Days calculation */}
+                {/* Days calculation for LICENSE */}
                 {formData.startDate && formData.endDate && (
                   <div className="p-4 bg-blue-50 rounded-lg">
                     <p className="text-sm text-blue-800">
@@ -257,6 +263,102 @@ export default function NewRequestForm() {
                     </p>
                   </div>
                 )}
+              </>
+            )}
+
+            {/* Personal/Remote day fields */}
+            {(formData.type === 'PERSONAL' || formData.type === 'REMOTE') && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Date */}
+                <div className="space-y-2">
+                  <Label htmlFor="startDate">Día *</Label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Input
+                      id="startDate"
+                      type="date"
+                      value={formData.startDate}
+                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+
+                {/* Shift */}
+                <div className="space-y-2">
+                  <Label htmlFor="shift">Turno *</Label>
+                  <Select 
+                    value={formData.shift || "none"} 
+                    onValueChange={(value) => setFormData({ ...formData, shift: value === "none" ? "" : value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona el turno" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Seleccionar turno</SelectItem>
+                      <SelectItem value={DayShift.MORNING}>
+                        {DAY_SHIFT_LABELS[DayShift.MORNING]}
+                      </SelectItem>
+                      <SelectItem value={DayShift.AFTERNOON}>
+                        {DAY_SHIFT_LABELS[DayShift.AFTERNOON]}
+                      </SelectItem>
+                      <SelectItem value={DayShift.FULL_DAY}>
+                        {DAY_SHIFT_LABELS[DayShift.FULL_DAY]}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+
+            {/* Hours specific fields */}
+            {formData.type === 'HOURS' && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="startDate">Día *</Label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Input
+                      id="startDate"
+                      type="date"
+                      value={formData.startDate}
+                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Start Time */}
+                  <div className="space-y-2">
+                    <Label htmlFor="startTime">Hora de Inicio *</Label>
+                    <div className="relative">
+                      <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Input
+                        id="startTime"
+                        type="time"
+                        value={formData.startTime}
+                        onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+
+                  {/* End Time */}
+                  <div className="space-y-2">
+                    <Label htmlFor="endTime">Hora de Fin *</Label>
+                    <div className="relative">
+                      <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Input
+                        id="endTime"
+                        type="time"
+                        value={formData.endTime}
+                        onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+                </div>
               </>
             )}
 

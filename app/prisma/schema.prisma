@@ -115,7 +115,15 @@ model LeaveRequest {
   startDate     DateTime
   endDate       DateTime
   isHalfDay     Boolean           @default(false)
-  hours         Int?              // For HOURS type requests
+  
+  // For HOURS type requests
+  hours         Int?              
+  startTime     String?           // Format: "HH:mm" (e.g., "09:00")
+  endTime       String?           // Format: "HH:mm" (e.g., "13:00")
+  
+  // For PERSONAL/REMOTE requests - shift (mañana/tarde/todo el día)
+  shift         DayShift?         
+  
   reason        String
   status        RequestStatus     @default(PENDING)
   adminNotes    String?
@@ -162,4 +170,10 @@ enum RequestStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum DayShift {
+  MORNING     // Mañana
+  AFTERNOON   // Tarde
+  FULL_DAY    // Todo el día
 }
