@@ -8,6 +8,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
+  debug: process.env.NODE_ENV === 'development',
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -16,7 +17,10 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
+        console.log('🔐 Attempting login for:', credentials?.email);
+        
         if (!credentials?.email || !credentials?.password) {
+          console.log('❌ Missing credentials');
           return null;
         }
 
@@ -26,19 +30,33 @@ export const authOptions: NextAuthOptions = {
             include: { employee: true }
           });
 
-          if (!user || !await bcrypt.compare(credentials.password, user.password)) {
+          console.log('👤 User found:', user ? 'YES' : 'NO');
+
+          if (!user) {
+            console.log('❌ User not found');
             return null;
           }
 
-          return {
+          const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+          console.log('🔑 Password valid:', isPasswordValid);
+
+          if (!isPasswordValid) {
+            console.log('❌ Invalid password');
+            return null;
+          }
+
+          const authUser = {
             id: user.id,
             email: user.email,
             name: user.name || `${user.employee?.firstName} ${user.employee?.lastName}` || user.email,
             role: user.role,
             image: user.employee?.photo
           };
+
+          console.log('✅ Authentication successful for:', authUser.email);
+          return authUser;
         } catch (error) {
-          console.error('Auth error:', error);
+          console.error('💥 Auth error:', error);
           return null;
         }
       }
@@ -46,26 +64,36 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 días para "remember me"
+    maxAge: 30 * 24 * 60 * 60, // 30 días
+  },
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60, // 30 días
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
+        token.id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.sub!;
+      if (token && session.user) {
+        session.user.id = token.id as string;
         session.user.role = token.role as string;
       }
       return session;
+    },
+    async redirect({ url, baseUrl }) {
+      // Permite redirect a páginas dentro del mismo dominio
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Permite redirect a la misma URL base
+      if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
     }
   },
   pages: {
     signIn: '/login',
-    signOut: '/login',
     error: '/login'
   }
 };
