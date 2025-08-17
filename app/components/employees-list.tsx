@@ -81,16 +81,18 @@ export default function EmployeesList() {
     });
   };
 
-  const handleDeleteEmployee = async (employeeId: string, employeeName: string) => {
+  const handleDeleteEmployee = async (employeeId: string, employeeName: string, force = false) => {
     setDeleteLoading(employeeId);
     
     try {
-      const response = await fetch(`/api/employees/${employeeId}`, {
+      const url = force ? `/api/employees/${employeeId}?force=true` : `/api/employees/${employeeId}`;
+      const response = await fetch(url, {
         method: 'DELETE',
       });
 
       if (response.ok) {
-        toast.success(`Empleado ${employeeName} eliminado exitosamente`);
+        const data = await response.json();
+        toast.success(data.message || `Empleado ${employeeName} eliminado exitosamente`);
         // Refetch employees to update the list
         const newEmployees = employees.filter(emp => emp.id !== employeeId);
         setEmployees(newEmployees);
@@ -102,7 +104,19 @@ export default function EmployeesList() {
         ));
       } else {
         const errorData = await response.json();
-        toast.error(errorData.error || 'Error al eliminar el empleado');
+        
+        if (response.status === 409 && errorData.hasRequests) {
+          // Show confirmation dialog for employee with requests
+          const confirmMessage = `${employeeName} tiene ${errorData.requestCount} solicitud(es) de licencia registradas.\n\n¿Estás seguro que deseas eliminar al empleado y TODAS sus solicitudes?\n\nEsta acción no se puede deshacer.`;
+          
+          if (window.confirm(confirmMessage)) {
+            // Retry with force=true
+            await handleDeleteEmployee(employeeId, employeeName, true);
+            return;
+          }
+        } else {
+          toast.error(errorData.error || 'Error al eliminar el empleado');
+        }
       }
     } catch (error) {
       console.error('Error deleting employee:', error);
@@ -248,11 +262,24 @@ export default function EmployeesList() {
                           <span className="font-semibold">
                             {employee.firstName} {employee.lastName}
                           </span>
-                          ? Esta acción no se puede deshacer.
-                          {employee.leaveRequests && employee.leaveRequests.length > 0 && (
-                            <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm">
-                              <strong>Nota:</strong> Este empleado tiene solicitudes de licencia registradas.
+                          ?
+                          {employee.leaveRequests && employee.leaveRequests.length > 0 ? (
+                            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded text-sm">
+                              <div className="flex items-center gap-2 font-semibold text-red-800 mb-2">
+                                <AlertTriangle className="h-4 w-4" />
+                                ¡Atención!
+                              </div>
+                              <p className="text-red-700">
+                                Este empleado tiene <strong>{employee.leaveRequests.length}</strong> solicitud(es) 
+                                de licencia registradas. Al eliminar el empleado, también se eliminarán 
+                                <strong> todas sus solicitudes</strong>.
+                              </p>
+                              <p className="text-red-700 mt-2 font-medium">
+                                Esta acción no se puede deshacer.
+                              </p>
                             </div>
+                          ) : (
+                            <p className="mt-2 text-gray-600">Esta acción no se puede deshacer.</p>
                           )}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
@@ -262,7 +289,10 @@ export default function EmployeesList() {
                           onClick={() => handleDeleteEmployee(employee.id, `${employee.firstName} ${employee.lastName}`)}
                           className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
                         >
-                          Eliminar Empleado
+                          {employee.leaveRequests && employee.leaveRequests.length > 0 
+                            ? 'Eliminar Empleado y Solicitudes' 
+                            : 'Eliminar Empleado'
+                          }
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>

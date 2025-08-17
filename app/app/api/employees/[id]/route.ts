@@ -193,6 +193,10 @@ export async function DELETE(
       return NextResponse.json({ error: 'Sin permisos' }, { status: 403 });
     }
 
+    // Get force parameter from URL
+    const url = new URL(request.url);
+    const force = url.searchParams.get('force') === 'true';
+
     // Check if employee exists
     const existingEmployee = await prisma.employee.findUnique({
       where: { id: params.id },
@@ -209,17 +213,29 @@ export async function DELETE(
       );
     }
 
-    // Check if employee has any leave requests
-    if (existingEmployee.leaveRequests.length > 0) {
+    // If employee has leave requests and force is not true, return error with details
+    if (existingEmployee.leaveRequests.length > 0 && !force) {
       return NextResponse.json(
-        { error: 'No se puede eliminar un empleado con solicitudes de licencia registradas' },
-        { status: 400 }
+        { 
+          error: 'El empleado tiene solicitudes de licencia registradas',
+          hasRequests: true,
+          requestCount: existingEmployee.leaveRequests.length,
+          message: 'Para eliminar este empleado y todas sus solicitudes, confirma la acción.'
+        },
+        { status: 409 }
       );
     }
 
-    // Delete employee and user in a transaction
+    // Delete employee, user and all leave requests in a transaction
     await prisma.$transaction(async (prisma) => {
-      // Delete employee first (due to foreign key constraint)
+      // Delete leave requests first
+      if (existingEmployee.leaveRequests.length > 0) {
+        await prisma.leaveRequest.deleteMany({
+          where: { employeeId: params.id }
+        });
+      }
+
+      // Delete employee (this will also delete related records due to cascade)
       await prisma.employee.delete({
         where: { id: params.id }
       });
@@ -230,7 +246,11 @@ export async function DELETE(
       });
     });
 
-    return NextResponse.json({ message: 'Empleado eliminado exitosamente' });
+    const message = existingEmployee.leaveRequests.length > 0 
+      ? `Empleado eliminado exitosamente junto con ${existingEmployee.leaveRequests.length} solicitud(es) de licencia`
+      : 'Empleado eliminado exitosamente';
+
+    return NextResponse.json({ message });
   } catch (error) {
     console.error('Delete employee error:', error);
     return NextResponse.json(
