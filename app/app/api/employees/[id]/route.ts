@@ -235,7 +235,11 @@ export async function PUT(
         lastName,
         birthDate: new Date(birthDate),
         hireDate: new Date(hireDate),
-        areaId,
+        Area: {
+          connect: {
+            id: areaId
+          }
+        },
         position,
         phone: phone || null
       };
