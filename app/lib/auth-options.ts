@@ -71,6 +71,7 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
+      console.log('🎟️ JWT callback:', { hasUser: !!user, tokenId: token.id });
       if (user) {
         token.role = user.role;
         token.id = user.id;
@@ -78,18 +79,26 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
+      console.log('🎭 Session callback:', { hasToken: !!token, hasSession: !!session });
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
       }
+      console.log('✅ Session created:', { userId: session.user?.id, role: session.user?.role });
       return session;
     },
     async redirect({ url, baseUrl }) {
+      console.log('🔄 Redirect callback:', { url, baseUrl });
+      // Forzar redirect al dashboard después de login exitoso
+      if (url === baseUrl || url === `${baseUrl}/`) {
+        console.log('🏠 Redirecting to dashboard');
+        return `${baseUrl}/dashboard`;
+      }
       // Permite redirect a páginas dentro del mismo dominio
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       // Permite redirect a la misma URL base
       if (new URL(url).origin === baseUrl) return url;
-      return baseUrl;
+      return `${baseUrl}/dashboard`;
     }
   },
   pages: {
