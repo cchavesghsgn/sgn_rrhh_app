@@ -383,12 +383,16 @@ export async function POST(request: NextRequest) {
       console.log('17. Preparing employee data...');
       const employeeData: any = {
         id: employeeId,
-        userId: user.id,
         dni,
         firstName,
         lastName,
         birthDate: parsedBirthDate,
         hireDate: parsedHireDate,
+        User: {
+          connect: {
+            id: user.id
+          }
+        },
         Area: {
           connect: {
             id: areaId
