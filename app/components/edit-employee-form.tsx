@@ -634,8 +634,8 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
 
               <div className="space-y-2">
                 <Label htmlFor="personalHours" className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  Horas Particulares *
+                  <Calendar className="h-4 w-4" />
+                  Dias Particulares *
                 </Label>
                 <Input
                   id="personalHours"
@@ -647,13 +647,13 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
                   className={errors.personalHours ? 'border-red-500' : ''}
                 />
                 {errors.personalHours && <p className="text-sm text-red-500">{errors.personalHours}</p>}
-                <p className="text-xs text-gray-500">Horas para asuntos personales</p>
+                <p className="text-xs text-gray-500">Días para asuntos personales</p>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="remoteHours" className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  Horas Remotas *
+                  <Calendar className="h-4 w-4" />
+                  Dias Remotos *
                 </Label>
                 <Input
                   id="remoteHours"
@@ -665,13 +665,13 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
                   className={errors.remoteHours ? 'border-red-500' : ''}
                 />
                 {errors.remoteHours && <p className="text-sm text-red-500">{errors.remoteHours}</p>}
-                <p className="text-xs text-gray-500">Horas para trabajo remoto</p>
+                <p className="text-xs text-gray-500">Días para trabajo remoto</p>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="availableHours" className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
-                  Horas Disponibles *
+                  Horas particulares *
                 </Label>
                 <Input
                   id="availableHours"
@@ -683,7 +683,7 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
                   className={errors.availableHours ? 'border-red-500' : ''}
                 />
                 {errors.availableHours && <p className="text-sm text-red-500">{errors.availableHours}</p>}
-                <p className="text-xs text-gray-500">Horas flexibles disponibles</p>
+                <p className="text-xs text-gray-500">Horas particulares disponibles</p>
               </div>
             </div>
 
