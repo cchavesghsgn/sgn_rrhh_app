@@ -102,7 +102,11 @@ export async function PUT(
           areaId: formData.get('areaId') as string,
           position: formData.get('position') as string,
           phone: formData.get('phone') as string,
-          role: formData.get('role') as string
+          role: formData.get('role') as string,
+          vacationDays: formData.get('vacationDays') as string,
+          personalHours: formData.get('personalHours') as string,
+          remoteHours: formData.get('remoteHours') as string,
+          availableHours: formData.get('availableHours') as string
         };
 
         // Get profile image if uploaded
@@ -138,7 +142,11 @@ export async function PUT(
       areaId,
       position,
       phone,
-      role
+      role,
+      vacationDays,
+      personalHours,
+      remoteHours,
+      availableHours
     } = data;
 
     // Validate required fields
@@ -243,6 +251,24 @@ export async function PUT(
         position,
         phone: phone || null
       };
+
+      // Add vacation and hours data if provided
+      if (vacationDays !== undefined) {
+        employeeUpdateData.vacationDays = Number(vacationDays);
+        employeeUpdateData.totalVacationDays = Number(vacationDays);
+      }
+      if (personalHours !== undefined) {
+        employeeUpdateData.personalHours = Number(personalHours);
+        employeeUpdateData.totalPersonalHours = Number(personalHours);
+      }
+      if (remoteHours !== undefined) {
+        employeeUpdateData.remoteHours = Number(remoteHours);
+        employeeUpdateData.totalRemoteHours = Number(remoteHours);
+      }
+      if (availableHours !== undefined) {
+        employeeUpdateData.availableHours = Number(availableHours);
+        employeeUpdateData.totalAvailableHours = Number(availableHours);
+      }
 
       // Add profile image path if uploaded
       if (profileImagePath) {

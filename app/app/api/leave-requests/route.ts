@@ -60,7 +60,18 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' }
     });
 
-    return NextResponse.json(leaveRequests);
+    // Format response to match frontend expectations (employee instead of employees)
+    const formattedRequests = leaveRequests.map((request: any) => ({
+      ...request,
+      employee: request.employees ? {
+        ...request.employees,
+        user: request.employees.User,
+        area: request.employees.Area
+      } : null,
+      employees: undefined // Remove the original
+    }));
+
+    return NextResponse.json(formattedRequests);
   } catch (error) {
     console.error('Get leave requests error:', error);
     return NextResponse.json(
@@ -242,7 +253,18 @@ export async function POST(request: NextRequest) {
       // No fallar la creación de la solicitud por errores de correo
     }
 
-    return NextResponse.json(leaveRequest, { status: 201 });
+    // Format response to match frontend expectations (employee instead of employees)
+    const formattedLeaveRequest = {
+      ...leaveRequest,
+      employee: leaveRequest.employees ? {
+        ...leaveRequest.employees,
+        user: leaveRequest.employees.User,
+        area: leaveRequest.employees.Area
+      } : null,
+      employees: undefined // Remove the original
+    };
+
+    return NextResponse.json(formattedLeaveRequest, { status: 201 });
   } catch (error) {
     console.error('Create leave request error:', error);
     return NextResponse.json(

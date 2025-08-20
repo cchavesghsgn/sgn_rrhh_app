@@ -23,7 +23,8 @@ import {
   ArrowLeft,
   Loader2,
   Upload,
-  Camera
+  Camera,
+  Clock
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -49,6 +50,10 @@ interface NewEmployeeFormData {
   phone: string;
   role: 'ADMIN' | 'EMPLOYEE';
   profileImage?: File | null;
+  vacationDays: string;
+  personalHours: string;
+  remoteHours: string;
+  availableHours: string;
 }
 
 export default function NewEmployeeForm() {
@@ -71,7 +76,11 @@ export default function NewEmployeeForm() {
     position: '',
     phone: '',
     role: 'EMPLOYEE',
-    profileImage: null
+    profileImage: null,
+    vacationDays: '20',
+    personalHours: '96',
+    remoteHours: '96',
+    availableHours: '16'
   });
   const [errors, setErrors] = useState<Partial<NewEmployeeFormData>>({});
 
@@ -143,6 +152,30 @@ export default function NewEmployeeForm() {
       newErrors.position = 'El puesto es requerido';
     }
 
+    if (!formData.vacationDays) {
+      newErrors.vacationDays = 'Los días de vacaciones son requeridos';
+    } else if (isNaN(Number(formData.vacationDays)) || Number(formData.vacationDays) < 0) {
+      newErrors.vacationDays = 'Debe ser un número válido';
+    }
+
+    if (!formData.personalHours) {
+      newErrors.personalHours = 'Las horas particulares son requeridas';
+    } else if (isNaN(Number(formData.personalHours)) || Number(formData.personalHours) < 0) {
+      newErrors.personalHours = 'Debe ser un número válido';
+    }
+
+    if (!formData.remoteHours) {
+      newErrors.remoteHours = 'Las horas remotas son requeridas';
+    } else if (isNaN(Number(formData.remoteHours)) || Number(formData.remoteHours) < 0) {
+      newErrors.remoteHours = 'Debe ser un número válido';
+    }
+
+    if (!formData.availableHours) {
+      newErrors.availableHours = 'Las horas disponibles son requeridas';
+    } else if (isNaN(Number(formData.availableHours)) || Number(formData.availableHours) < 0) {
+      newErrors.availableHours = 'Debe ser un número válido';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -200,7 +233,7 @@ export default function NewEmployeeForm() {
         const submitData = new FormData();
         
         // Add only the necessary form fields (exclude confirmPassword and null values)
-        const fieldsToInclude = ['email', 'password', 'dni', 'firstName', 'lastName', 'birthDate', 'hireDate', 'areaId', 'position', 'phone', 'role'];
+        const fieldsToInclude = ['email', 'password', 'dni', 'firstName', 'lastName', 'birthDate', 'hireDate', 'areaId', 'position', 'phone', 'role', 'vacationDays', 'personalHours', 'remoteHours', 'availableHours'];
         
         fieldsToInclude.forEach((field) => {
           const value = formData[field as keyof NewEmployeeFormData];
@@ -231,7 +264,11 @@ export default function NewEmployeeForm() {
           areaId: formData.areaId,
           position: formData.position,
           phone: formData.phone,
-          role: formData.role
+          role: formData.role,
+          vacationDays: Number(formData.vacationDays),
+          personalHours: Number(formData.personalHours),
+          remoteHours: Number(formData.remoteHours),
+          availableHours: Number(formData.availableHours)
         };
 
         response = await fetch('/api/employees', {
@@ -545,6 +582,95 @@ export default function NewEmployeeForm() {
                 />
                 {errors.position && <p className="text-sm text-red-500">{errors.position}</p>}
               </div>
+            </div>
+          </div>
+
+          {/* Licencias y Permisos Anuales */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-sgn-dark border-b pb-2">
+              Licencias y Permisos Anuales
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="vacationDays" className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Días de Vacaciones *
+                </Label>
+                <Input
+                  id="vacationDays"
+                  type="number"
+                  min="0"
+                  value={formData.vacationDays}
+                  onChange={(e) => handleInputChange('vacationDays', e.target.value)}
+                  placeholder="20"
+                  className={errors.vacationDays ? 'border-red-500' : ''}
+                />
+                {errors.vacationDays && <p className="text-sm text-red-500">{errors.vacationDays}</p>}
+                <p className="text-xs text-gray-500">Días de vacaciones disponibles para el año</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="personalHours" className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Horas Particulares *
+                </Label>
+                <Input
+                  id="personalHours"
+                  type="number"
+                  min="0"
+                  value={formData.personalHours}
+                  onChange={(e) => handleInputChange('personalHours', e.target.value)}
+                  placeholder="96"
+                  className={errors.personalHours ? 'border-red-500' : ''}
+                />
+                {errors.personalHours && <p className="text-sm text-red-500">{errors.personalHours}</p>}
+                <p className="text-xs text-gray-500">Horas para asuntos personales</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="remoteHours" className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Horas Remotas *
+                </Label>
+                <Input
+                  id="remoteHours"
+                  type="number"
+                  min="0"
+                  value={formData.remoteHours}
+                  onChange={(e) => handleInputChange('remoteHours', e.target.value)}
+                  placeholder="96"
+                  className={errors.remoteHours ? 'border-red-500' : ''}
+                />
+                {errors.remoteHours && <p className="text-sm text-red-500">{errors.remoteHours}</p>}
+                <p className="text-xs text-gray-500">Horas para trabajo remoto</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="availableHours" className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Horas Disponibles *
+                </Label>
+                <Input
+                  id="availableHours"
+                  type="number"
+                  min="0"
+                  value={formData.availableHours}
+                  onChange={(e) => handleInputChange('availableHours', e.target.value)}
+                  placeholder="16"
+                  className={errors.availableHours ? 'border-red-500' : ''}
+                />
+                {errors.availableHours && <p className="text-sm text-red-500">{errors.availableHours}</p>}
+                <p className="text-xs text-gray-500">Horas flexibles disponibles</p>
+              </div>
+            </div>
+
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-700">
+                <strong>Nota:</strong> Estos valores representan la cantidad total disponible para el año actual. 
+                Se establecen valores por defecto pero pueden ser ajustados según las políticas de la empresa 
+                y el puesto del empleado.
+              </p>
             </div>
           </div>
 

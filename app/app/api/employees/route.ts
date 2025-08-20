@@ -110,7 +110,11 @@ export async function POST(request: NextRequest) {
           areaId: formData.get('areaId') as string,
           position: formData.get('position') as string,
           phone: formData.get('phone') as string,
-          role: formData.get('role') as string || 'EMPLOYEE'
+          role: formData.get('role') as string || 'EMPLOYEE',
+          vacationDays: formData.get('vacationDays') as string,
+          personalHours: formData.get('personalHours') as string,
+          remoteHours: formData.get('remoteHours') as string,
+          availableHours: formData.get('availableHours') as string
         };
 
         // Get profile image if uploaded
@@ -165,7 +169,11 @@ export async function POST(request: NextRequest) {
       areaId,
       position,
       phone,
-      role = 'EMPLOYEE'
+      role = 'EMPLOYEE',
+      vacationDays = 20,
+      personalHours = 96,
+      remoteHours = 96,
+      availableHours = 16
     } = data;
 
     // Log received data for debugging
@@ -181,7 +189,11 @@ export async function POST(request: NextRequest) {
       hasPassword: !!password,
       hasImage: !!profileImage,
       phone,
-      role
+      role,
+      vacationDays,
+      personalHours,
+      remoteHours,
+      availableHours
     });
 
     // Validate required fields
@@ -384,6 +396,14 @@ export async function POST(request: NextRequest) {
         },
         position,
         phone: phone || null,
+        vacationDays: Number(vacationDays),
+        personalHours: Number(personalHours),
+        remoteHours: Number(remoteHours),
+        availableHours: Number(availableHours),
+        totalVacationDays: Number(vacationDays),
+        totalPersonalHours: Number(personalHours),
+        totalRemoteHours: Number(remoteHours),
+        totalAvailableHours: Number(availableHours),
         updatedAt: new Date()
       };
 
