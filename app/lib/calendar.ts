@@ -1,10 +1,10 @@
 
 
-// import { google } from 'googleapis';
+import { google } from 'googleapis';
 import { LeaveRequest, Employee, LEAVE_REQUEST_TYPE_LABELS } from './types';
 
 // Configuración de Google Calendar API
-// const calendar = google.calendar('v3');
+const calendar = google.calendar('v3');
 
 interface CalendarEventData {
   employeeName: string;
@@ -19,17 +19,17 @@ interface CalendarEventData {
 
 // Obtener cliente OAuth2 autenticado
 const getAuthClient = () => {
-  // const auth = new google.auth.OAuth2(
-  //   process.env.GOOGLE_CLIENT_ID,
-  //   process.env.GOOGLE_CLIENT_SECRET,
-  //   'https://developers.google.com/oauthplayground' // redirect URI
-  // );
+  const auth = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    'https://developers.google.com/oauthplayground' // redirect URI
+  );
 
-  // auth.setCredentials({
-  //   refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
-  // });
+  auth.setCredentials({
+    refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+  });
 
-  return null; // auth;
+  return auth;
 };
 
 // Formatear título del evento
@@ -119,15 +119,15 @@ export const createCalendarEvent = async (leaveRequest: LeaveRequest & { employe
     };
 
     // Crear evento en el calendario
-    // const response = await calendar.events.insert({
-    //   auth,
-    //   calendarId: process.env.GOOGLE_CALENDAR_ID || 'primary', // ID del calendario SGN
-    //   requestBody: event,
-    // });
+    const response = await calendar.events.insert({
+      auth,
+      calendarId: process.env.GOOGLE_CALENDAR_ID || 'primary', // ID del calendario SGN
+      requestBody: event,
+    });
 
     return {
-      success: false, // true,
-      eventId: undefined, // response.data.id || undefined,
+      success: true,
+      eventId: response.data.id || undefined,
     };
 
   } catch (error) {
