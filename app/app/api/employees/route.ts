@@ -170,10 +170,10 @@ export async function POST(request: NextRequest) {
       position,
       phone,
       role = 'EMPLOYEE',
-      vacationDays = 20,
-      personalHours = 96,
-      remoteHours = 96,
-      availableHours = 16
+      vacationDays = 0,
+      personalHours = 0,
+      remoteHours = 0,
+      availableHours = 0
     } = data;
 
     // Log received data for debugging

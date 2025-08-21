@@ -296,7 +296,7 @@ export default function AdminDashboard() {
             <Link href="/admin/employees">
               <Button variant="outline" className="w-full h-16 flex-col gap-2">
                 <Users className="h-6 w-6" />
-                Ver Empleados
+                Gestionar Empleados
               </Button>
             </Link>
           </div>

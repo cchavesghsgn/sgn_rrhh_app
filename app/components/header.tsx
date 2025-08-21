@@ -63,15 +63,16 @@ export default function Header() {
           )}
           
           {/* Logo */}
+
           <Link href="/dashboard" className="flex items-center space-x-3">
-            <div className="relative w-60 sm:w-80 h-16 sm:h-20">
-              <Image
-                src="/sgn-logo-new.png"
-                alt="SGN Logo - Soluciones de Negocios"
-                fill
-                className="object-contain"
-                priority
-              />
+            <div className="relative w-72 sm:w-96 h-20 sm:h-24">
+                <Image
+                    src="/sgn-logo-new.png"
+                    alt="SGN Logo - Soluciones de Negocios"
+                    fill
+                    className="object-contain"
+                    priority
+                />
             </div>
           </Link>
 

@@ -78,10 +78,10 @@ export default function NewEmployeeForm() {
     phone: '',
     role: 'EMPLOYEE',
     profileImage: null,
-    vacationDays: '20',
-    personalHours: '12', // Mostrar en días (12 días = 96 horas)
-    remoteHours: '12',  // Mostrar en días (12 días = 96 horas)
-    availableHours: '16'
+    vacationDays: '0',
+    personalHours: '0', // Mostrar en días (12 días = 96 horas)
+    remoteHours: '0',  // Mostrar en días (12 días = 96 horas)
+    availableHours: '0'
   });
   const [errors, setErrors] = useState<Partial<NewEmployeeFormData>>({});
 
