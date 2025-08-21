@@ -4,7 +4,7 @@ import { getServerAuthSession } from '../../../../../lib/auth';
 import { PrismaClient } from '@prisma/client';
 import { sendRequestStatusNotification, RequestStatusEmailData } from '../../../../../lib/email';
 import { createCalendarEvent } from '../../../../../lib/calendar';
-import { LEAVE_REQUEST_TYPE_LABELS } from '../../../../../lib/types';
+import { LEAVE_REQUEST_TYPE_LABELS, LeaveRequestType } from '../../../../../lib/types';
 import { calculateHoursToDeduct } from '../../../../../lib/time-utils';
 
 const prisma = new PrismaClient();
@@ -91,7 +91,11 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       
       switch (leaveRequest.type) {
         case 'LICENSE':
-          // LICENSE deducts vacation days (keep existing logic)
+          // LICENSE does NOT deduct from any counter - only tracks taken days
+          // No updateData needed - just approve without deducting
+          break;
+        case 'VACATION':
+          // VACATION deducts from vacation days
           updateData.vacationDays = leaveRequest.employees.vacationDays - daysToDeduct;
           break;
         case 'PERSONAL':

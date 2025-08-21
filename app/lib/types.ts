@@ -83,6 +83,7 @@ export enum UserRole {
 
 export enum LeaveRequestType {
   LICENSE = 'LICENSE',
+  VACATION = 'VACATION',
   PERSONAL = 'PERSONAL',
   REMOTE = 'REMOTE',
   HOURS = 'HOURS'
@@ -120,6 +121,7 @@ export interface EmployeeDashboardData {
 
 export const LEAVE_REQUEST_TYPE_LABELS = {
   [LeaveRequestType.LICENSE]: 'Licencia',
+  [LeaveRequestType.VACATION]: 'Vacaciones',
   [LeaveRequestType.PERSONAL]: 'Día Personal',
   [LeaveRequestType.REMOTE]: 'Día Remoto',
   [LeaveRequestType.HOURS]: 'Pedido de Horas'

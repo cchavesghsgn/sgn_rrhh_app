@@ -182,19 +182,37 @@ export function formatAvailableDays(availableDays: number, usedHours: number = 0
 
 /**
  * Calcula el total de licencias tomadas en días
- * @param employee Datos del empleado
+ * @param employee Datos del empleado (debe incluir leave_requests)
  * @returns Total de días de licencias utilizados
  */
 export function calculateTotalLicensesTaken(employee: any): number {
-  const vacationTaken = (employee.totalVacationDays || 20) - (employee.vacationDays || 0);
-  const personalTakenHours = (employee.totalPersonalHours || 96) - (employee.personalHours || 0);
-  const remoteTakenHours = (employee.totalRemoteHours || 96) - (employee.remoteHours || 0);
+  // Solo contar solicitudes de tipo LICENSE aprobadas
+  if (!employee.leave_requests) {
+    return 0;
+  }
   
-  // Convertir horas usadas a días (8 horas = 1 día)
-  const personalTakenDays = Math.floor(personalTakenHours / 8);
-  const remoteTakenDays = Math.floor(remoteTakenHours / 8);
+  const licenseRequests = employee.leave_requests.filter(
+    (request: any) => request.type === 'LICENSE' && request.status === 'APPROVED'
+  );
   
-  return vacationTaken + personalTakenDays + remoteTakenDays;
+  let totalLicenseDays = 0;
+  
+  for (const request of licenseRequests) {
+    if (request.endDate) {
+      const start = new Date(request.startDate);
+      const end = new Date(request.endDate);
+      let days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      
+      // Si es medio día, contar como 0.5
+      if (request.isHalfDay && days === 1) {
+        days = 0.5;
+      }
+      
+      totalLicenseDays += days;
+    }
+  }
+  
+  return totalLicenseDays;
 }
 
 /**

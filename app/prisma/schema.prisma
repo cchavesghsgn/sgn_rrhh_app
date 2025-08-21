@@ -134,6 +134,7 @@ enum DayShift {
 
 enum LeaveRequestType {
   LICENSE
+  VACATION
   PERSONAL
   REMOTE
   HOURS

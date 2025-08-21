@@ -23,6 +23,7 @@ import { formatAvailableTime, hoursToDays, canRequestShift, getTimeBreakdown } f
 export default function NewRequestForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [employee, setEmployee] = useState<any>(null);
   const [availableDays, setAvailableDays] = useState({
     personalHours: 0,
     remoteHours: 0,
@@ -61,7 +62,7 @@ export default function NewRequestForm() {
 
   // Update hours automatically when start/end time changes
   useEffect(() => {
-    if (formData.type === 'HOURS' && formData.startTime && formData.endTime) {
+    if (formData.type === LeaveRequestType.HOURS && formData.startTime && formData.endTime) {
       const calculatedHours = calculateHours(formData.startTime, formData.endTime);
       setFormData(prev => ({ ...prev, hours: calculatedHours.toString() }));
     }
@@ -72,11 +73,12 @@ export default function NewRequestForm() {
       try {
         const response = await fetch('/api/employees/me');
         if (response.ok) {
-          const employee = await response.json();
+          const employeeData = await response.json();
+          setEmployee(employeeData);
           setAvailableDays({
-            personalHours: employee.personalHours,
-            remoteHours: employee.remoteHours,
-            hours: employee.availableHours
+            personalHours: employeeData.personalHours,
+            remoteHours: employeeData.remoteHours,
+            hours: employeeData.availableHours
           });
         }
       } catch (error) {
@@ -99,7 +101,7 @@ export default function NewRequestForm() {
       }
 
       // Validation based on request type
-      if (formData.type === 'HOURS') {
+      if (formData.type === LeaveRequestType.HOURS) {
         if (!formData.startDate || !formData.startTime || !formData.endTime) {
           toast.error('Para pedido de horas debes completar día, hora de inicio y hora de fin');
           return;
@@ -131,10 +133,21 @@ export default function NewRequestForm() {
           toast.error(`No tienes suficientes horas para solicitar ${shiftName}. Disponible: ${formatAvailableTime(availableHours)}`);
           return;
         }
-      } else if (formData.type === 'LICENSE') {
+      } else if (formData.type === LeaveRequestType.LICENSE || formData.type === LeaveRequestType.VACATION) {
         if (!formData.startDate || !formData.endDate) {
-          toast.error('Para licencias debes completar fecha de inicio y fin');
+          const typeLabel = formData.type === LeaveRequestType.LICENSE ? 'licencias' : 'vacaciones';
+          toast.error(`Para ${typeLabel} debes completar fecha de inicio y fin`);
           return;
+        }
+        
+        // Additional validation for VACATION
+        if (formData.type === LeaveRequestType.VACATION) {
+          const requestedDays = calculateDaysNeeded();
+          const availableVacationDays = (employee?.vacationDays || 0);
+          if (requestedDays > availableVacationDays) {
+            toast.error(`No tienes suficientes días de vacaciones. Solicitas: ${requestedDays} días, Disponibles: ${availableVacationDays} días`);
+            return;
+          }
         }
       }
 
@@ -189,9 +202,11 @@ export default function NewRequestForm() {
 
   const getAvailableForType = () => {
     switch (formData.type) {
-      case 'PERSONAL': return formatAvailableTime(availableDays.personalHours);
-      case 'REMOTE': return formatAvailableTime(availableDays.remoteHours);
-      case 'HOURS': return availableDays.hours;
+      case LeaveRequestType.VACATION: return `${employee?.vacationDays || 0} de ${employee?.totalVacationDays || 20} días`;
+      case LeaveRequestType.PERSONAL: return formatAvailableTime(availableDays.personalHours);
+      case LeaveRequestType.REMOTE: return formatAvailableTime(availableDays.remoteHours);
+      case LeaveRequestType.HOURS: return availableDays.hours;
+      case LeaveRequestType.LICENSE: return 'Sin límite - solo registro';
       default: return null;
     }
   };
@@ -199,9 +214,11 @@ export default function NewRequestForm() {
   // Get raw hours for validation
   const getAvailableHoursForType = () => {
     switch (formData.type) {
-      case 'PERSONAL': return availableDays.personalHours;
-      case 'REMOTE': return availableDays.remoteHours;
-      case 'HOURS': return availableDays.hours;
+      case LeaveRequestType.VACATION: return employee?.vacationDays || 0;
+      case LeaveRequestType.PERSONAL: return availableDays.personalHours;
+      case LeaveRequestType.REMOTE: return availableDays.remoteHours;
+      case LeaveRequestType.HOURS: return availableDays.hours;
+      case LeaveRequestType.LICENSE: return 999; // No limit for licenses
       default: return 0;
     }
   };
@@ -259,7 +276,7 @@ export default function NewRequestForm() {
               </div>
 
               {/* Hours calculation display */}
-              {formData.type === 'HOURS' && formData.startTime && formData.endTime && (
+              {formData.type === LeaveRequestType.HOURS && formData.startTime && formData.endTime && (
                 <div className="space-y-2">
                   <Label>Horas Calculadas</Label>
                   <div className="p-3 bg-blue-50 rounded-md border border-blue-200">
@@ -278,7 +295,7 @@ export default function NewRequestForm() {
             </div>
 
             {/* Date fields based on type */}
-            {formData.type === 'LICENSE' && (
+            {(formData.type === LeaveRequestType.LICENSE || formData.type === LeaveRequestType.VACATION) && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Start Date */}
@@ -369,7 +386,7 @@ export default function NewRequestForm() {
             )}
 
             {/* Hours specific fields */}
-            {formData.type === 'HOURS' && (
+            {formData.type === LeaveRequestType.HOURS && (
               <>
                 <div className="space-y-2">
                   <Label htmlFor="startDate">Día *</Label>

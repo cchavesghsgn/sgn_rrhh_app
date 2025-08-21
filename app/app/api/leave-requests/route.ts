@@ -4,7 +4,7 @@ import { getServerAuthSession } from '../../../lib/auth';
 import { PrismaClient } from '@prisma/client';
 import { calculateHoursToDeduct, formatAvailableTime } from '../../../lib/time-utils';
 import { sendNewRequestNotification, NewRequestEmailData } from '../../../lib/email';
-import { LEAVE_REQUEST_TYPE_LABELS } from '../../../lib/types';
+import { LEAVE_REQUEST_TYPE_LABELS, LeaveRequestType } from '../../../lib/types';
 import crypto from 'crypto';
 
 const prisma = new PrismaClient();
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
     // Check available days/hours based on type
     let daysRequested = 0;
     
-    if (type === 'LICENSE' && endDate) {
+    if ((type === LeaveRequestType.LICENSE || type === LeaveRequestType.VACATION) && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
       daysRequested = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
@@ -143,13 +143,22 @@ export async function POST(request: NextRequest) {
       if (isHalfDay && daysRequested === 1) {
         daysRequested = 0.5;
       }
-    } else if (type === 'PERSONAL' || type === 'REMOTE') {
+    } else if (type === LeaveRequestType.PERSONAL || type === LeaveRequestType.REMOTE) {
       // For personal/remote days, it's always 1 day but can be half day based on shift
       daysRequested = (shift === 'MORNING' || shift === 'AFTERNOON') ? 0.5 : 1;
     }
 
     // Validate available resources using hours
-    if (type === 'PERSONAL') {
+    if (type === LeaveRequestType.VACATION) {
+      if (employee.vacationDays < daysRequested) {
+        return NextResponse.json(
+          { error: `No tienes suficientes días de vacaciones disponibles. Disponibles: ${employee.vacationDays} de ${employee.totalVacationDays || 20} días` },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (type === LeaveRequestType.PERSONAL) {
       const hoursRequired = shift ? calculateHoursToDeduct(shift) : 8; // Default to full day
       if (employee.personalHours < hoursRequired) {
         return NextResponse.json(
@@ -159,7 +168,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (type === 'REMOTE') {
+    if (type === LeaveRequestType.REMOTE) {
       const hoursRequired = shift ? calculateHoursToDeduct(shift) : 8; // Default to full day
       if (employee.remoteHours < hoursRequired) {
         return NextResponse.json(
@@ -169,12 +178,15 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (type === 'HOURS' && employee.availableHours < hours) {
+    if (type === LeaveRequestType.HOURS && employee.availableHours < hours) {
       return NextResponse.json(
         { error: `No tienes suficientes horas disponibles. Disponibles: ${employee.availableHours}` },
         { status: 400 }
       );
     }
+
+    // LICENSE validation - no limits, just informational tracking
+    // No validation needed for LICENSE type as it doesn't consume any pool
 
     const leaveRequest = await prisma.leave_requests.create({
       data: {
