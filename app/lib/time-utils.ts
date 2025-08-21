@@ -93,6 +93,59 @@ export function calculateHoursToDeduct(shift: string): number {
 }
 
 /**
+ * Calcula los días y turnos disponibles desde días guardados en BD
+ * @param availableDays Días disponibles (cada día = 8 horas)
+ * @param usedHours Horas ya utilizadas en solicitudes
+ * @returns String formateado con disponibilidad
+ */
+export function formatAvailableDays(availableDays: number, usedHours: number = 0): string {
+  if (availableDays <= 0) return '0 días';
+  
+  // Convertir días a horas y restar horas usadas
+  const totalAvailableHours = (availableDays * 8) - usedHours;
+  
+  if (totalAvailableHours <= 0) return '0 días';
+  
+  const fullDays = Math.floor(totalAvailableHours / 8);
+  const remainingHours = totalAvailableHours % 8;
+  
+  const parts: string[] = [];
+  
+  if (fullDays > 0) {
+    parts.push(`${fullDays} día${fullDays > 1 ? 's' : ''}`);
+  }
+  
+  if (remainingHours === 5) {
+    parts.push('1 mañana');
+  } else if (remainingHours === 3) {
+    parts.push('1 tarde');
+  }
+  
+  return parts.join(' y ') || '0 días';
+}
+
+/**
+ * Calcula el total de licencias tomadas en días
+ * @param employee Datos del empleado
+ * @returns Total de días de licencias utilizados
+ */
+export function calculateTotalLicensesTaken(employee: any): number {
+  const vacationTaken = (employee.totalVacationDays || 20) - (employee.vacationDays || 0);
+  const personalTaken = (employee.totalPersonalDays || 12) - (employee.personalDays || 0);
+  const remoteTaken = (employee.totalRemoteDays || 12) - (employee.remoteDays || 0);
+  
+  return vacationTaken + personalTaken + remoteTaken;
+}
+
+/**
+ * Formatea horas disponibles específicas (para el campo availableHours)
+ * Esta función mantiene la lógica original para horas específicas
+ */
+export function formatAvailableHours(availableHours: number): string {
+  return formatAvailableTime(availableHours);
+}
+
+/**
  * Obtiene un resumen detallado de las horas disponibles
  * @param totalHours Total de horas disponibles
  * @returns Objeto con desglose detallado
