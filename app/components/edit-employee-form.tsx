@@ -95,8 +95,8 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
     role: 'EMPLOYEE',
     profileImage: null,
     vacationDays: '20',
-    personalHours: '96',
-    remoteHours: '96',
+    personalHours: '12', // Mostrar en días (12 días = 96 horas)
+    remoteHours: '12',  // Mostrar en días (12 días = 96 horas)
     availableHours: '16'
   });
   const [errors, setErrors] = useState<Partial<EditEmployeeFormData>>({});
@@ -133,8 +133,8 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
             phone: employeeData.phone || '',
             role: employeeData.user.role,
             vacationDays: String(employeeData.vacationDays || 20),
-            personalHours: String(employeeData.personalHours || 96),
-            remoteHours: String(employeeData.remoteHours || 96),
+            personalHours: String((employeeData.personalHours || 96) / 8), // Convertir horas a días para mostrar
+            remoteHours: String((employeeData.remoteHours || 96) / 8),     // Convertir horas a días para mostrar
             availableHours: String(employeeData.availableHours || 16)
           });
 
@@ -278,7 +278,7 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
         const submitData = new FormData();
         
         // Add only the necessary form fields (exclude null values)
-        const fieldsToInclude = ['email', 'dni', 'firstName', 'lastName', 'birthDate', 'hireDate', 'areaId', 'position', 'phone', 'role', 'vacationDays', 'personalHours', 'remoteHours', 'availableHours'];
+        const fieldsToInclude = ['email', 'dni', 'firstName', 'lastName', 'birthDate', 'hireDate', 'areaId', 'position', 'phone', 'role', 'vacationDays', 'availableHours'];
         
         fieldsToInclude.forEach((field) => {
           const value = formData[field as keyof EditEmployeeFormData];
@@ -286,6 +286,14 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
             submitData.append(field, value as string);
           }
         });
+        
+        // Add converted days to hours for personal and remote
+        if (formData.personalHours) {
+          submitData.append('personalHours', String(Number(formData.personalHours) * 8));
+        }
+        if (formData.remoteHours) {
+          submitData.append('remoteHours', String(Number(formData.remoteHours) * 8));
+        }
 
         // Add the profile image
         if (formData.profileImage) {
@@ -310,8 +318,8 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
           phone: formData.phone,
           role: formData.role,
           vacationDays: Number(formData.vacationDays),
-          personalHours: Number(formData.personalHours),
-          remoteHours: Number(formData.remoteHours),
+          personalHours: Number(formData.personalHours) * 8, // Convertir días a horas
+          remoteHours: Number(formData.remoteHours) * 8,     // Convertir días a horas
           availableHours: Number(formData.availableHours)
         };
 
@@ -643,7 +651,7 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
                   min="0"
                   value={formData.personalHours}
                   onChange={(e) => handleInputChange('personalHours', e.target.value)}
-                  placeholder="96"
+                  placeholder="12"
                   className={errors.personalHours ? 'border-red-500' : ''}
                 />
                 {errors.personalHours && <p className="text-sm text-red-500">{errors.personalHours}</p>}
@@ -661,7 +669,7 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
                   min="0"
                   value={formData.remoteHours}
                   onChange={(e) => handleInputChange('remoteHours', e.target.value)}
-                  placeholder="96"
+                  placeholder="12"
                   className={errors.remoteHours ? 'border-red-500' : ''}
                 />
                 {errors.remoteHours && <p className="text-sm text-red-500">{errors.remoteHours}</p>}
