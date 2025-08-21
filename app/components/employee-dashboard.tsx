@@ -286,12 +286,10 @@ export default function EmployeeDashboard() {
               </Button>
             </Link>
 
-            <Link href="/profile">
-              <Button variant="outline" className="w-full h-16 flex-col gap-2">
-                <User className="h-6 w-6" />
-                Mi Perfil
-              </Button>
-            </Link>
+            <Button variant="outline" disabled className="w-full h-16 flex-col gap-2 opacity-50 cursor-not-allowed">
+              <User className="h-6 w-6" />
+              Mi Perfil
+            </Button>
 
             <Button variant="outline" className="w-full h-16 flex-col gap-2" disabled>
               <Calendar className="h-6 w-6" />

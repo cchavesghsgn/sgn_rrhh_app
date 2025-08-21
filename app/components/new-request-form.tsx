@@ -54,6 +54,17 @@ export default function NewRequestForm() {
     return end - start;
   };
 
+  // Calcular si la fecha está dentro de las próximas 48 horas
+  const isWithin48Hours = (startDate: string): boolean => {
+    if (!startDate) return false;
+    
+    const selectedDate = new Date(startDate);
+    const now = new Date();
+    const hours48Later = new Date(now.getTime() + (48 * 60 * 60 * 1000));
+    
+    return selectedDate < hours48Later;
+  };
+
   // Generate hour options (00 to 23)
   const hourOptions = Array.from({ length: 24 }, (_, i) => {
     const hour = i.toString().padStart(2, '0');
@@ -337,51 +348,77 @@ export default function NewRequestForm() {
                     </p>
                   </div>
                 )}
+
+                {/* Advertencia para solicitudes con menos de 48hs de anticipación */}
+                {formData.startDate && isWithin48Hours(formData.startDate) && (
+                  <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                    <p className="text-sm text-red-800 font-medium">
+                      ⚠️ Solicitud con menos de 48 horas de anticipación
+                    </p>
+                    <p className="text-xs text-red-700 mt-1">
+                      Deberás justificar la urgencia de esta solicitud en el motivo.
+                    </p>
+                  </div>
+                )}
               </>
             )}
 
             {/* Personal/Remote day fields */}
             {(formData.type === 'PERSONAL' || formData.type === 'REMOTE') && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Date */}
-                <div className="space-y-2">
-                  <Label htmlFor="startDate">Día *</Label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      id="startDate"
-                      type="date"
-                      value={formData.startDate}
-                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                      className="pl-10"
-                    />
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Date */}
+                  <div className="space-y-2">
+                    <Label htmlFor="startDate">Día *</Label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Input
+                        id="startDate"
+                        type="date"
+                        value={formData.startDate}
+                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Shift */}
+                  <div className="space-y-2">
+                    <Label htmlFor="shift">Turno *</Label>
+                    <Select 
+                      value={formData.shift || "none"} 
+                      onValueChange={(value) => setFormData({ ...formData, shift: value === "none" ? "" : value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona el turno" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Seleccionar turno</SelectItem>
+                        <SelectItem value={DayShift.MORNING}>
+                          {DAY_SHIFT_LABELS[DayShift.MORNING]}
+                        </SelectItem>
+                        <SelectItem value={DayShift.AFTERNOON}>
+                          {DAY_SHIFT_LABELS[DayShift.AFTERNOON]}
+                        </SelectItem>
+                        <SelectItem value={DayShift.FULL_DAY}>
+                          {DAY_SHIFT_LABELS[DayShift.FULL_DAY]}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
-                {/* Shift */}
-                <div className="space-y-2">
-                  <Label htmlFor="shift">Turno *</Label>
-                  <Select 
-                    value={formData.shift || "none"} 
-                    onValueChange={(value) => setFormData({ ...formData, shift: value === "none" ? "" : value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona el turno" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">Seleccionar turno</SelectItem>
-                      <SelectItem value={DayShift.MORNING}>
-                        {DAY_SHIFT_LABELS[DayShift.MORNING]}
-                      </SelectItem>
-                      <SelectItem value={DayShift.AFTERNOON}>
-                        {DAY_SHIFT_LABELS[DayShift.AFTERNOON]}
-                      </SelectItem>
-                      <SelectItem value={DayShift.FULL_DAY}>
-                        {DAY_SHIFT_LABELS[DayShift.FULL_DAY]}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {/* Advertencia para solicitudes con menos de 48hs de anticipación */}
+                {formData.startDate && isWithin48Hours(formData.startDate) && (
+                  <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                    <p className="text-sm text-red-800 font-medium">
+                      ⚠️ Solicitud con menos de 48 horas de anticipación
+                    </p>
+                    <p className="text-xs text-red-700 mt-1">
+                      Deberás justificar la urgencia de esta solicitud en el motivo.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
@@ -445,6 +482,18 @@ export default function NewRequestForm() {
                     </Select>
                   </div>
                 </div>
+
+                {/* Advertencia para solicitudes con menos de 48hs de anticipación */}
+                {formData.startDate && isWithin48Hours(formData.startDate) && (
+                  <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                    <p className="text-sm text-red-800 font-medium">
+                      ⚠️ Solicitud con menos de 48 horas de anticipación
+                    </p>
+                    <p className="text-xs text-red-700 mt-1">
+                      Deberás justificar la urgencia de esta solicitud en el motivo.
+                    </p>
+                  </div>
+                )}
               </>
             )}
 
