@@ -29,6 +29,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
+import { formatYearsOfService } from '@/lib/time-utils';
 
 interface Area {
   id: string;
@@ -553,6 +554,13 @@ export default function NewEmployeeForm() {
                   className={errors.hireDate ? 'border-red-500' : ''}
                 />
                 {errors.hireDate && <p className="text-sm text-red-500">{errors.hireDate}</p>}
+                {formData.hireDate && (
+                  <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                    <p className="text-sm font-medium text-blue-800">
+                      Antigüedad: {formatYearsOfService(formData.hireDate)}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">

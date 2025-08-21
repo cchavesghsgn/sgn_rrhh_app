@@ -236,3 +236,46 @@ export function getTimeBreakdown(totalHours: number) {
   };
 }
 
+/**
+ * Calcula la antigüedad en años basada en la fecha de ingreso
+ * @param hireDate Fecha de ingreso del empleado (formato YYYY-MM-DD o Date)
+ * @returns Número de años de antigüedad con decimales
+ */
+export function calculateYearsOfService(hireDate: string | Date): number {
+  if (!hireDate) return 0;
+  
+  const hire = new Date(hireDate);
+  const today = new Date();
+  
+  if (isNaN(hire.getTime())) return 0;
+  
+  // Calcular diferencia en años
+  let years = today.getFullYear() - hire.getFullYear();
+  const monthDiff = today.getMonth() - hire.getMonth();
+  const dayDiff = today.getDate() - hire.getDate();
+  
+  // Ajustar si aún no cumplió años en el año actual
+  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+    years--;
+  }
+  
+  return years;
+}
+
+/**
+ * Formatea la antigüedad para mostrar en la interfaz
+ * @param hireDate Fecha de ingreso del empleado
+ * @returns String formateado con la antigüedad (ej: "3 años", "1 año", "menos de 1 año")
+ */
+export function formatYearsOfService(hireDate: string | Date): string {
+  const years = calculateYearsOfService(hireDate);
+  
+  if (years === 0) {
+    return 'Menos de 1 año';
+  } else if (years === 1) {
+    return '1 año';
+  } else {
+    return `${years} años`;
+  }
+}
+
