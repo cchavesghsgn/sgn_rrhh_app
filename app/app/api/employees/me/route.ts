@@ -33,7 +33,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Empleado no encontrado' }, { status: 404 });
     }
 
-    return NextResponse.json(employee);
+    // Transformar los nombres de las relaciones para consistencia con el frontend
+    const transformedEmployee = {
+      ...employee,
+      user: employee.User,
+      area: employee.Area,
+    };
+
+    return NextResponse.json(transformedEmployee);
   } catch (error) {
     console.error('Get employee profile error:', error);
     return NextResponse.json(

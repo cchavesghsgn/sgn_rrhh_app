@@ -22,7 +22,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { Employee, LeaveRequest, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS } from '../lib/types';
-import { formatAvailableTime, formatAvailablePersonalDays, formatAvailableRemoteDays, getTimeBreakdown } from '../lib/time-utils';
+import { formatAvailableTime, formatAvailablePersonalDays, formatAvailableRemoteDays, getTimeBreakdown, formatYearsOfService } from '../lib/time-utils';
 
 export default function EmployeeDashboard() {
   const { data: session } = useSession();
@@ -127,7 +127,7 @@ export default function EmployeeDashboard() {
               {formatAvailablePersonalDays(employee)}
             </p>
             <p className="text-xs text-gray-500 mb-1">
-              {employee.personalHours || 0}h de {employee.totalPersonalHours || 96}h
+              de {Math.floor((employee.totalPersonalHours || 96) / 8)} días
             </p>
             <p className="text-sm text-gray-600">Días personales</p>
           </CardContent>
@@ -140,7 +140,7 @@ export default function EmployeeDashboard() {
               {formatAvailableRemoteDays(employee)}
             </p>
             <p className="text-xs text-gray-500 mb-1">
-              {employee.remoteHours || 0}h de {employee.totalRemoteHours || 96}h
+              de {Math.floor((employee.totalRemoteHours || 96) / 8)} días
             </p>
             <p className="text-sm text-gray-600">Días remotos</p>
           </CardContent>
@@ -190,6 +190,10 @@ export default function EmployeeDashboard() {
                 <p className="font-medium">{employee.dni}</p>
               </div>
               <div>
+                <p className="text-gray-600">Nombre</p>
+                <p className="font-medium">{employee.firstName} {employee.lastName}</p>
+              </div>
+              <div>
                 <p className="text-gray-600">Email</p>
                 <p className="font-medium">{employee.user?.email}</p>
               </div>
@@ -208,6 +212,10 @@ export default function EmployeeDashboard() {
               <div>
                 <p className="text-gray-600">Fecha de ingreso</p>
                 <p className="font-medium">{formatDate(employee.hireDate.toString())}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Antigüedad</p>
+                <p className="font-medium">{formatYearsOfService(employee.hireDate)}</p>
               </div>
             </div>
           </CardContent>
