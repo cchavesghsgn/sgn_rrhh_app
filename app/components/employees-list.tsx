@@ -20,7 +20,7 @@ import {
 import Link from 'next/link';
 import { Input } from './ui/input';
 import { Employee } from '../lib/types';
-import { formatAvailableTime } from '../lib/time-utils';
+import { formatAvailableTime, formatYearsOfService } from '../lib/time-utils';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -190,6 +190,13 @@ export default function EmployeesList() {
                   <div className="flex items-center gap-2 text-gray-600">
                     <Calendar className="h-4 w-4" />
                     <span>Ingreso: {formatDate(employee.hireDate.toString())}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <div className="h-4 w-4" /> {/* Espaciador para alinear con otros campos */}
+                    <span className="text-sm font-medium text-blue-700">
+                      Antigüedad: {formatYearsOfService(employee.hireDate)}
+                    </span>
                   </div>
                 </div>
 
