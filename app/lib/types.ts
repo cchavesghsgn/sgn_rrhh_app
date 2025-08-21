@@ -25,14 +25,10 @@ export interface Employee {
   personalHours: number;
   remoteHours: number;
   availableHours: number;
-  personalDays: number;        // Nuevo campo para días personales
-  remoteDays: number;          // Nuevo campo para días remotos
   totalVacationDays: number;
   totalPersonalHours: number;
   totalRemoteHours: number;
   totalAvailableHours: number;
-  totalPersonalDays: number;   // Total de días personales asignados
-  totalRemoteDays: number;     // Total de días remotos asignados
   createdAt: Date;
   updatedAt: Date;
   user?: User;

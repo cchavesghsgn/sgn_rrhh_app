@@ -93,6 +93,62 @@ export function calculateHoursToDeduct(shift: string): number {
 }
 
 /**
+ * Formatea días personales disponibles desde horas almacenadas en BD
+ * @param employee Datos del empleado
+ * @returns String formateado con disponibilidad
+ */
+export function formatAvailablePersonalDays(employee: any): string {
+  const availableHours = employee.personalHours || 0;
+  
+  if (availableHours <= 0) return '0 días';
+  
+  const fullDays = Math.floor(availableHours / 8);
+  const remainingHours = availableHours % 8;
+  
+  const parts: string[] = [];
+  
+  if (fullDays > 0) {
+    parts.push(`${fullDays} día${fullDays > 1 ? 's' : ''}`);
+  }
+  
+  if (remainingHours === 5) {
+    parts.push('1 mañana');
+  } else if (remainingHours === 3) {
+    parts.push('1 tarde');
+  }
+  
+  return parts.join(' y ') || '0 días';
+}
+
+/**
+ * Formatea días remotos disponibles desde horas almacenadas en BD
+ * @param employee Datos del empleado
+ * @returns String formateado con disponibilidad
+ */
+export function formatAvailableRemoteDays(employee: any): string {
+  const availableHours = employee.remoteHours || 0;
+  
+  if (availableHours <= 0) return '0 días';
+  
+  const fullDays = Math.floor(availableHours / 8);
+  const remainingHours = availableHours % 8;
+  
+  const parts: string[] = [];
+  
+  if (fullDays > 0) {
+    parts.push(`${fullDays} día${fullDays > 1 ? 's' : ''}`);
+  }
+  
+  if (remainingHours === 5) {
+    parts.push('1 mañana');
+  } else if (remainingHours === 3) {
+    parts.push('1 tarde');
+  }
+  
+  return parts.join(' y ') || '0 días';
+}
+
+/**
  * Calcula los días y turnos disponibles desde días guardados en BD
  * @param availableDays Días disponibles (cada día = 8 horas)
  * @param usedHours Horas ya utilizadas en solicitudes
@@ -131,10 +187,14 @@ export function formatAvailableDays(availableDays: number, usedHours: number = 0
  */
 export function calculateTotalLicensesTaken(employee: any): number {
   const vacationTaken = (employee.totalVacationDays || 20) - (employee.vacationDays || 0);
-  const personalTaken = (employee.totalPersonalDays || 12) - (employee.personalDays || 0);
-  const remoteTaken = (employee.totalRemoteDays || 12) - (employee.remoteDays || 0);
+  const personalTakenHours = (employee.totalPersonalHours || 96) - (employee.personalHours || 0);
+  const remoteTakenHours = (employee.totalRemoteHours || 96) - (employee.remoteHours || 0);
   
-  return vacationTaken + personalTaken + remoteTaken;
+  // Convertir horas usadas a días (8 horas = 1 día)
+  const personalTakenDays = Math.floor(personalTakenHours / 8);
+  const remoteTakenDays = Math.floor(remoteTakenHours / 8);
+  
+  return vacationTaken + personalTakenDays + remoteTakenDays;
 }
 
 /**

@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { Employee, LeaveRequest, Area, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS } from '../lib/types';
-import { formatAvailableTime, formatAvailableDays, calculateTotalLicensesTaken } from '../lib/time-utils';
+import { formatAvailableTime, formatAvailablePersonalDays, formatAvailableRemoteDays, calculateTotalLicensesTaken } from '../lib/time-utils';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -242,10 +242,10 @@ export default function AdminDashboard() {
                             Vacaciones: {employee.vacationDays || 0} de {employee.totalVacationDays || 20} días
                           </div>
                           <div className="text-gray-600">
-                            Personales: {formatAvailableDays(employee.personalDays || 0)} disponibles
+                            Personales: {formatAvailablePersonalDays(employee)} disponibles
                           </div>
                           <div className="text-gray-600">
-                            Remotos: {formatAvailableDays(employee.remoteDays || 0)} disponibles
+                            Remotos: {formatAvailableRemoteDays(employee)} disponibles
                           </div>
                           <div className="text-gray-600">
                             Horas: {employee.availableHours || 0} de {employee.totalAvailableHours || 16} horas
