@@ -55,7 +55,7 @@ const formatEventDescription = (data: CalendarEventData): string => {
 };
 
 // Crear evento en Google Calendar
-export const createCalendarEvent = async (leaveRequest: LeaveRequest & { employee: Employee }): Promise<{ success: boolean; eventId?: string; error?: string }> => {
+export const createCalendarEvent = async (leaveRequest: LeaveRequest & { employees: Employee }): Promise<{ success: boolean; eventId?: string; error?: string }> => {
   try {
     // Verificar que las credenciales estén configuradas
     if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_REFRESH_TOKEN) {
@@ -66,7 +66,7 @@ export const createCalendarEvent = async (leaveRequest: LeaveRequest & { employe
     const auth = getAuthClient();
     
     // Preparar datos del evento
-    const employeeName = `${leaveRequest.employee.firstName} ${leaveRequest.employee.lastName}`;
+    const employeeName = `${leaveRequest.employees.firstName} ${leaveRequest.employees.lastName}`;
     const requestType = LEAVE_REQUEST_TYPE_LABELS[leaveRequest.type] || leaveRequest.type;
     
     const eventData: CalendarEventData = {
