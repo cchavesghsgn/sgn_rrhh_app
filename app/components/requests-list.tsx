@@ -104,9 +104,16 @@ export default function RequestsList() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
                       <FileText className="h-5 w-5 text-sgn-blue" />
-                      <h3 className="font-semibold text-lg">
-                        {LEAVE_REQUEST_TYPE_LABELS[request.type]}
-                      </h3>
+                      <div className="flex flex-col">
+                        <h3 className="font-semibold text-lg">
+                          {LEAVE_REQUEST_TYPE_LABELS[request.type]}
+                        </h3>
+                        {request.employee && (
+                          <p className="text-sm text-gray-600">
+                            {request.employee.firstName} {request.employee.lastName}
+                          </p>
+                        )}
+                      </div>
                       <Badge variant={getStatusBadgeVariant(request.status)}>
                         {REQUEST_STATUS_LABELS[request.status]}
                       </Badge>
