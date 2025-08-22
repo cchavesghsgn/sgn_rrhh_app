@@ -1,0 +1,6 @@
+app/admin/employees/[id]/page.tsx(63,27): error TS2322: Type '{ phone: string | undefined; user: { id: string; createdAt: Date; updatedAt: Date; name: string | null; email: string; password: string; emailVerified: Date | null; image: string | null; role: $Enums.UserRole; }; ... 16 more ...; updatedAt: Date; }' is not assignable to type 'Employee & { user: any; area: Area; }'.
+  Type '{ phone: string | undefined; user: { id: string; createdAt: Date; updatedAt: Date; name: string | null; email: string; password: string; emailVerified: Date | null; image: string | null; role: $Enums.UserRole; }; ... 16 more ...; updatedAt: Date; }' is not assignable to type 'Employee'.
+    Types of property 'photo' are incompatible.
+      Type 'string | null' is not assignable to type 'string | undefined'.
+        Type 'null' is not assignable to type 'string | undefined'.
+exit_code=2

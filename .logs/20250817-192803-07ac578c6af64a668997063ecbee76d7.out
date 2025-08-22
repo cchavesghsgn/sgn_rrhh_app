@@ -1,0 +1,90 @@
+➤ YN0000: · Yarn 4.9.2
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + @types/mime-types@npm:3.0.1, @types/nodemailer@npm:7.0.0, googleapis@npm:156.0.0, mime-types@npm:3.0.1, nodemailer@npm:7.0.5, and 98 more.
+➤ YN0000: └ Completed in 0s 737ms
+➤ YN0000: ┌ Post-resolution validation
+➤ YN0060: │ @typescript-eslint/parser is listed by your project with version 7.0.0 (p6cb6c), which doesn't satisfy what @typescript-eslint/eslint-plugin requests (^6.0.0-alpha).
+➤ YN0060: │ eslint is listed by your project with version 9.24.0 (pe6e00), which doesn't satisfy what @typescript-eslint/eslint-plugin and other dependencies request (^8.57.0).
+➤ YN0060: │ nodemailer is listed by your project with version 7.0.5 (p4594f), which doesn't satisfy what next-auth requests (^6.6.5).
+➤ YN0002: │ app@workspace:. doesn't provide prettier (pd88b5), requested by eslint-plugin-prettier.
+➤ YN0086: │ Some peer dependencies are incorrectly met by your project; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+➤ YN0086: │ Some peer dependencies are incorrectly met by dependencies; run yarn explain peer-requirements for details.
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ 103 packages were added to the project (+ 197.58 MiB).
+➤ YN0000: └ Completed in 3s 983ms
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed in 1s 963ms
+➤ YN0000: · Done with warnings in 6s 877ms
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v6.7.0) to ./node_modules/.prisma/client in 139ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+
+Starting server...
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env.local, .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
+ ○ Compiling / ...
+ ✓ Compiled / in 3.2s (791 modules)
+ GET / 200 in 3661ms
+ ✓ Compiled in 462ms (280 modules)
+ GET / 200 in 49ms
+ GET / 200 in 44ms
+ GET / 200 in 43ms
+ GET / 200 in 44ms
+ GET / 200 in 33ms
+ GET / 200 in 35ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 1031ms (895 modules)
+ GET /login?_rsc=1ebxd 200 in 31ms
+ GET /api/auth/session 200 in 1475ms
+ GET /api/auth/session 200 in 34ms
+ GET / 200 in 73ms
+ GET / 200 in 37ms
+ GET / 200 in 50ms
+ GET / 200 in 43ms
+ GET / 200 in 40ms
+ GET /api/auth/providers 200 in 44ms
+ GET /api/auth/csrf 200 in 31ms
+ POST /api/auth/callback/credentials 401 in 149ms
+ GET /api/auth/providers 200 in 42ms
+ GET /api/auth/csrf 200 in 37ms
+ POST /api/auth/callback/credentials 401 in 102ms
+ GET / 200 in 40ms
+ GET /api/auth/providers 200 in 35ms
+ GET /api/auth/csrf 200 in 33ms
+ POST /api/auth/callback/credentials 401 in 100ms
+ GET / 200 in 44ms
+ GET / 200 in 45ms
+ GET / 200 in 49ms
+ GET /api/auth/session 200 in 52ms
+ GET /api/auth/session 200 in 39ms
+ GET /login?_rsc=1ebxd 200 in 46ms
+ GET /api/auth/providers 200 in 41ms
+ GET /api/auth/csrf 200 in 31ms
+ POST /api/auth/callback/credentials 401 in 103ms
+ GET /api/auth/providers 200 in 37ms
+ GET /api/auth/csrf 200 in 34ms
+ POST /api/auth/callback/credentials 401 in 101ms
+ GET /api/auth/providers 200 in 41ms
+ GET /api/auth/csrf 200 in 31ms
+ POST /api/auth/callback/credentials 401 in 100ms
+ GET /api/auth/providers 200 in 36ms
+ GET /api/auth/csrf 200 in 36ms
+ POST /api/auth/callback/credentials 401 in 96ms
+ GET / 200 in 33ms
+ GET / 200 in 39ms
+ GET /api/auth/providers 200 in 44ms
+ GET /api/auth/csrf 200 in 30ms
+ POST /api/auth/callback/credentials 401 in 109ms
+[?25h

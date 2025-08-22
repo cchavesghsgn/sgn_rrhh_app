@@ -1,0 +1,11 @@
+[master 9021808] Login y empleados corregidos
+ 10 files changed, 491 insertions(+), 9 deletions(-)
+ rewrite .abacus.donotdelete (97%)
+ delete mode 100644 app/.env.local
+ create mode 100644 app/debug-test.js
+ create mode 100644 app/dev-server.log
+ create mode 100644 app/scripts/debug-nextauth-config.ts
+ create mode 100644 app/scripts/diagnose-auth.ts
+ create mode 100644 app/scripts/test-nextauth.ts
+ create mode 100644 app/test-employee-creation.js
+###90218088b378e80faf2303bc2c0ef720ff4c3418###

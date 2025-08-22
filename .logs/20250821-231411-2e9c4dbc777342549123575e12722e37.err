@@ -1,0 +1,56 @@
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+ ⨯ ./components/new-request-form.tsx
+Error: 
+  [31mx[0m Unexpected token `div`. Expected jsx identifier
+     ,-[[36;1;4m/home/ubuntu/sgn_rrhh_app/app/components/new-request-form.tsx[0m:235:1]
+ [2m235[0m |   };
+ [2m236[0m | 
+ [2m237[0m |   return (
+ [2m238[0m |     <div className="space-y-6">
+     : [31;1m     ^^^[0m
+ [2m239[0m |       <Card className="sgn-card">
+ [2m240[0m |         <CardHeader>
+ [2m241[0m |           <div className="flex items-center gap-3">
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/new-request-form.tsx
+ ⨯ ./components/new-request-form.tsx
+Error: 
+  [31mx[0m Unexpected token `div`. Expected jsx identifier
+     ,-[[36;1;4m/home/ubuntu/sgn_rrhh_app/app/components/new-request-form.tsx[0m:235:1]
+ [2m235[0m |   };
+ [2m236[0m | 
+ [2m237[0m |   return (
+ [2m238[0m |     <div className="space-y-6">
+     : [31;1m     ^^^[0m
+ [2m239[0m |       <Card className="sgn-card">
+ [2m240[0m |         <CardHeader>
+ [2m241[0m |           <div className="flex items-center gap-3">
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/new-request-form.tsx

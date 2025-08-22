@@ -1,0 +1,168 @@
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+Create employee error: PrismaClientValidationError: 
+Invalid `transactionPrisma.employees.create()` invocation in
+/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/route.js:655:64
+
+  652     console.log("✅ Profile image path added to employee data:", profileImagePath);
+  653 }
+  654 console.log("18. Creating employee in transaction...");
+→ 655 const employee = await transactionPrisma.employees.create({
+        data: {
+          id: "8adae2dd-a3b2-415c-9330-8533a6f7a2d7",
+          userId: "569b51bb-1467-4a6f-bfdb-d8453a6f8590",
+          dni: "23861120",
+          firstName: "Cristian",
+          lastName: "Ormeño",
+          birthDate: new Date("2025-08-20T00:00:00.000Z"),
+          hireDate: new Date("2008-06-01T00:00:00.000Z"),
+          Area: {
+            connect: {
+              id: "cmeg3hl1q0000u5x9hxc3r3u3"
+            }
+          },
+          position: "Desarrollador Senior",
+          phone: null,
+          vacationDays: 20,
+          personalHours: 5,
+          remoteHours: 5,
+          availableHours: 4,
+          totalVacationDays: 20,
+          totalPersonalHours: 5,
+          totalRemoteHours: 5,
+          totalAvailableHours: 4,
+          updatedAt: new Date("2025-08-20T22:54:16.435Z"),
+      +   User: {
+      +     create: UserCreateWithoutEmployeesInput | UserUncheckedCreateWithoutEmployeesInput,
+      +     connectOrCreate: UserCreateOrConnectWithoutEmployeesInput,
+      +     connect: UserWhereUniqueInput
+      +   }
+        },
+        include: {
+          User: true,
+          Area: true
+        }
+      })
+
+Argument `User` is missing.
+    at An (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:32:1363)
+    at zn.handleRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:7102)
+    at zn.handleAndLogRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6784)
+    at zn.request (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6491)
+    at async l (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:133:9778)
+    at async /home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/route.js:655:30
+    at async Proxy._transactionWithCallback (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:133:8139)
+    at async POST (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/route.js:609:24)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:818:17)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/opt/hostedapp/node/root/app/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  clientVersion: '6.7.0'
+}
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+Create employee error: PrismaClientValidationError: 
+Invalid `transactionPrisma.employees.create()` invocation in
+/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/route.js:655:64
+
+  652     console.log("✅ Profile image path added to employee data:", profileImagePath);
+  653 }
+  654 console.log("18. Creating employee in transaction...");
+→ 655 const employee = await transactionPrisma.employees.create({
+        data: {
+          id: "69d2cab4-56fa-4948-a511-13fffb3e73e7",
+          userId: "0e23a535-a69a-490e-994e-23adebd2251d",
+          dni: "23861120",
+          firstName: "Cristian ",
+          lastName: "Ormeño",
+          birthDate: new Date("2025-08-01T00:00:00.000Z"),
+          hireDate: new Date("2008-06-01T00:00:00.000Z"),
+          Area: {
+            connect: {
+              id: "cmeg3hl1q0000u5x9hxc3r3u3"
+            }
+          },
+          position: "Desarrollador Senior",
+          phone: null,
+          vacationDays: 20,
+          personalHours: 5,
+          remoteHours: 5,
+          availableHours: 4,
+          totalVacationDays: 20,
+          totalPersonalHours: 5,
+          totalRemoteHours: 5,
+          totalAvailableHours: 4,
+          updatedAt: new Date("2025-08-20T23:01:25.992Z"),
+      +   User: {
+      +     create: UserCreateWithoutEmployeesInput | UserUncheckedCreateWithoutEmployeesInput,
+      +     connectOrCreate: UserCreateOrConnectWithoutEmployeesInput,
+      +     connect: UserWhereUniqueInput
+      +   }
+        },
+        include: {
+          User: true,
+          Area: true
+        }
+      })
+
+Argument `User` is missing.
+    at An (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:32:1363)
+    at zn.handleRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:7102)
+    at zn.handleAndLogRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6784)
+    at zn.request (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6491)
+    at async l (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:133:9778)
+    at async /home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/route.js:655:30
+    at async Proxy._transactionWithCallback (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:133:8139)
+    at async POST (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/route.js:609:24)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:818:17)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/opt/hostedapp/node/root/app/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  clientVersion: '6.7.0'
+}

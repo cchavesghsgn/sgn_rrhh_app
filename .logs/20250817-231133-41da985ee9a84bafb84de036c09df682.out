@@ -1,0 +1,5 @@
+[master f785840] Empleados JSON fix compilado
+ 12 files changed, 100 insertions(+), 68 deletions(-)
+ rewrite .abacus.donotdelete (97%)
+ create mode 100644 app/test-login.html
+###f785840fb44366e4ccf14ea68f5baa5f033ef0c5###

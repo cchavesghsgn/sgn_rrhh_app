@@ -1,0 +1,8 @@
+scripts/seed.ts(27,9): error TS1005: ',' expected.
+scripts/seed.ts(35,9): error TS1005: ',' expected.
+scripts/seed.ts(43,9): error TS1005: ',' expected.
+scripts/seed.ts(51,9): error TS1005: ',' expected.
+scripts/seed.ts(59,9): error TS1005: ',' expected.
+scripts/seed.ts(78,9): error TS1005: ',' expected.
+scripts/seed.ts(207,9): error TS1005: ',' expected.
+exit_code=2

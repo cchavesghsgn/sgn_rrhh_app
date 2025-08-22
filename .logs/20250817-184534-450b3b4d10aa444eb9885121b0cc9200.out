@@ -1,0 +1,16 @@
+[master 5696416] Despliegues seguros sin pérdida datos
+ 17 files changed, 1051 insertions(+), 13 deletions(-)
+ rewrite .abacus.donotdelete (97%)
+ create mode 100644 CHECKLIST_DESPLIEGUE_SEGURO.md
+ create mode 100644 CHECKLIST_DESPLIEGUE_SEGURO.pdf
+ create mode 100644 GUIA_DESPLIEGUE_SEGURO.md
+ create mode 100644 GUIA_DESPLIEGUE_SEGURO.pdf
+ create mode 100644 app/.env.example
+ create mode 100644 app/.env.local
+ create mode 100644 app/public/sgn-logo-new.png
+ create mode 100644 app/scripts/backup-db.ts
+ create mode 100644 app/scripts/migrate-safe.ts
+ create mode 100644 app/scripts/seed-development.ts
+ create mode 100644 app/scripts/seed-production.ts
+ create mode 100644 app/scripts/validate-env.ts
+###569641659e24076fee36016ccac04cabc8bfcc46###

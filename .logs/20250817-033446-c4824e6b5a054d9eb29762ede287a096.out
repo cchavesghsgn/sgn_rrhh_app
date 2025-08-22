@@ -1,0 +1,5 @@
+lib/auth-options.ts(65,11): error TS2322: Type '{ jwt({ token, user }: { token: JWT; user: User | AdapterUser; account: Account | null; profile?: Profile | undefined; trigger?: "signIn" | "signUp" | "update" | undefined; isNewUser?: boolean | undefined; session?: any; }): Promise<...>; session({ session, token }: { ...; } & { ...; }): Promise<...>; signOut({ url,...' is not assignable to type 'Partial<CallbacksOptions<Profile, Account>>'.
+  Object literal may only specify known properties, and 'signOut' does not exist in type 'Partial<CallbacksOptions<Profile, Account>>'.
+lib/auth-options.ts(65,21): error TS7031: Binding element 'url' implicitly has an 'any' type.
+lib/auth-options.ts(65,26): error TS7031: Binding element 'baseUrl' implicitly has an 'any' type.
+exit_code=2

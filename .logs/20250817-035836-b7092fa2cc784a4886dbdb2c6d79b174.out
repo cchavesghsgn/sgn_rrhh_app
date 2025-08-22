@@ -1,0 +1,7 @@
+[master 6f06887] Sistema granular de horas implementado
+ 13 files changed, 421 insertions(+), 51 deletions(-)
+ rewrite .abacus.donotdelete (98%)
+ create mode 100644 app/lib/time-utils.ts
+ create mode 100644 app/prisma/migrations/20250817035219_init/migration.sql
+ create mode 100644 app/prisma/migrations/migration_lock.toml
+###6f0688741081fa3848d290256ac048e9f18d8282###

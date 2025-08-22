@@ -1,0 +1,214 @@
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+💥 Auth error: PrismaClientInitializationError: 
+Invalid `prisma.user.findUnique()` invocation in
+/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/auth/[...nextauth]/route.js:288:52
+
+  285     return null;
+  286 }
+  287 try {
+→ 288     const user = await prisma.user.findUnique(
+Can't reach database server at `localhost:5432`
+
+Please make sure your database server is running at `localhost:5432`.
+    at zn.handleRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:7759)
+    at zn.handleAndLogRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6784)
+    at zn.request (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6491)
+    at async l (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:133:9778)
+    at async Object.authorize (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/auth/[...nextauth]/route.js:288:34)
+    at async Object.callback (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4003:14)
+    at async AuthHandler (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:1648:28)
+    at async NextAuthRouteHandler (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4798:28)
+    at async NextAuth._args$ (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4830:16)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1576:40)
+    at async DevServer.renderToResponseWithComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:818:17)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/opt/hostedapp/node/root/app/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  clientVersion: '6.7.0',
+  errorCode: undefined,
+  retryable: undefined
+}
+💥 Auth error: PrismaClientInitializationError: 
+Invalid `prisma.user.findUnique()` invocation in
+/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/auth/[...nextauth]/route.js:288:52
+
+  285     return null;
+  286 }
+  287 try {
+→ 288     const user = await prisma.user.findUnique(
+Can't reach database server at `localhost:5432`
+
+Please make sure your database server is running at `localhost:5432`.
+    at zn.handleRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:7759)
+    at zn.handleAndLogRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6784)
+    at zn.request (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6491)
+    at async l (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:133:9778)
+    at async Object.authorize (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/auth/[...nextauth]/route.js:288:34)
+    at async Object.callback (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4003:14)
+    at async AuthHandler (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:1648:28)
+    at async NextAuthRouteHandler (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4798:28)
+    at async NextAuth._args$ (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4830:16)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1576:40)
+    at async DevServer.renderToResponseWithComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:818:17)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/opt/hostedapp/node/root/app/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  clientVersion: '6.7.0',
+  errorCode: undefined,
+  retryable: undefined
+}
+💥 Auth error: PrismaClientInitializationError: 
+Invalid `prisma.user.findUnique()` invocation in
+/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/auth/[...nextauth]/route.js:288:52
+
+  285     return null;
+  286 }
+  287 try {
+→ 288     const user = await prisma.user.findUnique(
+Can't reach database server at `localhost:5432`
+
+Please make sure your database server is running at `localhost:5432`.
+    at zn.handleRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:7759)
+    at zn.handleAndLogRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6784)
+    at zn.request (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6491)
+    at async l (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:133:9778)
+    at async Object.authorize (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/auth/[...nextauth]/route.js:288:34)
+    at async Object.callback (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4003:14)
+    at async AuthHandler (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:1648:28)
+    at async NextAuthRouteHandler (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4798:28)
+    at async NextAuth._args$ (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4830:16)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1576:40)
+    at async DevServer.renderToResponseWithComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:818:17)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/opt/hostedapp/node/root/app/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  clientVersion: '6.7.0',
+  errorCode: undefined,
+  retryable: undefined
+}
+💥 Auth error: PrismaClientInitializationError: 
+Invalid `prisma.user.findUnique()` invocation in
+/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/auth/[...nextauth]/route.js:288:52
+
+  285     return null;
+  286 }
+  287 try {
+→ 288     const user = await prisma.user.findUnique(
+Can't reach database server at `localhost:5432`
+
+Please make sure your database server is running at `localhost:5432`.
+    at zn.handleRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:7759)
+    at zn.handleAndLogRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6784)
+    at zn.request (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6491)
+    at async l (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:133:9778)
+    at async Object.authorize (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/auth/[...nextauth]/route.js:288:34)
+    at async Object.callback (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4003:14)
+    at async AuthHandler (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:1648:28)
+    at async NextAuthRouteHandler (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4798:28)
+    at async NextAuth._args$ (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4830:16)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1576:40)
+    at async DevServer.renderToResponseWithComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:818:17)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/opt/hostedapp/node/root/app/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  clientVersion: '6.7.0',
+  errorCode: undefined,
+  retryable: undefined
+}
+💥 Auth error: PrismaClientInitializationError: 
+Invalid `prisma.user.findUnique()` invocation in
+/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/auth/[...nextauth]/route.js:288:52
+
+  285     return null;
+  286 }
+  287 try {
+→ 288     const user = await prisma.user.findUnique(
+Can't reach database server at `localhost:5432`
+
+Please make sure your database server is running at `localhost:5432`.
+    at zn.handleRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:7759)
+    at zn.handleAndLogRequestError (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6784)
+    at zn.request (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:124:6491)
+    at async l (/opt/hostedapp/node/root/app/node_modules/.prisma/client/runtime/library.js:133:9778)
+    at async Object.authorize (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/auth/[...nextauth]/route.js:288:34)
+    at async Object.callback (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4003:14)
+    at async AuthHandler (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:1648:28)
+    at async NextAuthRouteHandler (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4798:28)
+    at async NextAuth._args$ (/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/next-auth.js:4830:16)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1576:40)
+    at async DevServer.renderToResponseWithComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:818:17)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/opt/hostedapp/node/root/app/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  clientVersion: '6.7.0',
+  errorCode: undefined,
+  retryable: undefined
+}

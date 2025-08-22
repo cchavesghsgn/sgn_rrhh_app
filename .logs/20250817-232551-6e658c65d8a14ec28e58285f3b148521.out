@@ -1,0 +1,112 @@
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1310ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.8s (791 modules)
+ GET / 200 in 3199ms
+ ✓ Compiled in 478ms (280 modules)
+ GET / 200 in 47ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 949ms (895 modules)
+ GET /login?_rsc=1ebxd 200 in 34ms
+ GET /api/auth/session 200 in 1395ms
+ GET /api/auth/session 200 in 35ms
+ GET /api/auth/session 200 in 23ms
+ GET /api/auth/session 200 in 26ms
+ GET / 200 in 64ms
+ GET /login 200 in 38ms
+ GET /api/auth/session 200 in 44ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 23ms
+ ✓ Compiled /api/employees in 300ms (602 modules)
+📝 POST /api/employees - Iniciando creación de empleado
+👤 Sesión obtenida: { hasSession: false, userId: undefined, userRole: undefined }
+❌ No hay sesión activa
+ POST /api/employees 401 in 418ms
+ ○ Compiling /admin/employees ...
+ ✓ Compiled /admin/employees in 895ms (1098 modules)
+ GET /admin/employees 200 in 1075ms
+ ✓ Compiled /api/auth/[...nextauth] in 159ms (693 modules)
+ GET /api/auth/session 200 in 442ms
+ GET /login?_rsc=1ebxd 200 in 76ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 29ms
+ GET /api/auth/session 200 in 25ms
+ GET /api/auth/session 200 in 21ms
+ GET /api/auth/session 200 in 22ms
+ GET /login 200 in 41ms
+ GET /api/auth/session 200 in 45ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 34ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 39ms
+ GET /api/auth/session 200 in 24ms
+ ✓ Compiled in 355ms (421 modules)
+ GET /login?_rsc=v3pub 200 in 38ms
+ GET /login?_rsc=v3pub 200 in 27ms
+ GET /login?_rsc=v3pub 200 in 23ms
+ GET /login?_rsc=v3pub 200 in 26ms
+ ✓ Compiled in 537ms (976 modules)
+ GET /login?_rsc=v3pub 200 in 125ms
+ GET /login?_rsc=v3pub 200 in 28ms
+ GET /login?_rsc=v3pub 200 in 23ms
+ GET /login?_rsc=v3pub 200 in 25ms
+ ✓ Compiled /test-login in 335ms (982 modules)
+ GET /test-login 200 in 430ms
+ ✓ Compiled /api/auth/[...nextauth] in 133ms (577 modules)
+ GET /api/auth/session 200 in 257ms
+ GET /api/auth/session 200 in 57ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 32ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 25ms
+ GET /api/auth/session 200 in 38ms
+ ✓ Compiled in 313ms (423 modules)
+ GET /login?_rsc=v3pub 200 in 50ms
+ GET /login?_rsc=v3pub 200 in 35ms
+ GET /login?_rsc=v3pub 200 in 29ms
+ GET /login?_rsc=v3pub 200 in 26ms
+ ✓ Compiled in 242ms (423 modules)
+ GET /login?_rsc=v3pub 200 in 42ms
+ GET /login?_rsc=v3pub 200 in 34ms
+ GET /login?_rsc=v3pub 200 in 30ms
+ GET /login?_rsc=v3pub 200 in 26ms
+ ✓ Compiled in 248ms (423 modules)
+ GET /login?_rsc=v3pub 200 in 45ms
+ GET /login?_rsc=v3pub 200 in 41ms
+ GET /login?_rsc=v3pub 200 in 30ms
+ GET /login?_rsc=v3pub 200 in 24ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 925ms (985 modules)
+ GET /login?_rsc=v3pub 200 in 705ms
+ GET /test-login 404 in 50ms
+ GET /login?_rsc=v3pub 200 in 71ms
+ GET /login?_rsc=v3pub 200 in 26ms
+ GET /login?_rsc=v3pub 200 in 28ms
+ GET /login?_rsc=v3pub 200 in 33ms
+ GET /login?_rsc=v3pub 200 in 36ms
+ GET /login?_rsc=v3pub 200 in 34ms
+ GET /login?_rsc=v3pub 200 in 34ms
+ GET /api/auth/session 200 in 65ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 23ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 21ms
+ GET /api/auth/session 200 in 38ms
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+[?25h

@@ -1,0 +1,5 @@
+[master 7155c8c] Activar aplicación con credenciales admin
+ 2 files changed, 152 insertions(+), 180 deletions(-)
+ rewrite .abacus.donotdelete (96%)
+ rewrite app/prisma/schema.prisma (77%)
+###7155c8cba537770b0972425ac5d4afce53eceb29###

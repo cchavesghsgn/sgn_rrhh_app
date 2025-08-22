@@ -1,0 +1,9 @@
+[master 9f7d9f0] AWS Amplify deployment ready
+ 6 files changed, 439 insertions(+), 1 deletion(-)
+ rewrite .abacus.donotdelete (98%)
+ create mode 100644 .env.example
+ create mode 100644 DEPLOY_AWS_AMPLIFY.md
+ create mode 100644 DEPLOY_AWS_AMPLIFY.pdf
+ create mode 100644 README.md
+ create mode 100644 amplify.yml
+###9f7d9f027ac07605c050d000cc61fccce9a5af50###

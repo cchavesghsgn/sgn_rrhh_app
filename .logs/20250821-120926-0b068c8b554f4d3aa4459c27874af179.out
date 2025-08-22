@@ -1,0 +1,54 @@
+➤ YN0000: · Yarn 4.9.2
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + @types/mime-types@npm:3.0.1, @types/nodemailer@npm:7.0.1, form-data@npm:4.0.4, googleapis@npm:156.0.0, mime-types@npm:3.0.1, node-fetch@npm:2.7.0, and 105 more.
+➤ YN0000: └ Completed in 0s 606ms
+➤ YN0000: ┌ Post-resolution validation
+➤ YN0060: │ @typescript-eslint/parser is listed by your project with version 7.0.0 (p6cb6c), which doesn't satisfy what @typescript-eslint/eslint-plugin requests (^6.0.0-alpha).
+➤ YN0060: │ eslint is listed by your project with version 9.24.0 (pe6e00), which doesn't satisfy what @typescript-eslint/eslint-plugin and other dependencies request (^8.57.0).
+➤ YN0060: │ nodemailer is listed by your project with version 7.0.5 (p4594f), which doesn't satisfy what next-auth requests (^6.6.5).
+➤ YN0002: │ app@workspace:. doesn't provide prettier (pd88b5), requested by eslint-plugin-prettier.
+➤ YN0086: │ Some peer dependencies are incorrectly met by your project; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+➤ YN0086: │ Some peer dependencies are incorrectly met by dependencies; run yarn explain peer-requirements for details.
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ 111 packages were added to the project (+ 198.18 MiB).
+➤ YN0000: └ Completed in 8s 908ms
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed in 1s 576ms
+➤ YN0000: · Done with warnings in 11s 306ms
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v6.7.0) to ./node_modules/.prisma/client in 111ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+Starting server...
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1698ms
+ ○ Compiling /admin/requests ...
+ ✓ Compiled /admin/requests in 526ms (269 modules)
+ ○ Compiling /admin/areas ...
+ ✓ Compiled / in 4.5s (1101 modules)
+ GET / 200 in 3029ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+ POST /api/auth/_log 200 in 2676ms
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /api/auth/session 200 in 6245ms

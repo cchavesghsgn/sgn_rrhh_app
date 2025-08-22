@@ -1,0 +1,9 @@
+app/api/employees/[id]/documents/[docId]/route.ts(3,38): error TS2307: Cannot find module '../../../../../lib/auth' or its corresponding type declarations.
+app/api/employees/[id]/documents/[docId]/route.ts(4,24): error TS2307: Cannot find module '../../../../../lib/prisma' or its corresponding type declarations.
+app/api/employees/[id]/documents/route.ts(3,38): error TS2307: Cannot find module '../../../../lib/auth' or its corresponding type declarations.
+app/api/employees/[id]/documents/route.ts(4,24): error TS2307: Cannot find module '../../../../lib/prisma' or its corresponding type declarations.
+app/api/employees/[id]/photo/route.ts(3,38): error TS2307: Cannot find module '../../../../lib/auth' or its corresponding type declarations.
+app/api/employees/[id]/photo/route.ts(4,24): error TS2307: Cannot find module '../../../../lib/prisma' or its corresponding type declarations.
+app/api/files/[...filename]/route.ts(5,24): error TS7016: Could not find a declaration file for module 'mime-types'. '/opt/hostedapp/node/root/app/node_modules/mime-types/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/mime-types` if it exists or add a new declaration (.d.ts) file containing `declare module 'mime-types';`
+exit_code=2

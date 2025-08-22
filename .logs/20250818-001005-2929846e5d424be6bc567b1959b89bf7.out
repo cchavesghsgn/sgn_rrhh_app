@@ -1,0 +1,61 @@
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 2.1s
+ ○ Compiling / ...
+ ✓ Compiled / in 3.1s (791 modules)
+ GET / 200 in 3337ms
+ ✓ Compiled in 451ms (280 modules)
+ ✓ Compiled /api/auth/[...nextauth] in 192ms (510 modules)
+ POST /api/auth/signin 302 in 601ms
+ GET /api/auth/csrf 200 in 39ms
+🔐 Attempting login for: john@doe.com
+👤 User found: YES
+🔑 Password valid: true
+✅ Authentication successful for: john@doe.com
+ POST /api/auth/callback/credentials 302 in 430ms
+ ✓ Compiled /api/areas in 177ms (536 modules)
+ GET /api/areas 200 in 341ms
+ ✓ Compiled /api/employees in 129ms (540 modules)
+Processing request with content-type: multipart/form-data; boundary=------------------------cebe2b4c54e076fb
+Parsing as FormData...
+FormData keys: [
+  'email',    'password',
+  'dni',      'firstName',
+  'lastName', 'birthDate',
+  'hireDate', 'areaId',
+  'position', 'phone',
+  'role',     'profileImage'
+]
+FormData values preview: {
+  email: 'test.imagen.1755475817@example.com',
+  dni: 'IMG1755475817',
+  firstName: 'Juan Carlos',
+  lastName: 'Pérez Imagen',
+  hasProfileImage: true
+}
+Received employee creation data: {
+  email: 'test.imagen.1755475817@example.com',
+  dni: 'IMG1755475817',
+  firstName: 'Juan Carlos',
+  lastName: 'Pérez Imagen',
+  birthDate: '1990-05-15',
+  hireDate: '2024-01-15',
+  areaId: 'cmeg3hl230003u5x99l2z87uj',
+  position: 'Desarrollador con Imagen',
+  hasPassword: true,
+  hasImage: true,
+  phone: '+1234567890'
+}
+Processing profile image: { name: 'logo completo color.png', size: 39123, type: 'image/png' }
+Profile image saved successfully: {
+  path: '/uploads/employee-e0998aa7-6357-4736-b2cd-dd3d1f17b94b-1755475818176.png',
+  size: 39123,
+  fileName: 'employee-e0998aa7-6357-4736-b2cd-dd3d1f17b94b-1755475818176.png'
+}
+ POST /api/employees 500 in 556ms
+[?25h

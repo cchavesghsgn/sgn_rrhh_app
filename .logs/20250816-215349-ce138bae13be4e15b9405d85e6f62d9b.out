@@ -1,0 +1,3 @@
+app/api/files/[...filename]/route.ts(5,24): error TS7016: Could not find a declaration file for module 'mime-types'. '/opt/hostedapp/node/root/app/node_modules/mime-types/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/mime-types` if it exists or add a new declaration (.d.ts) file containing `declare module 'mime-types';`
+exit_code=2

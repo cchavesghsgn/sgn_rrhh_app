@@ -1,0 +1,53 @@
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env.local, .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1197ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.9s (791 modules)
+ GET / 200 in 3418ms
+ ✓ Compiled in 462ms (280 modules)
+ GET / 200 in 50ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 902ms (895 modules)
+ GET /login?_rsc=1ebxd 200 in 32ms
+ GET /api/auth/session 200 in 1358ms
+ GET /api/auth/session 200 in 34ms
+ GET / 200 in 79ms
+ GET / 200 in 35ms
+ GET /api/auth/session 200 in 38ms
+ GET /api/auth/session 200 in 38ms
+ GET /login?_rsc=1ebxd 200 in 44ms
+ GET / 200 in 34ms
+ GET / 200 in 41ms
+ GET / 200 in 36ms
+ GET /api/auth/session 200 in 48ms
+ GET /login?_rsc=1ebxd 200 in 23ms
+ GET /api/auth/session 200 in 21ms
+ GET / 200 in 47ms
+ GET /api/auth/providers 200 in 38ms
+ GET /api/auth/csrf 200 in 23ms
+ POST /api/auth/callback/credentials 401 in 114ms
+ GET /api/auth/providers 200 in 31ms
+ GET /api/auth/csrf 200 in 26ms
+ POST /api/auth/callback/credentials 401 in 100ms
+ GET /api/auth/providers 200 in 38ms
+ GET /api/auth/csrf 200 in 32ms
+ POST /api/auth/callback/credentials 401 in 106ms
+ GET / 200 in 37ms
+ GET /api/auth/providers 200 in 31ms
+ GET /api/auth/csrf 200 in 47ms
+ POST /api/auth/callback/credentials 401 in 105ms
+ GET / 200 in 39ms
+ GET /api/auth/session 200 in 50ms
+ GET /login?_rsc=1ebxd 200 in 36ms
+ GET /api/auth/session 200 in 51ms
+ GET / 200 in 31ms
+ GET /api/auth/providers 200 in 35ms
+ GET /api/auth/csrf 200 in 32ms
+ POST /api/auth/callback/credentials 401 in 98ms
+ GET / 200 in 32ms
+[?25h

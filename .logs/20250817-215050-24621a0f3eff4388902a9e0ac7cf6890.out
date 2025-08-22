@@ -1,0 +1,10 @@
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "122689afff", schema "public" at "db-122689afff.db001.hosteddb.reai.io:5432"
+
+The database is already in sync with the Prisma schema.
+
+Running generate... (Use --skip-generate to skip the generators)
+[2K[1A[2K[GRunning generate... - Prisma Client
+[2K[1A[2K[G✔ Generated Prisma Client (v6.7.0) to ./node_modules/.prisma/client in 150ms
+

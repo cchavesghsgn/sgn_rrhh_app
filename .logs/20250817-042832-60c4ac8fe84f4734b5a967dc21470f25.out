@@ -1,0 +1,12 @@
+[master 17000c2] Testing system complete
+ 9 files changed, 1005 insertions(+), 1 deletion(-)
+ rewrite .abacus.donotdelete (98%)
+ create mode 100644 CHECKLIST_PRUEBAS_RAPIDAS.md
+ create mode 100644 CHECKLIST_PRUEBAS_RAPIDAS.pdf
+ create mode 100644 GUIA_COMO_USAR_PLAN_PRUEBAS.md
+ create mode 100644 GUIA_COMO_USAR_PLAN_PRUEBAS.pdf
+ create mode 100644 PLAN_DE_PRUEBAS.md
+ create mode 100644 PLAN_DE_PRUEBAS.pdf
+ create mode 100644 SCRIPTS_DATOS_PRUEBA.md
+ create mode 100644 SCRIPTS_DATOS_PRUEBA.pdf
+###17000c27b951259424e411f072c51e8960e3cc38###

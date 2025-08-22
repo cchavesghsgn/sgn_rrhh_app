@@ -1,0 +1,11 @@
+[master 7f73259] Fix login redirect loop
+ 9 files changed, 113 insertions(+), 2 deletions(-)
+ rewrite .abacus.donotdelete (96%)
+ create mode 100644 app/core
+ create mode 100644 app/debug_login.js
+ create mode 100644 app/server.log
+ create mode 100644 app/test_auth_flow.js
+ delete mode 100644 app/uploads/employee-93968a9e-f3b1-4645-bf96-527588fa7086-1755480356065.jpg
+ rename app/uploads/{employee-93968a9e-f3b1-4645-bf96-527588fa7086-1755479489035.jpg => employee-93968a9e-f3b1-4645-bf96-527588fa7086-1755480772711.jpg} (100%)
+ rename app/uploads/{employee-93968a9e-f3b1-4645-bf96-527588fa7086-1755480103533.jpg => employee-93968a9e-f3b1-4645-bf96-527588fa7086-1755480784285.jpg} (100%)
+###7f73259a3a51dcaa972213fae391393330afd1a4###

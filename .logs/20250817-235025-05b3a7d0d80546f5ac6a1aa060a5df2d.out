@@ -1,0 +1,87 @@
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1842ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.9s (791 modules)
+ GET / 200 in 3309ms
+ ✓ Compiled in 435ms (280 modules)
+ GET / 200 in 55ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 1515ms (932 modules)
+ GET /dashboard?_rsc=3y0gy 200 in 31ms
+ GET /api/auth/session 200 in 1966ms
+ GET /api/auth/session 200 in 37ms
+ ✓ Compiled /api/leave-requests in 188ms (618 modules)
+ ✓ Compiled (623 modules)
+ GET /api/leave-requests 200 in 527ms
+ GET /api/employees 200 in 536ms
+ GET /api/employees 200 in 36ms
+ GET /api/leave-requests 200 in 33ms
+ GET / 200 in 76ms
+ GET / 200 in 34ms
+ GET / 200 in 34ms
+ GET /api/auth/session 200 in 50ms
+ GET /dashboard?_rsc=3y0gy 200 in 32ms
+ GET /api/auth/session 200 in 41ms
+ GET /api/employees 200 in 36ms
+ GET /api/leave-requests 200 in 38ms
+ GET /api/leave-requests 200 in 28ms
+ GET /api/employees 200 in 38ms
+ ○ Compiling /admin/employees ...
+ ✓ Compiled /admin/employees in 852ms (1096 modules)
+ GET /admin/employees?_rsc=czupt 200 in 31ms
+ GET /api/employees 200 in 118ms
+ GET /api/employees 200 in 27ms
+ ○ Compiling /admin/employees/[id]/edit ...
+ ✓ Compiled /admin/employees/[id]/edit in 620ms (1157 modules)
+ GET /admin/employees/93968a9e-f3b1-4645-bf96-527588fa7086/edit?_rsc=1tedk 200 in 38ms
+ ✓ Compiled /api/areas in 170ms (724 modules)
+ GET /api/areas 200 in 300ms
+ ✓ Compiled /api/employees/[id] in 177ms (726 modules)
+ GET /api/areas 200 in 490ms
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 815ms
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 35ms
+ GET / 200 in 49ms
+Profile image saved: /uploads/employee-93968a9e-f3b1-4645-bf96-527588fa7086-1755474745018.png
+ PUT /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 500 in 1296ms
+Profile image saved: /uploads/employee-93968a9e-f3b1-4645-bf96-527588fa7086-1755474751633.png
+ PUT /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 500 in 1147ms
+ GET / 200 in 41ms
+ GET / 200 in 34ms
+ GET / 200 in 32ms
+ GET / 200 in 37ms
+ GET / 200 in 32ms
+ GET / 200 in 37ms
+ GET / 200 in 121ms
+ GET / 200 in 40ms
+ GET / 200 in 35ms
+ GET /admin/employees?_rsc=cvg4n 200 in 39ms
+ GET /api/employees 200 in 116ms
+ GET /api/employees 200 in 29ms
+ GET / 200 in 35ms
+ GET / 200 in 34ms
+ GET / 200 in 40ms
+ GET / 200 in 29ms
+ GET / 200 in 32ms
+ GET / 200 in 32ms
+ GET /api/auth/session 200 in 46ms
+ GET / 200 in 35ms
+ GET / 200 in 36ms
+ GET / 200 in 29ms
+ GET / 200 in 33ms
+ GET / 200 in 33ms
+ GET / 200 in 33ms
+ GET / 200 in 33ms
+ GET / 200 in 45ms
+ GET / 200 in 33ms
+ GET /api/auth/session 200 in 45ms
+ GET /api/auth/session 200 in 56ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1231ms (1028 modules)
+ GET /dashboard 200 in 93ms
+ GET /_next/static/chunks/app/dashboard/page.js 404 in 19ms

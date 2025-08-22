@@ -1,0 +1,15 @@
+app/api/employees/[id]/route.ts(145,53): error TS7006: Parameter 'prisma' implicitly has an 'any' type.
+app/api/employees/[id]/route.ts(226,38): error TS7006: Parameter 'prisma' implicitly has an 'any' type.
+app/api/employees/route.ts(38,46): error TS7006: Parameter 'employee' implicitly has an 'any' type.
+app/api/employees/route.ts(121,53): error TS7006: Parameter 'prisma' implicitly has an 'any' type.
+app/api/files/[...filename]/route.ts(5,24): error TS7016: Could not find a declaration file for module 'mime-types'. '/opt/hostedapp/node/root/app/node_modules/mime-types/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/mime-types` if it exists or add a new declaration (.d.ts) file containing `declare module 'mime-types';`
+app/api/leave-requests/[id]/approve/route.ts(71,53): error TS7006: Parameter 'prisma' implicitly has an 'any' type.
+app/api/leave-requests/route.ts(203,40): error TS7006: Parameter 'admin' implicitly has an 'any' type.
+lib/calendar.ts(3,24): error TS2307: Cannot find module 'googleapis' or its corresponding type declarations.
+lib/email.ts(2,24): error TS2307: Cannot find module 'nodemailer' or its corresponding type declarations.
+scripts/diagnose-auth.ts(65,22): error TS7006: Parameter 'user' implicitly has an 'any' type.
+scripts/diagnose-auth.ts(65,28): error TS7006: Parameter 'index' implicitly has an 'any' type.
+scripts/verify-admin.ts(56,21): error TS7006: Parameter 'user' implicitly has an 'any' type.
+scripts/verify-admin.ts(56,27): error TS7006: Parameter 'index' implicitly has an 'any' type.
+exit_code=2

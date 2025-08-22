@@ -1,0 +1,10 @@
+[master c868b90] Solución problema login administrador
+ 8 files changed, 416 insertions(+), 8 deletions(-)
+ rewrite .abacus.donotdelete (97%)
+ create mode 100644 SOLUCION_LOGIN_ADMINISTRADOR.md
+ create mode 100644 SOLUCION_LOGIN_ADMINISTRADOR.pdf
+ create mode 100644 app/cookies.txt
+ create mode 100644 app/dev.log
+ create mode 100644 app/scripts/test-login.ts
+ create mode 100644 app/scripts/verify-admin.ts
+###c868b901592a65f103940e658e080d4faff476ed###

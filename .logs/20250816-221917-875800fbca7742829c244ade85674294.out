@@ -1,0 +1,6 @@
+app/admin/employees/[id]/page.tsx(63,27): error TS2322: Type '{ user: { id: string; name: string | null; email: string; password: string; role: UserRole; image: string | null; emailVerified: Date | null; createdAt: Date; updatedAt: Date; }; area: { ...; }; } & { ...; }' is not assignable to type 'Employee & { user: any; area: Area; }'.
+  Type '{ user: { id: string; name: string | null; email: string; password: string; role: UserRole; image: string | null; emailVerified: Date | null; createdAt: Date; updatedAt: Date; }; area: { ...; }; } & { ...; }' is not assignable to type 'Employee'.
+    Types of property 'phone' are incompatible.
+      Type 'string | null' is not assignable to type 'string | undefined'.
+        Type 'null' is not assignable to type 'string | undefined'.
+exit_code=2

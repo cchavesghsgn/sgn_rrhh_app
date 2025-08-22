@@ -1,0 +1,139 @@
+➤ YN0000: · Yarn 4.9.2
+➤ YN0000: ┌ Resolution step
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Post-resolution validation
+➤ YN0060: │ @typescript-eslint/parser is listed by your project with version 7.0.0 (p6cb6c), which doesn't satisfy what @typescript-eslint/eslint-plugin requests (^6.0.0-alpha).
+➤ YN0060: │ eslint is listed by your project with version 9.24.0 (pe6e00), which doesn't satisfy what @typescript-eslint/eslint-plugin and other dependencies request (^8.57.0).
+➤ YN0060: │ nodemailer is listed by your project with version 7.0.5 (p4594f), which doesn't satisfy what next-auth requests (^6.6.5).
+➤ YN0002: │ app@workspace:. doesn't provide prettier (pd88b5), requested by eslint-plugin-prettier.
+➤ YN0086: │ Some peer dependencies are incorrectly met by your project; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+➤ YN0086: │ Some peer dependencies are incorrectly met by dependencies; run yarn explain peer-requirements for details.
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0000: └ Completed in 1s 667ms
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed in 0s 568ms
+➤ YN0000: · Done with warnings in 2s 550ms
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v6.7.0) to ./node_modules/.prisma/client in 139ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to react to database changes in your app as they happen? Discover how with Pulse: https://pris.ly/tip-1-pulse
+
+Starting server...
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env.local, .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1253ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.9s (791 modules)
+ GET / 200 in 2738ms
+ ✓ Compiled in 451ms (280 modules)
+ ✓ Compiled in 285ms (280 modules)
+ ✓ Compiled in 266ms (280 modules)
+ ✓ Compiled in 299ms (280 modules)
+ ✓ Compiled in 265ms (280 modules)
+ ✓ Compiled in 247ms (280 modules)
+ ✓ Compiled in 233ms (280 modules)
+ ✓ Compiled in 395ms (280 modules)
+ ✓ Compiled in 231ms (280 modules)
+ ✓ Compiled in 297ms (280 modules)
+ ✓ Compiled in 236ms (280 modules)
+ ✓ Compiled in 431ms (280 modules)
+ ✓ Compiled in 240ms (280 modules)
+ ✓ Compiled in 223ms (280 modules)
+ ✓ Compiled in 389ms (280 modules)
+ ✓ Compiled in 280ms (280 modules)
+ ✓ Compiled in 251ms (280 modules)
+ ✓ Compiled in 237ms (280 modules)
+ ✓ Compiled in 234ms (280 modules)
+ ✓ Compiled in 227ms (280 modules)
+ ✓ Compiled in 219ms (280 modules)
+ ✓ Compiled in 254ms (280 modules)
+ ✓ Compiled in 306ms (280 modules)
+ ✓ Compiled in 248ms (280 modules)
+ ✓ Compiled in 234ms (280 modules)
+ ✓ Compiled in 284ms (280 modules)
+ ✓ Compiled in 245ms (280 modules)
+ ✓ Compiled in 221ms (280 modules)
+ ✓ Compiled in 296ms (280 modules)
+ ✓ Compiled in 225ms (280 modules)
+ ✓ Compiled in 398ms (280 modules)
+ ✓ Compiled in 268ms (280 modules)
+ ✓ Compiled in 363ms (280 modules)
+ ✓ Compiled / in 199ms (504 modules)
+ GET / 200 in 340ms
+ GET / 200 in 41ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 989ms (895 modules)
+ GET /api/auth/session 200 in 1398ms
+ GET /login?_rsc=1ebxd 200 in 26ms
+ GET /api/auth/session 200 in 43ms
+ GET / 200 in 73ms
+ GET / 200 in 37ms
+ GET / 200 in 51ms
+ GET / 200 in 33ms
+ GET / 200 in 35ms
+ GET / 200 in 34ms
+ GET / 200 in 33ms
+ GET / 200 in 34ms
+ GET / 200 in 36ms
+ GET / 200 in 29ms
+ GET / 200 in 36ms
+ GET / 200 in 33ms
+ GET / 200 in 32ms
+ GET / 200 in 35ms
+ GET /api/auth/session 200 in 42ms
+ GET /api/auth/session 200 in 36ms
+ GET /login?_rsc=1ebxd 200 in 27ms
+ GET /api/auth/providers 200 in 33ms
+ GET /api/auth/csrf 200 in 34ms
+🔐 Attempting login for: john@doe.com
+ POST /api/auth/callback/credentials 401 in 106ms
+ GET /api/auth/providers 200 in 29ms
+ GET /api/auth/csrf 200 in 32ms
+🔐 Attempting login for: john@doe.com
+ POST /api/auth/callback/credentials 401 in 98ms
+ GET /api/auth/providers 200 in 39ms
+ GET /api/auth/csrf 200 in 34ms
+🔐 Attempting login for: john@doe.com
+ POST /api/auth/callback/credentials 401 in 97ms
+ GET / 200 in 30ms
+ GET / 200 in 31ms
+ GET / 200 in 32ms
+ GET / 200 in 30ms
+ GET / 200 in 34ms
+ GET /api/auth/providers 200 in 30ms
+ GET /api/auth/csrf 200 in 31ms
+🔐 Attempting login for: maria.gonzalez@sgn.com
+ POST /api/auth/callback/credentials 401 in 99ms
+ GET /api/auth/providers 200 in 33ms
+ GET /api/auth/csrf 200 in 31ms
+🔐 Attempting login for: maria.gonzalez@sgn.com
+ POST /api/auth/callback/credentials 401 in 100ms
+ GET / 200 in 27ms
+ GET /api/auth/providers 200 in 40ms
+ GET /api/auth/csrf 200 in 34ms
+🔐 Attempting login for: carlos.rodriguez@sgn.com
+ POST /api/auth/callback/credentials 401 in 99ms
+ GET / 200 in 34ms
+ GET / 200 in 33ms
+ GET / 200 in 36ms
+ GET / 200 in 29ms
+ ✓ Compiled in 27ms
+ ✓ Compiled in 331ms (331 modules)
+ ✓ Compiled in 238ms (331 modules)
+ ✓ Compiled in 229ms (331 modules)
+ ✓ Compiled in 271ms (331 modules)
+ ✓ Compiled in 226ms (331 modules)
+ ✓ Compiled in 278ms (331 modules)
+ ✓ Compiled in 243ms (331 modules)
+ ✓ Compiled in 277ms (331 modules)
+[?25h

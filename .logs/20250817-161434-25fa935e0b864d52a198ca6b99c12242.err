@@ -1,0 +1,137 @@
+[Error: Unknown system error -116: Unknown system error -116, write] {
+  errno: -116,
+  code: 'Unknown system error -116',
+  syscall: 'write'
+}
+ ⨯ uncaughtException: [Error: Unknown system error -116: Unknown system error -116, write] {
+  errno: -116,
+  code: 'Unknown system error -116',
+  syscall: 'write'
+}
+ ⨯ uncaughtException: [Error: Unknown system error -116: Unknown system error -116, write] {
+  errno: -116,
+  code: 'Unknown system error -116',
+  syscall: 'write'
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/oidc-token-hash.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/@panva' in /home/ubuntu/sgn_rrhh_app/app/.next/server for build dependencies doesn't lead to expected result '/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/@panva.js', but to 'Error: Can't resolve './vendor-chunks/@panva' in '/home/ubuntu/sgn_rrhh_app/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/@panva (expected /home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/@panva.js)
+<w>  at file dependencies /home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js
+<w>  at file /home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js
+<w>  at file dependencies /home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js
+<w>  at file /home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/handle-externals.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/handle-externals.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/oidc-token-hash' in /home/ubuntu/sgn_rrhh_app/app/.next/server for build dependencies doesn't lead to expected result '/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/oidc-token-hash.js', but to 'Error: Can't resolve './vendor-chunks/oidc-token-hash' in '/home/ubuntu/sgn_rrhh_app/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/oidc-token-hash (expected /home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/oidc-token-hash.js)
+<w>  at file dependencies /home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js
+<w>  at file /home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js
+<w>  at file dependencies /home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js
+<w>  at file /home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/handle-externals.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/handle-externals.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/lru-cache' in /home/ubuntu/sgn_rrhh_app/app/.next/server for build dependencies doesn't lead to expected result '/home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/lru-cache.js', but to 'Error: Can't resolve './vendor-chunks/lru-cache' in '/home/ubuntu/sgn_rrhh_app/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/lru-cache (expected /home/ubuntu/sgn_rrhh_app/app/.next/server/vendor-chunks/lru-cache.js)
+<w>  at file dependencies /home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js
+<w>  at file /home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js
+<w>  at file dependencies /home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js
+<w>  at file /home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/handle-externals.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/handle-externals.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../../../../../../home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/leave-requests/route' in /opt/hostedapp/node/root/app/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/leave-requests/route.js', but to 'Error: Can't resolve '../../../../../../../../../home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/leave-requests/route' in '/opt/hostedapp/node/root/app/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../../../../../../home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/leave-requests/route (expected /home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/leave-requests/route.js)
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/swc/index.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at resolve commonjs /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../../../../../../home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/me/route' in /opt/hostedapp/node/root/app/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/me/route.js', but to 'Error: Can't resolve '../../../../../../../../../home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/me/route' in '/opt/hostedapp/node/root/app/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../../../../../../home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/me/route (expected /home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/me/route.js)
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/swc/index.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at resolve commonjs /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../../../../../../home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/me/route' in /opt/hostedapp/node/root/app/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/me/route.js', but to 'Error: Can't resolve '../../../../../../../../../home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/me/route' in '/opt/hostedapp/node/root/app/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../../../../../../home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/me/route (expected /home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/employees/me/route.js)
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../../../../../../home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/leave-requests/route' in /opt/hostedapp/node/root/app/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/leave-requests/route.js', but to 'Error: Can't resolve '../../../../../../../../../home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/leave-requests/route' in '/opt/hostedapp/node/root/app/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../../../../../../home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/leave-requests/route (expected /home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/leave-requests/route.js)
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /opt/hostedapp/node/root/app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js

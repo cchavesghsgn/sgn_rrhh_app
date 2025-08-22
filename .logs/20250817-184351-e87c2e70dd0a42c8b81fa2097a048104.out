@@ -1,0 +1,74 @@
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env.local, .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1578ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.5s (791 modules)
+ GET / 200 in 3040ms
+ ✓ Compiled in 459ms (280 modules)
+ GET / 200 in 47ms
+ GET / 200 in 32ms
+ GET / 200 in 41ms
+ ○ Compiling /login ...
+ ✓ Compiled /api/auth/[...nextauth] in 898ms (895 modules)
+ GET /api/auth/session 200 in 714ms
+ GET /login?_rsc=1ebxd 200 in 47ms
+ GET /api/auth/session 200 in 31ms
+ ✓ Compiled /_not-found in 260ms (898 modules)
+ GET /_next/static/chunks/app/index.mjs.map 404 in 343ms
+ GET /_next/static/chunks/handle-smooth-scroll.js.map 404 in 345ms
+ GET /_next/static/chunks/app/login/bundle-mjs.mjs.map 404 in 343ms
+ GET /_next/static/chunks/static-generation-async-storage-instance.js.map 404 in 20ms
+ GET / 200 in 46ms
+ GET / 200 in 31ms
+ GET / 200 in 37ms
+ GET / 200 in 31ms
+ GET / 200 in 30ms
+ GET / 200 in 34ms
+ GET / 200 in 31ms
+ GET / 200 in 35ms
+ GET / 200 in 27ms
+ GET / 200 in 36ms
+ GET / 200 in 30ms
+ GET / 200 in 29ms
+ GET / 200 in 31ms
+ GET / 200 in 30ms
+ GET / 200 in 30ms
+ GET / 200 in 30ms
+ GET / 200 in 31ms
+ GET / 200 in 35ms
+ GET / 200 in 30ms
+ GET / 200 in 34ms
+ GET / 200 in 32ms
+ GET / 200 in 27ms
+ GET / 200 in 31ms
+ GET / 200 in 26ms
+ GET / 200 in 34ms
+ GET /api/auth/session 200 in 63ms
+ GET /login?_rsc=1ebxd 200 in 25ms
+ GET /api/auth/session 200 in 20ms
+ GET / 200 in 31ms
+ GET / 200 in 32ms
+ GET / 200 in 30ms
+ GET / 200 in 30ms
+ GET / 200 in 31ms
+ GET / 200 in 33ms
+ GET / 200 in 32ms
+ GET / 200 in 30ms
+ GET / 200 in 30ms
+ GET / 200 in 30ms
+ GET / 200 in 33ms
+ GET / 200 in 38ms
+ GET / 200 in 34ms
+ GET / 200 in 32ms
+ GET / 200 in 35ms
+ GET / 200 in 31ms
+ GET / 200 in 34ms
+ GET / 200 in 33ms
+ GET / 200 in 36ms
+ GET / 200 in 28ms
+ GET / 200 in 37ms

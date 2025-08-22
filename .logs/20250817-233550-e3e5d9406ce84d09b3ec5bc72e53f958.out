@@ -1,0 +1,104 @@
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1562ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.1s (784 modules)
+ GET / 200 in 2600ms
+ ✓ Compiled in 504ms (280 modules)
+ GET / 200 in 86ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 1584ms (932 modules)
+ GET /api/auth/session 200 in 2019ms
+ GET /dashboard?_rsc=3y0gy 200 in 26ms
+ GET /api/auth/session 200 in 43ms
+ ✓ Compiled /api/leave-requests in 227ms (616 modules)
+ ✓ Compiled (621 modules)
+ GET /api/leave-requests 200 in 563ms
+ GET /api/employees 200 in 580ms
+ GET /api/leave-requests 200 in 31ms
+ GET /api/employees 200 in 36ms
+ GET / 200 in 81ms
+ GET / 200 in 34ms
+ GET /api/auth/session 200 in 50ms
+ GET /api/auth/session 200 in 28ms
+ GET /dashboard?_rsc=3y0gy 200 in 47ms
+ GET /api/leave-requests 200 in 30ms
+ GET /api/employees 200 in 39ms
+ GET /api/employees 200 in 32ms
+ GET /api/leave-requests 200 in 34ms
+ ○ Compiling /admin/employees ...
+ ✓ Compiled /admin/employees in 958ms (1094 modules)
+ GET /admin/employees?_rsc=czupt 200 in 32ms
+ GET /api/employees 200 in 117ms
+ GET /api/employees 200 in 25ms
+ ○ Compiling /admin/employees/[id]/edit ...
+ ✓ Compiled /admin/employees/[id]/edit in 665ms (1155 modules)
+ GET /admin/employees/93968a9e-f3b1-4645-bf96-527588fa7086/edit?_rsc=1tedk 200 in 37ms
+ ✓ Compiled /api/areas in 172ms (722 modules)
+ GET /api/areas 200 in 305ms
+ GET /api/areas 200 in 36ms
+ ✓ Compiled /api/employees/[id] in 165ms (726 modules)
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 607ms
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 41ms
+ PUT /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 49ms
+ GET /api/employees 200 in 109ms
+ GET /api/employees 200 in 25ms
+ GET / 200 in 52ms
+ GET /admin/employees/ad6f8535-0ce7-4bd6-a511-88e466477af7/edit?_rsc=rcony 200 in 26ms
+ GET /api/areas 200 in 102ms
+ GET /api/areas 200 in 44ms
+ GET /api/employees/ad6f8535-0ce7-4bd6-a511-88e466477af7 200 in 46ms
+ GET /api/employees/ad6f8535-0ce7-4bd6-a511-88e466477af7 200 in 38ms
+Profile image saved: /uploads/employee-ad6f8535-0ce7-4bd6-a511-88e466477af7-1755473863811.png
+ PUT /api/employees/ad6f8535-0ce7-4bd6-a511-88e466477af7 500 in 1109ms
+Profile image saved: /uploads/employee-ad6f8535-0ce7-4bd6-a511-88e466477af7-1755473875410.png
+ PUT /api/employees/ad6f8535-0ce7-4bd6-a511-88e466477af7 500 in 1149ms
+ GET /admin/employees?_rsc=cvg4n 200 in 33ms
+ GET /api/employees 200 in 29ms
+ GET /api/employees 200 in 26ms
+ GET /admin/employees/93968a9e-f3b1-4645-bf96-527588fa7086/edit?_rsc=1231k 200 in 42ms
+ GET /api/areas 200 in 32ms
+ GET /api/areas 200 in 32ms
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 47ms
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 39ms
+ GET / 200 in 39ms
+ GET / 200 in 47ms
+ GET / 200 in 32ms
+ GET /api/auth/session 200 in 41ms
+ GET /api/auth/session 200 in 33ms
+ GET /dashboard?_rsc=3y0gy 200 in 27ms
+ GET /api/employees 200 in 42ms
+ GET /api/leave-requests 200 in 109ms
+ GET /api/employees 200 in 28ms
+ GET /api/leave-requests 200 in 25ms
+ GET /admin/employees?_rsc=czupt 200 in 26ms
+ GET /api/employees 200 in 41ms
+ GET /api/employees 200 in 56ms
+ GET /admin/employees/93968a9e-f3b1-4645-bf96-527588fa7086/edit?_rsc=1tedk 200 in 35ms
+ GET /api/areas 200 in 26ms
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 50ms
+ GET /api/areas 200 in 52ms
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 38ms
+ PUT /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 47ms
+ GET /api/employees 200 in 27ms
+ GET /api/employees 200 in 25ms
+ GET /api/areas 200 in 24ms
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 40ms
+ GET /api/areas 200 in 43ms
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 39ms
+ GET / 200 in 38ms
+Profile image saved: /uploads/employee-93968a9e-f3b1-4645-bf96-527588fa7086-1755473919061.png
+ PUT /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 500 in 1143ms
+ GET /api/employees 200 in 27ms
+ GET /api/employees 200 in 28ms
+ GET / 200 in 35ms
+ ✓ Compiled in 532ms (951 modules)
+ ✓ Compiled in 242ms (447 modules)
+ ✓ Compiled in 239ms (447 modules)
+ ✓ Compiled in 227ms (447 modules)
+[?25h

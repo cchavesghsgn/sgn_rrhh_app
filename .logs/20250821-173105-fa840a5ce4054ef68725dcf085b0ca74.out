@@ -1,0 +1,7 @@
+app/api/leave-requests/[id]/approve/route.ts(97,14): error TS2678: Type 'LeaveRequestType.VACATION' is not comparable to type 'LeaveRequestType'.
+components/new-request-form.tsx(143,33): error TS2552: Cannot find name 'calculateDaysRequested'. Did you mean 'calculateDaysNeeded'?
+components/new-request-form.tsx(144,42): error TS2304: Cannot find name 'employee'.
+components/new-request-form.tsx(203,49): error TS2304: Cannot find name 'employee'.
+components/new-request-form.tsx(203,83): error TS2304: Cannot find name 'employee'.
+components/new-request-form.tsx(215,46): error TS2304: Cannot find name 'employee'.
+exit_code=2

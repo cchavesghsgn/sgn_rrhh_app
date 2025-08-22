@@ -1,0 +1,1143 @@
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1538ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1878ms (784 modules)
+ GET / 200 in 2327ms
+ ✓ Compiled in 469ms (280 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET / 200 in 58ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 731ms (932 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /dashboard?_rsc=3y0gy 200 in 36ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/auth/session 200 in 1221ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/auth/session 200 in 41ms
+ ✓ Compiled /api/employees in 210ms (662 modules)
+ ✓ Compiled (665 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/leave-requests 200 in 624ms
+ GET /api/employees 200 in 624ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+ GET /api/leave-requests 200 in 48ms
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 52ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/auth/session 200 in 43ms
+ ○ Compiling /admin/employees ...
+ ✓ Compiled /admin/employees in 699ms (1138 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees?_rsc=czupt 200 in 37ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 157ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 25ms
+ ○ Compiling /admin/employees/new ...
+ ✓ Compiled /admin/employees/new in 662ms (1201 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees/new?_rsc=661gr 200 in 36ms
+ ✓ Compiled /api/areas in 176ms (767 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 317ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 26ms
+ GET / 200 in 77ms
+ GET / 200 in 41ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/auth/session 200 in 45ms
+ GET / 200 in 38ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET / 200 in 33ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/auth/session 200 in 46ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /dashboard?_rsc=3y0gy 200 in 26ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/auth/session 200 in 22ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/leave-requests 200 in 127ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/leave-requests 200 in 28ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 115ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 30ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees?_rsc=czupt 200 in 28ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 29ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 26ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees/new?_rsc=661gr 200 in 26ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 27ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 26ms
+ GET / 200 in 36ms
+ GET / 200 in 36ms
+ GET / 200 in 35ms
+=== EMPLOYEE CREATION API CALLED ===
+1. Checking authentication...
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+✅ Authentication passed for user: john@doe.com
+2. Processing request with content-type: application/json
+3. Parsing as JSON...
+9. Extracting data from parsed input...
+10. ✅ Received employee creation data: {
+  email: 'cormeno@sgntech.net',
+  dni: '23861120',
+  firstName: 'Cristian',
+  lastName: 'Ormeño',
+  birthDate: '2025-08-20',
+  hireDate: '2008-06-01',
+  areaId: 'cmeg3hl1q0000u5x9hxc3r3u3',
+  position: 'Desarrollador Senior',
+  hasPassword: true,
+  hasImage: false,
+  phone: '',
+  role: 'EMPLOYEE',
+  vacationDays: 20,
+  personalHours: 5,
+  remoteHours: 5,
+  availableHours: 4
+}
+11. Starting database transaction...
+12. Validating area exists: cmeg3hl1q0000u5x9hxc3r3u3
+✅ Area validation passed: Desarrollo
+13. Validating dates...
+✅ Date validation passed: {
+  birthDate: '2025-08-20T00:00:00.000Z',
+  hireDate: '2008-06-01T00:00:00.000Z'
+}
+14. Hashing password...
+✅ Password hashed successfully
+15. Starting Prisma transaction...
+16. Creating user in transaction...
+✅ User created in transaction: 569b51bb-1467-4a6f-bfdb-d8453a6f8590
+17. Preparing employee data...
+18. Creating employee in transaction...
+ POST /api/employees 500 in 375ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees?_rsc=cvg4n 200 in 29ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 27ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 27ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /dashboard?_rsc=1gtj6 200 in 28ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+ GET /api/employees 200 in 33ms
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/leave-requests 200 in 36ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+ GET /api/employees 200 in 35ms
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/leave-requests 200 in 38ms
+ GET / 200 in 31ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 30ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 30ms
+ ○ Compiling /admin/employees/[id]/edit ...
+ ✓ Compiled /admin/employees/[id]/edit in 604ms (1199 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees/93968a9e-f3b1-4645-bf96-527588fa7086/edit?_rsc=1tedk 200 in 56ms
+ ✓ Compiled /api/areas in 161ms (762 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 298ms
+ ✓ Compiled /api/employees/[id] in 165ms (764 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 453ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 786ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 41ms
+ GET / 200 in 72ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ PUT /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 50ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees?_rsc=cvg4n 200 in 32ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 125ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 30ms
+ GET / 200 in 38ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees/93968a9e-f3b1-4645-bf96-527588fa7086/edit?_rsc=1231k 200 in 44ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 29ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 31ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 47ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/93968a9e-f3b1-4645-bf96-527588fa7086 200 in 27ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 35ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 32ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees/cmeg3hli7000au5x9r294n9o6/edit?_rsc=e3vb2 200 in 27ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 25ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 38ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 54ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 26ms
+ GET / 200 in 33ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ PUT /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 46ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees?_rsc=cvg4n 200 in 31ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 32ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 29ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees/cmeg3hli7000au5x9r294n9o6/edit?_rsc=136nu 200 in 39ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 25ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 42ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 25ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 38ms
+ GET / 200 in 31ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 28ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 28ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 28ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 30ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 46ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 26ms
+ GET / 200 in 36ms
+ ✓ Compiled /api/auth/[...nextauth] in 308ms (707 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/auth/session 200 in 409ms
+ GET / 200 in 50ms
+ GET / 200 in 34ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ PUT /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 145ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 115ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 27ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees/cmeg3hli7000au5x9r294n9o6/edit?_rsc=136nu 200 in 52ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 113ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 48ms
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 53ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 43ms
+ GET / 200 in 36ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/auth/session 200 in 32ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ PUT /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 44ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees?_rsc=cvg4n 200 in 24ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 28ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 32ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees/cmeg3hli7000au5x9r294n9o6/edit?_rsc=136nu 200 in 39ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 26ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 27ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 45ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 39ms
+ GET / 200 in 35ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ PUT /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 51ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 31ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 29ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 29ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 47ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 42ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 42ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 31ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 29ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees/cmeg3hli10007u5x9c4972t8k/edit?_rsc=12nbn 200 in 38ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 25ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 30ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli10007u5x9c4972t8k 200 in 42ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli10007u5x9c4972t8k 200 in 38ms
+ GET / 200 in 36ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees?_rsc=cvg4n 200 in 25ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 27ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 30ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ DELETE /api/employees/cmeg3hli10007u5x9c4972t8k 200 in 49ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /admin/employees/cmeg3hli7000au5x9r294n9o6/edit?_rsc=136nu 200 in 38ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 25ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 30ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 43ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees/cmeg3hli7000au5x9r294n9o6 200 in 37ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 30ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/employees 200 in 29ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/auth/session 200 in 36ms
+ GET / 200 in 32ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/auth/session 200 in 34ms
+ ✓ Compiled /admin/employees/new in 398ms (715 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 115ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/areas 200 in 28ms
+ GET / 200 in 50ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+ GET /api/auth/session 200 in 36ms
+ GET / 200 in 35ms
+=== EMPLOYEE CREATION API CALLED ===
+1. Checking authentication...
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: 'cmeg3hlhy0005u5x9c4hc9xlo' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: 'cmeg3hlhy0005u5x9c4hc9xlo', role: 'ADMIN' }
+✅ Authentication passed for user: john@doe.com
+2. Processing request with content-type: application/json
+3. Parsing as JSON...
+9. Extracting data from parsed input...
+10. ✅ Received employee creation data: {
+  email: 'cormeno@sgntech.net',
+  dni: '23861120',
+  firstName: 'Cristian ',
+  lastName: 'Ormeño',
+  birthDate: '2025-08-01',
+  hireDate: '2008-06-01',
+  areaId: 'cmeg3hl1q0000u5x9hxc3r3u3',
+  position: 'Desarrollador Senior',
+  hasPassword: true,
+  hasImage: false,
+  phone: '',
+  role: 'EMPLOYEE',
+  vacationDays: 20,
+  personalHours: 5,
+  remoteHours: 5,
+  availableHours: 4
+}
+11. Starting database transaction...
+12. Validating area exists: cmeg3hl1q0000u5x9hxc3r3u3
+✅ Area validation passed: Desarrollo
+13. Validating dates...
+✅ Date validation passed: {
+  birthDate: '2025-08-01T00:00:00.000Z',
+  hireDate: '2008-06-01T00:00:00.000Z'
+}
+14. Hashing password...
+✅ Password hashed successfully
+15. Starting Prisma transaction...
+16. Creating user in transaction...
+✅ User created in transaction: 0e23a535-a69a-490e-994e-23adebd2251d
+17. Preparing employee data...
+18. Creating employee in transaction...
+ POST /api/employees 500 in 447ms
+ GET / 200 in 41ms
+[?25h

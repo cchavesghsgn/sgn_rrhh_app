@@ -1,0 +1,185 @@
+➤ YN0000: · Yarn 4.9.2
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + @types/mime-types@npm:3.0.1, @types/nodemailer@npm:7.0.1, form-data@npm:4.0.4, googleapis@npm:156.0.0, mime-types@npm:3.0.1, node-fetch@npm:2.7.0, and 105 more.
+➤ YN0000: └ Completed in 0s 870ms
+➤ YN0000: ┌ Post-resolution validation
+➤ YN0060: │ @typescript-eslint/parser is listed by your project with version 7.0.0 (p6cb6c), which doesn't satisfy what @typescript-eslint/eslint-plugin requests (^6.0.0-alpha).
+➤ YN0060: │ eslint is listed by your project with version 9.24.0 (pe6e00), which doesn't satisfy what @typescript-eslint/eslint-plugin and other dependencies request (^8.57.0).
+➤ YN0060: │ nodemailer is listed by your project with version 7.0.5 (p4594f), which doesn't satisfy what next-auth requests (^6.6.5).
+➤ YN0002: │ app@workspace:. doesn't provide prettier (pd88b5), requested by eslint-plugin-prettier.
+➤ YN0086: │ Some peer dependencies are incorrectly met by your project; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+➤ YN0086: │ Some peer dependencies are incorrectly met by dependencies; run yarn explain peer-requirements for details.
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ 111 packages were added to the project (+ 198.18 MiB).
+➤ YN0000: └ Completed in 3s 233ms
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed in 1s 505ms
+➤ YN0000: · Done with warnings in 5s 796ms
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v6.7.0) to ./node_modules/.prisma/client in 108ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want real-time updates to your database without manual polling? Discover how with Pulse: https://pris.ly/tip-0-pulse
+
+Starting server...
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1937ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.9s (791 modules)
+ GET / 200 in 3378ms
+ ✓ Compiled in 474ms (280 modules)
+ GET / 200 in 51ms
+ GET / 200 in 48ms
+ ○ Compiling /admin/employees/new ...
+ ✓ Compiled /admin/employees/new in 1485ms (1069 modules)
+ ✓ Compiled /dashboard in 497ms (1095 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /dashboard?_rsc=1gtj6 200 in 598ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /dashboard 200 in 60ms
+ GET / 200 in 39ms
+ ✓ Compiled /api/auth/[...nextauth] in 253ms (700 modules)
+ ✓ Compiled (704 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /api/employees 200 in 707ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /api/auth/session 200 in 868ms
+ ✓ Compiled /api/leave-requests in 291ms (751 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /api/leave-requests 200 in 435ms
+ GET /api/employees 200 in 150ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /api/auth/session 200 in 50ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /api/leave-requests 200 in 36ms
+ ○ Compiling /admin/requests ...
+ ✓ Compiled /admin/requests in 501ms (1185 modules)
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /admin/requests?_rsc=1un7k 200 in 35ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /api/leave-requests 200 in 123ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /api/leave-requests 200 in 37ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+ GET /api/leave-requests 200 in 48ms
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /api/employees 200 in 132ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /api/leave-requests 200 in 38ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /api/employees 200 in 36ms
+ GET / 200 in 73ms
+ GET / 200 in 40ms
+🔄 Redirect callback: {
+  url: 'http://localhost:3000/dashboard',
+  baseUrl: 'http://localhost:3000'
+}
+🎟️ JWT callback: { hasUser: false, tokenId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809' }
+🎭 Session callback: { hasToken: true, hasSession: true }
+✅ Session created: { userId: '96ae3d53-cac4-4552-b4e8-dd0be8c6d809', role: 'ADMIN' }
+ GET /api/auth/session 200 in 47ms
+ GET / 200 in 43ms
+ GET / 200 in 44ms
+ GET / 200 in 51ms
+[?25h

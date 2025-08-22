@@ -1,0 +1,10 @@
+[master 6e07396] Funcionalidades corregidas y mejoradas
+ 14 files changed, 1049 insertions(+), 16 deletions(-)
+ rewrite .abacus.donotdelete (100%)
+ create mode 100644 app/app/admin/employees/[id]/employee-edit-form.tsx
+ create mode 100644 app/app/admin/employees/[id]/page.tsx
+ create mode 100644 app/app/api/areas/[id]/route.ts
+ create mode 100644 app/app/api/employees/[id]/route.ts
+ create mode 100644 app/components/areas-list.tsx
+ create mode 100644 app/lib/leave-calculations.ts
+###6e073965582ab40c7be6aba8f9af2cf12dbcb42e###

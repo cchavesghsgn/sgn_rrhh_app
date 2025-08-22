@@ -1,0 +1,15 @@
+app/api/leave-requests/route.ts(139,41): error TS2339: Property 'personalDays' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; position: string; ... 9 more ...; totalAvailableHours: number; }'.
+app/api/leave-requests/route.ts(141,94): error TS2339: Property 'personalDays' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; position: string; ... 9 more ...; totalAvailableHours: number; }'.
+app/api/leave-requests/route.ts(146,39): error TS2339: Property 'remoteDays' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; position: string; ... 9 more ...; totalAvailableHours: number; }'.
+app/api/leave-requests/route.ts(148,91): error TS2339: Property 'remoteDays' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; position: string; ... 9 more ...; totalAvailableHours: number; }'.
+components/admin-dashboard.tsx(217,51): error TS2339: Property 'totalPersonalDays' does not exist on type 'Employee'.
+components/admin-dashboard.tsx(217,88): error TS2339: Property 'personalDays' does not exist on type 'Employee'.
+components/admin-dashboard.tsx(218,49): error TS2339: Property 'totalRemoteDays' does not exist on type 'Employee'.
+components/admin-dashboard.tsx(218,84): error TS2339: Property 'remoteDays' does not exist on type 'Employee'.
+components/admin-dashboard.tsx(249,51): error TS2339: Property 'personalDays' does not exist on type 'Employee'.
+components/admin-dashboard.tsx(249,83): error TS2339: Property 'totalPersonalDays' does not exist on type 'Employee'.
+components/admin-dashboard.tsx(252,48): error TS2339: Property 'remoteDays' does not exist on type 'Employee'.
+components/admin-dashboard.tsx(252,78): error TS2339: Property 'totalRemoteDays' does not exist on type 'Employee'.
+components/employees-list.tsx(201,82): error TS2339: Property 'personalDays' does not exist on type 'Employee'.
+components/employees-list.tsx(204,79): error TS2339: Property 'remoteDays' does not exist on type 'Employee'.
+exit_code=2

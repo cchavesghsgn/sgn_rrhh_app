@@ -1,0 +1,7 @@
+.build/types/app/admin/employees/[id]/page.ts(2,24): error TS2307: Cannot find module '../../../../../../app/admin/employees/[id]/page.js' or its corresponding type declarations.
+.build/types/app/admin/employees/[id]/page.ts(5,29): error TS2307: Cannot find module '../../../../../../app/admin/employees/[id]/page.js' or its corresponding type declarations.
+.build/types/app/api/areas/[id]/route.ts(2,24): error TS2307: Cannot find module '../../../../../../app/api/areas/[id]/route.js' or its corresponding type declarations.
+.build/types/app/api/areas/[id]/route.ts(5,29): error TS2307: Cannot find module '../../../../../../app/api/areas/[id]/route.js' or its corresponding type declarations.
+.build/types/app/api/employees/[id]/route.ts(2,24): error TS2307: Cannot find module '../../../../../../app/api/employees/[id]/route.js' or its corresponding type declarations.
+.build/types/app/api/employees/[id]/route.ts(5,29): error TS2307: Cannot find module '../../../../../../app/api/employees/[id]/route.js' or its corresponding type declarations.
+exit_code=2

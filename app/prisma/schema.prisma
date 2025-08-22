@@ -1,0 +1,152 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/sgn_rrhh_app/app/node_modules/.prisma/client"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  User              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Area {
+  id          String      @id
+  name        String      @unique
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime
+  employees   employees[]
+}
+
+model Session {
+  id           String   @id
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String     @id
+  email         String     @unique
+  password      String
+  name          String?
+  emailVerified DateTime?
+  image         String?
+  role          UserRole   @default(EMPLOYEE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime
+  Account       Account[]
+  Session       Session[]
+  employees     employees?
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model attachments {
+  id             String         @id
+  leaveRequestId String
+  fileName       String
+  originalName   String
+  filePath       String
+  fileType       String
+  fileSize       Int
+  createdAt      DateTime       @default(now())
+  leave_requests leave_requests @relation(fields: [leaveRequestId], references: [id], onDelete: Cascade)
+}
+
+model employees {
+  id                  String           @id
+  userId              String           @unique
+  dni                 String           @unique
+  firstName           String
+  lastName            String
+  birthDate           DateTime
+  hireDate            DateTime
+  areaId              String
+  position            String
+  phone               String?
+  photo               String?
+  vacationDays        Int              @default(20)
+  personalHours       Int              @default(96)
+  remoteHours         Int              @default(96)
+  availableHours      Int              @default(16)
+  totalVacationDays   Int              @default(20)
+  totalPersonalHours  Int              @default(96)
+  totalRemoteHours    Int              @default(96)
+  totalAvailableHours Int              @default(16)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime
+  Area                Area             @relation(fields: [areaId], references: [id])
+  User                User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leave_requests      leave_requests[]
+}
+
+model leave_requests {
+  id          String           @id
+  employeeId  String
+  type        LeaveRequestType
+  startDate   DateTime
+  endDate     DateTime
+  isHalfDay   Boolean          @default(false)
+  hours       Int?
+  startTime   String?
+  endTime     String?
+  shift       DayShift?
+  reason      String
+  status      RequestStatus    @default(PENDING)
+  adminNotes  String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime
+  attachments attachments[]
+  employees   employees        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+enum DayShift {
+  MORNING
+  AFTERNOON
+  FULL_DAY
+}
+
+enum LeaveRequestType {
+  LICENSE
+  VACATION
+  PERSONAL
+  REMOTE
+  HOURS
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum UserRole {
+  EMPLOYEE
+  ADMIN
+}

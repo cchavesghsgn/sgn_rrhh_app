@@ -1,0 +1,178 @@
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1117ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.6s (792 modules)
+ GET / 200 in 2997ms
+ ✓ Compiled in 430ms (280 modules)
+ ✓ Compiled /api/auth/[...nextauth] in 196ms (511 modules)
+ GET /api/auth/providers 200 in 586ms
+ GET / 200 in 60ms
+ GET /api/auth/session 200 in 38ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 712ms (872 modules)
+ GET /api/auth/session 200 in 777ms
+ GET /login?_rsc=1ebxd 200 in 25ms
+ GET /api/auth/csrf 200 in 32ms
+ ✓ Compiled /api/signup in 190ms (591 modules)
+ POST /api/signup 201 in 642ms
+ GET / 200 in 65ms
+ GET /api/auth/csrf 200 in 36ms
+ POST /api/auth/callback/credentials 302 in 372ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 582ms (991 modules)
+ GET /dashboard 200 in 712ms
+ GET / 200 in 38ms
+ GET /dashboard 200 in 52ms
+ GET /api/auth/session 200 in 48ms
+ ✓ Compiled /api/leave-requests in 168ms (642 modules)
+ ✓ Compiled (644 modules)
+ GET /dashboard?_rsc=3y0gy 200 in 400ms
+ GET /api/leave-requests 200 in 518ms
+ GET /api/employees 200 in 559ms
+ GET /api/leave-requests 200 in 25ms
+ GET /api/employees 200 in 30ms
+ GET /api/employees 200 in 28ms
+ GET /api/leave-requests 200 in 25ms
+ GET /api/auth/session 200 in 622ms
+ GET /api/employees 200 in 25ms
+ GET /api/auth/session 200 in 35ms
+ GET /api/leave-requests 200 in 43ms
+ GET /api/auth/session 200 in 20ms
+ GET /api/auth/session 200 in 20ms
+ GET /api/auth/session 200 in 24ms
+ ○ Compiling /admin/employees/new ...
+ ✓ Compiled /admin/employees/new in 917ms (1049 modules)
+ GET /admin/employees 200 in 1086ms
+ GET /admin/requests 200 in 1089ms
+ GET /admin/areas 200 in 1094ms
+ GET /requests 200 in 1101ms
+ GET /admin/employees/new 200 in 1076ms
+ GET /admin/requests/cmeeuvw9v000zm2p2l9d0s3il 200 in 1400ms
+ GET /admin/requests/cmeeuvwa30015m2p290ghstqn 200 in 1400ms
+ GET /api/auth/session 200 in 79ms
+ GET /api/auth/session 200 in 34ms
+ GET /api/employees 200 in 177ms
+ GET /api/auth/session 200 in 25ms
+ GET /api/leave-requests 200 in 198ms
+ GET /api/employees 200 in 38ms
+ GET /api/auth/session 200 in 38ms
+ GET /api/leave-requests 200 in 37ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/leave-requests 200 in 29ms
+ GET /api/leave-requests?requestId=cmeeuvw9v000zm2p2l9d0s3il 200 in 37ms
+ GET /api/leave-requests?requestId=cmeeuvwa30015m2p290ghstqn 200 in 63ms
+ GET /api/auth/session 200 in 63ms
+ GET /api/leave-requests?requestId=cmeeuvw9v000zm2p2l9d0s3il 200 in 35ms
+ GET /api/leave-requests 200 in 37ms
+ GET /api/leave-requests?requestId=cmeeuvwa30015m2p290ghstqn 200 in 35ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 18ms
+ GET /api/auth/session 200 in 22ms
+ GET /api/auth/session 200 in 18ms
+ GET /api/auth/session 200 in 20ms
+ GET /api/auth/session 200 in 31ms
+ GET /api/auth/session 200 in 19ms
+ GET /api/auth/session 200 in 20ms
+ GET /api/auth/session 200 in 19ms
+ GET /api/auth/session 200 in 21ms
+ GET /api/auth/session 200 in 36ms
+ GET /api/auth/session 200 in 20ms
+ GET /api/auth/session 200 in 19ms
+ GET /api/auth/session 200 in 20ms
+ GET /api/auth/session 200 in 21ms
+ GET /api/auth/session 200 in 22ms
+ GET /api/auth/session 200 in 34ms
+ GET /api/auth/session 200 in 20ms
+ ○ Compiling /requests/new ...
+ ✓ Compiled /requests/new in 821ms (1194 modules)
+ GET /requests/new 200 in 918ms
+ ✓ Compiled /api/employees/me in 223ms (755 modules)
+ GET /api/auth/session 200 in 518ms
+ GET /api/auth/session 200 in 19ms
+ GET /api/employees/me 200 in 604ms
+ GET /api/employees/me 200 in 24ms
+ GET / 200 in 60ms
+ GET / 200 in 38ms
+ GET /api/auth/session 200 in 39ms
+ GET /api/auth/session 200 in 39ms
+ GET /dashboard?_rsc=3y0gy 200 in 48ms
+ GET /api/employees/me 200 in 41ms
+ GET /api/leave-requests 200 in 122ms
+ GET /api/employees/me 200 in 29ms
+ GET /api/leave-requests 200 in 28ms
+ GET / 200 in 34ms
+ GET /requests/new?_rsc=1eiff 200 in 33ms
+ GET /api/employees/me 200 in 32ms
+ GET /api/employees/me 200 in 33ms
+ GET /requests?_rsc=18jz7 200 in 29ms
+ GET /api/leave-requests 200 in 32ms
+ GET /api/leave-requests 200 in 30ms
+ GET /dashboard?_rsc=1gtj6 200 in 31ms
+ GET / 200 in 35ms
+ GET /api/leave-requests 200 in 30ms
+ GET /api/employees/me 200 in 33ms
+ GET /api/leave-requests 200 in 33ms
+ GET /api/employees/me 200 in 35ms
+ GET /api/auth/session 200 in 40ms
+ GET /api/leave-requests 200 in 28ms
+ GET /api/employees/me 200 in 28ms
+ GET /api/auth/csrf 200 in 38ms
+ POST /api/auth/signout 200 in 37ms
+ GET /login 200 in 39ms
+ GET /api/auth/session 200 in 35ms
+ GET /api/auth/session 200 in 34ms
+ GET / 200 in 33ms
+ GET /api/auth/providers 200 in 36ms
+ GET /api/auth/csrf 200 in 37ms
+ POST /api/auth/callback/credentials 200 in 386ms
+ GET /api/auth/session 200 in 47ms
+ GET /dashboard?_rsc=3y0gy 200 in 28ms
+ GET /api/leave-requests 200 in 43ms
+ GET /api/employees 200 in 119ms
+ GET /api/leave-requests 200 in 34ms
+ GET /api/employees 200 in 26ms
+ GET /admin/employees?_rsc=czupt 200 in 27ms
+ GET /api/employees 200 in 31ms
+ GET /api/employees 200 in 30ms
+ GET / 200 in 37ms
+ GET /api/auth/session 200 in 34ms
+ GET / 200 in 34ms
+ GET /api/auth/session 200 in 38ms
+ GET / 200 in 34ms
+ GET / 200 in 33ms
+ GET /api/auth/session 200 in 36ms
+ ✓ Compiled in 380ms (510 modules)
+ ✓ Compiled in 567ms (453 modules)
+ ✓ Compiled in 331ms (453 modules)
+ ✓ Compiled in 248ms (453 modules)
+ ✓ Compiled in 380ms (453 modules)
+ ✓ Compiled in 307ms (453 modules)
+ ✓ Compiled in 254ms (453 modules)
+ ✓ Compiled in 267ms (453 modules)
+ ✓ Compiled in 255ms (453 modules)
+ ✓ Compiled in 319ms (457 modules)
+ ✓ Compiled in 26ms
+ ✓ Compiled in 355ms (457 modules)
+ ✓ Compiled in 263ms (457 modules)
+ ✓ Compiled in 277ms (457 modules)
+ ✓ Compiled in 249ms (457 modules)
+ ✓ Compiled in 112ms (445 modules)
+ ✓ Compiled in 267ms (457 modules)
+ ✓ Compiled in 275ms (457 modules)
+ ✓ Compiled in 300ms (457 modules)
+ ✓ Compiled in 270ms (457 modules)
+ ✓ Compiled in 251ms (457 modules)
+ ✓ Compiled in 256ms (457 modules)
+ ✓ Compiled in 329ms (457 modules)
+ ✓ Compiled in 317ms (457 modules)
+ ✓ Compiled in 310ms (457 modules)
+ ✓ Compiled in 268ms (457 modules)
+ ✓ Compiled in 226ms (457 modules)
+ ✓ Compiled in 315ms (457 modules)
+[?25h

@@ -1,0 +1,217 @@
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1716ms
+ ○ Compiling / ...
+ ✓ Compiled / in 3s (791 modules)
+ GET / 200 in 3465ms
+ ✓ Compiled in 474ms (280 modules)
+ ✓ Compiled /api/auth/[...nextauth] in 231ms (510 modules)
+ GET /api/auth/providers 200 in 666ms
+ GET / 200 in 69ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 919ms (895 modules)
+ GET /api/auth/session 200 in 1040ms
+ GET /api/auth/session 200 in 25ms
+ GET /login?_rsc=1ebxd 200 in 31ms
+ GET /api/auth/csrf 200 in 37ms
+ ✓ Compiled /api/signup in 224ms (602 modules)
+ POST /api/signup 201 in 728ms
+ GET / 200 in 68ms
+ GET /api/auth/csrf 200 in 47ms
+ POST /api/auth/callback/credentials 302 in 427ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 689ms (1016 modules)
+ GET /dashboard 200 in 851ms
+ GET / 200 in 57ms
+ GET /dashboard 200 in 54ms
+ GET /api/auth/session 200 in 54ms
+ ✓ Compiled /api/leave-requests in 193ms (654 modules)
+ ✓ Compiled (702 modules)
+ GET /dashboard?_rsc=3y0gy 200 in 562ms
+ GET /api/auth/session 200 in 608ms
+ GET /api/auth/session 200 in 29ms
+ GET /api/employees 200 in 768ms
+ GET /api/auth/session 200 in 29ms
+ GET /api/leave-requests 200 in 769ms
+ GET /api/employees 200 in 41ms
+ GET /api/auth/session 200 in 41ms
+ GET /api/leave-requests 200 in 49ms
+ GET /api/employees 200 in 40ms
+ GET /api/auth/session 200 in 37ms
+ GET /api/leave-requests 200 in 49ms
+ GET /api/employees 200 in 29ms
+ GET /api/leave-requests 200 in 35ms
+ ○ Compiling /admin/employees ...
+ ✓ Compiled /admin/employees in 1606ms (1279 modules)
+ GET /admin/employees/new 200 in 1847ms
+ GET /admin/requests 200 in 1847ms
+ GET /admin/areas 200 in 1857ms
+ GET /admin/employees 200 in 1848ms
+ GET /requests 200 in 1864ms
+ GET /admin/requests/cmef5hoyb0015wqo2g3oab8mu 200 in 2153ms
+ GET /admin/requests/cmef5hoy2000zwqo2refheniz 200 in 2150ms
+ GET /api/auth/session 200 in 64ms
+ GET /api/employees 200 in 185ms
+ GET /api/leave-requests 200 in 217ms
+ ✓ Compiled /api/areas in 341ms (819 modules)
+ GET /api/auth/session 200 in 635ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 25ms
+ GET /api/areas 200 in 837ms
+ GET /api/employees 200 in 631ms
+ GET /api/leave-requests?requestId=cmef5hoyb0015wqo2g3oab8mu 200 in 667ms
+ GET /api/auth/session 200 in 28ms
+ GET /api/leave-requests 200 in 638ms
+ GET /api/leave-requests?requestId=cmef5hoy2000zwqo2refheniz 200 in 554ms
+ GET /api/areas 200 in 36ms
+ GET /api/leave-requests?requestId=cmef5hoyb0015wqo2g3oab8mu 200 in 46ms
+ GET /api/auth/session 200 in 54ms
+ GET /api/leave-requests 200 in 65ms
+ GET /api/leave-requests?requestId=cmef5hoy2000zwqo2refheniz 200 in 58ms
+ GET /api/areas 200 in 44ms
+ GET /api/auth/session 200 in 48ms
+ GET /api/leave-requests 200 in 56ms
+ GET /api/areas 200 in 34ms
+ GET /api/auth/session 200 in 23ms
+ GET /api/auth/session 200 in 23ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 23ms
+ GET /api/auth/session 200 in 25ms
+ GET /api/auth/session 200 in 37ms
+ GET /api/auth/session 200 in 25ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 23ms
+ GET /api/auth/session 200 in 29ms
+ GET /api/auth/session 200 in 37ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 24ms
+ ○ Compiling /admin/employees/[id]/edit ...
+ ✓ Compiled /admin/employees/[id]/edit in 938ms (1301 modules)
+ GET /requests/new 200 in 1090ms
+ GET /api/auth/session 200 in 77ms
+ GET /admin/employees/cmef5hoxb000jwqo29btjta01/edit 200 in 1537ms
+ GET /admin/employees/cmef5hox0000dwqo2ubygf6z6/edit 200 in 1536ms
+ GET /admin/employees/cmef5hoxg000mwqo2qdfftegz/edit 200 in 1538ms
+ GET /admin/employees/cmef5hoxq000swqo2lo7aal4w/edit 200 in 1540ms
+ GET /admin/employees/cmef5hoxl000pwqo2gob7aonr/edit 200 in 1542ms
+ GET /admin/employees/cmef5hox5000gwqo2zsowjypk/edit 200 in 1532ms
+ GET /admin/employees/cmef5howv000awqo2aw6p8iqz/edit 200 in 1532ms
+ GET /admin/employees/cmef5howo0007wqo2hzhrvyly/edit 200 in 1512ms
+ GET /admin/employees/cmef5hoxv000vwqo20wqzy3z0/edit 200 in 1527ms
+ ○ Compiling /api/employees/me ...
+ ✓ Compiled /api/employees/me in 567ms (834 modules)
+ ✓ Compiled in 1ms (834 modules)
+ ✓ Compiled in 1ms (834 modules)
+ ✓ Compiled in 1ms (834 modules)
+ GET /api/auth/session 200 in 1696ms
+ GET /api/employees/me 200 in 1931ms
+ ✓ Compiled in 1ms (834 modules)
+ GET /api/areas 200 in 1352ms
+ ✓ Compiled in 0ms (834 modules)
+ ✓ Compiled /api/employees/[id] in 0ms (834 modules)
+ ✓ Compiled in 1ms (836 modules)
+ GET /api/auth/session 200 in 1295ms
+ ✓ Compiled in 0ms (836 modules)
+ GET /api/areas 200 in 1098ms
+ ✓ Compiled in 1ms (836 modules)
+ ✓ Compiled in 0ms (836 modules)
+ ✓ Compiled in 1ms (836 modules)
+ GET /api/auth/session 200 in 1231ms
+ GET /api/employees/cmef5hoxl000pwqo2gob7aonr 200 in 2075ms
+ ✓ Compiled in 1ms (836 modules)
+ GET /api/areas 200 in 1256ms
+ ✓ Compiled in 0ms (836 modules)
+ GET /api/auth/session 200 in 1385ms
+ ✓ Compiled in 0ms (836 modules)
+ ✓ Compiled in 0ms (836 modules)
+ ✓ Compiled in 0ms (836 modules)
+ GET /api/areas 200 in 1282ms
+ GET /api/employees/cmef5hoxq000swqo2lo7aal4w 200 in 1332ms
+ ✓ Compiled in 0ms (836 modules)
+ GET /api/auth/session 200 in 1230ms
+ ✓ Compiled in 1ms (836 modules)
+ GET /api/areas 200 in 1042ms
+ ✓ Compiled in 1ms (836 modules)
+ GET /api/auth/session 200 in 1287ms
+ ✓ Compiled in 0ms (836 modules)
+ ✓ Compiled in 0ms (836 modules)
+ ✓ Compiled in 0ms (836 modules)
+ GET /api/areas 200 in 1160ms
+ ✓ Compiled in 0ms (836 modules)
+ GET /api/auth/session 200 in 1209ms
+ ✓ Compiled in 0ms (836 modules)
+ GET /api/areas 200 in 959ms
+ ✓ Compiled in 0ms (836 modules)
+ GET /api/auth/session 200 in 1198ms
+ ✓ Compiled in 0ms (836 modules)
+ ✓ Compiled in 0ms (836 modules)
+ ✓ Compiled in 1ms (836 modules)
+ GET /api/areas 200 in 1178ms
+ GET /api/employees/cmef5howo0007wqo2hzhrvyly 200 in 1201ms
+ ✓ Compiled in 1ms (836 modules)
+ GET /api/auth/session 200 in 1195ms
+ ✓ Compiled in 0ms (836 modules)
+ GET /api/areas 200 in 916ms
+ GET /api/auth/session 200 in 1081ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/areas 200 in 249ms
+ GET /api/employees/cmef5hoxb000jwqo29btjta01 200 in 238ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/areas 200 in 36ms
+ GET /api/employees/cmef5hoxb000jwqo29btjta01 200 in 44ms
+ GET /api/auth/session 200 in 50ms
+ GET /api/areas 200 in 34ms
+ GET /api/employees/cmef5hox5000gwqo2zsowjypk 200 in 40ms
+ GET /api/auth/session 200 in 32ms
+ GET /api/areas 200 in 40ms
+ GET /api/employees/cmef5hox5000gwqo2zsowjypk 200 in 51ms
+ GET /api/auth/session 200 in 66ms
+ GET /api/areas 200 in 88ms
+ GET /api/employees/cmef5hox0000dwqo2ubygf6z6 200 in 86ms
+ GET /api/auth/session 200 in 25ms
+ GET /api/areas 200 in 31ms
+ GET /api/employees/cmef5hox0000dwqo2ubygf6z6 200 in 37ms
+ GET /api/auth/session 200 in 30ms
+ GET /api/areas 200 in 34ms
+ GET /api/employees/cmef5howv000awqo2aw6p8iqz 200 in 42ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/areas 200 in 37ms
+ GET /api/employees/cmef5howv000awqo2aw6p8iqz 200 in 38ms
+ GET /api/auth/session 200 in 37ms
+ GET /api/areas 200 in 39ms
+ GET /api/employees/cmef5hoxg000mwqo2qdfftegz 200 in 33ms
+ GET /api/auth/session 200 in 47ms
+ GET /api/employees/cmef5hoxg000mwqo2qdfftegz 200 in 29ms
+ GET /api/auth/session 200 in 28ms
+ GET /api/auth/session 200 in 22ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 22ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 47ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 24ms
+ GET /api/auth/session 200 in 27ms
+ GET / 200 in 60ms
+ GET / 200 in 43ms
+ GET / 200 in 44ms
+ GET /api/auth/session 200 in 51ms
+ GET /api/auth/session 200 in 28ms
+ GET /login?_rsc=1ebxd 200 in 34ms
+ GET / 200 in 36ms
+ GET / 200 in 36ms
+ GET / 200 in 38ms
+ GET / 200 in 37ms
+ GET / 200 in 41ms
+ GET / 200 in 42ms
+ GET / 200 in 34ms
+ GET / 200 in 47ms
+ GET /api/auth/session 200 in 43ms
+ GET /login?_rsc=1ebxd 200 in 32ms
+ GET /api/auth/session 200 in 31ms
+[?25h

@@ -1,0 +1,59 @@
+ ⨯ Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+    at (rsc)/./lib/auth-options.ts (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:492:16)
+    at __webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at (rsc)/./lib/auth.ts (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:602:71)
+    at __webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at (rsc)/./app/page.tsx (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:438:67)
+    at Function.__webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at async Promise.all (index 0)
+digest: "2988302657"
+ ⨯ Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+    at (rsc)/./lib/auth-options.ts (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:492:16)
+    at __webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at (rsc)/./lib/auth.ts (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:602:71)
+    at __webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at (rsc)/./app/page.tsx (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:438:67)
+    at Function.__webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at async Promise.all (index 0)
+digest: "2988302657"
+Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+    at new PrismaClient (/opt/hostedapp/node/root/app/node_modules/.prisma/client/default.js:43:11)
+    at (rsc)/./lib/auth-options.ts (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:492:16)
+    at __webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at (rsc)/./lib/auth.ts (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:602:71)
+    at __webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at (rsc)/./app/page.tsx (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:438:67)
+    at Function.__webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at async e7 (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396972)
+    at async tS (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400486)
+    at async tw (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401047)
+    at async tw (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401178)
+    at async tO (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2320)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2989 {
+  digest: '3036973178'
+}
+ ⨯ Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+    at (rsc)/./lib/auth-options.ts (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:492:16)
+    at __webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at (rsc)/./lib/auth.ts (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:602:71)
+    at __webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at (rsc)/./app/page.tsx (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:438:67)
+    at Function.__webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+digest: "3036973178"
+ ⨯ Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+    at new PrismaClient (/opt/hostedapp/node/root/app/node_modules/.prisma/client/default.js:43:11)
+    at (rsc)/./lib/auth-options.ts (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:492:16)
+    at __webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at (rsc)/./lib/auth.ts (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:602:71)
+    at __webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at (rsc)/./app/page.tsx (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/page.js:438:67)
+    at Function.__webpack_require__ (/home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:25:43)
+    at async e7 (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396972)
+    at async tS (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400486)
+    at async tw (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401047)
+    at async tw (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401178)
+    at async tO (/opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2320)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2989 {
+  digest: '3036973178',
+  page: '/'
+}

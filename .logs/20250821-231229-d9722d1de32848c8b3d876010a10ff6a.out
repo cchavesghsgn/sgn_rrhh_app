@@ -1,0 +1,3 @@
+components/employee-dashboard.tsx(198,54): error TS2551: Property 'User' does not exist on type 'Employee'. Did you mean 'user'?
+components/employee-dashboard.tsx(206,54): error TS2551: Property 'Area' does not exist on type 'Employee'. Did you mean 'area'?
+exit_code=2

@@ -1,0 +1,569 @@
+
+
+===== TS errors =====
+
+[Test Mode] ./app/api/areas/[id]/route.ts:97:14
+Type error: Property 'length' does not exist on type '{ employees: { id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; ... 10 more ...; totalAvailableHours: number; }[]; } & { ...; }'.
+
+[0m [90m  95 |[39m     }[0m
+[0m [90m  96 |[39m[0m
+[0m[31m[1m>[22m[39m[90m  97 |[39m     [36mif[39m (area[33m.[39mlength [33m>[39m [35m0[39m) {[0m
+[0m [90m     |[39m              [31m[1m^[22m[39m[0m
+[0m [90m  98 |[39m       [36mreturn[39m [33mNextResponse[39m[33m.[39mjson([0m
+[0m [90m  99 |[39m         { error[33m:[39m [32m'No se puede eliminar un área que tiene empleados asignados'[39m }[33m,[39m[0m
+[0m [90m 100 |[39m         { status[33m:[39m [35m400[39m }[0m
+
+[Test Mode] ./app/api/employees/[id]/route.ts:29:9
+Type error: Type '{ user: { select: { email: true; role: true; }; }; area: true; leaveRequests: { orderBy: { createdAt: string; }; take: number; }; }' is not assignable to type 'employeesInclude<DefaultArgs>'.
+  Object literal may only specify known properties, but 'user' does not exist in type 'employeesInclude<DefaultArgs>'. Did you mean to write 'User'?
+
+[0m [90m 27 |[39m       where[33m:[39m { id[33m:[39m params[33m.[39mid }[33m,[39m[0m
+[0m [90m 28 |[39m       include[33m:[39m {[0m
+[0m[31m[1m>[22m[39m[90m 29 |[39m         user[33m:[39m {[0m
+[0m [90m    |[39m         [31m[1m^[22m[39m[0m
+[0m [90m 30 |[39m           select[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m role[33m:[39m [36mtrue[39m }[0m
+[0m [90m 31 |[39m         }[33m,[39m[0m
+[0m [90m 32 |[39m         area[33m:[39m [36mtrue[39m[33m,[39m[0m
+
+[Test Mode] ./app/api/employees/[id]/route.ts:97:18
+Type error: Type '{ user: true; }' is not assignable to type 'employeesInclude<DefaultArgs>'.
+  Object literal may only specify known properties, but 'user' does not exist in type 'employeesInclude<DefaultArgs>'. Did you mean to write 'User'?
+
+[0m [90m  95 |[39m     [36mconst[39m existingEmployee [33m=[39m [36mawait[39m prisma[33m.[39memployees[33m.[39mfindUnique({[0m
+[0m [90m  96 |[39m       where[33m:[39m { id[33m:[39m params[33m.[39mid }[33m,[39m[0m
+[0m[31m[1m>[22m[39m[90m  97 |[39m       include[33m:[39m { user[33m:[39m [36mtrue[39m }[0m
+[0m [90m     |[39m                  [31m[1m^[22m[39m[0m
+[0m [90m  98 |[39m     })[33m;[39m[0m
+[0m [90m  99 |[39m[0m
+[0m [90m 100 |[39m     [36mif[39m ([33m![39mexistingEmployee) {[0m
+
+[Test Mode] ./app/api/employees/[id]/route.ts:108:36
+Type error: Property 'user' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; position: string; ... 9 more ...; totalAvailableHours: number; }'.
+
+[0m [90m 106 |[39m[0m
+[0m [90m 107 |[39m     [90m// Check if email is already used by another user[39m[0m
+[0m[31m[1m>[22m[39m[90m 108 |[39m     [36mif[39m (email [33m!==[39m existingEmployee[33m.[39muser[33m.[39memail) {[0m
+[0m [90m     |[39m                                    [31m[1m^[22m[39m[0m
+[0m [90m 109 |[39m       [36mconst[39m existingUser [33m=[39m [36mawait[39m prisma[33m.[39muser[33m.[39mfindUnique({[0m
+[0m [90m 110 |[39m         where[33m:[39m { email }[0m
+[0m [90m 111 |[39m       })[33m;[39m[0m
+
+[Test Mode] ./app/api/employees/[id]/route.ts:143:42
+Type error: Property 'user' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; position: string; ... 9 more ...; totalAvailableHours: number; }'.
+
+[0m [90m 141 |[39m           email[33m,[39m[0m
+[0m [90m 142 |[39m           name[33m:[39m [32m`${firstName} ${lastName}`[39m[33m,[39m[0m
+[0m[31m[1m>[22m[39m[90m 143 |[39m           role[33m:[39m role [33m||[39m existingEmployee[33m.[39muser[33m.[39mrole[0m
+[0m [90m     |[39m                                          [31m[1m^[22m[39m[0m
+[0m [90m 144 |[39m         }[0m
+[0m [90m 145 |[39m       })[33m;[39m[0m
+[0m [90m 146 |[39m[0m
+
+[Test Mode] ./app/api/employees/[id]/route.ts:148:44
+Type error: Property 'update' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">'.
+
+[0m [90m 146 |[39m[0m
+[0m [90m 147 |[39m       [90m// Update employee[39m[0m
+[0m[31m[1m>[22m[39m[90m 148 |[39m       [36mconst[39m updatedEmployee [33m=[39m [36mawait[39m prisma[33m.[39mupdate({[0m
+[0m [90m     |[39m                                            [31m[1m^[22m[39m[0m
+[0m [90m 149 |[39m         where[33m:[39m { id[33m:[39m params[33m.[39mid }[33m,[39m[0m
+[0m [90m 150 |[39m         data[33m:[39m {[0m
+[0m [90m 151 |[39m           dni[33m,[39m[0m
+
+[Test Mode] ./app/api/employees/[id]/route.ts:202:9
+Type error: Type '{ user: true; leaveRequests: true; }' is not assignable to type 'employeesInclude<DefaultArgs>'.
+  Object literal may only specify known properties, but 'user' does not exist in type 'employeesInclude<DefaultArgs>'. Did you mean to write 'User'?
+
+[0m [90m 200 |[39m       where[33m:[39m { id[33m:[39m params[33m.[39mid }[33m,[39m[0m
+[0m [90m 201 |[39m       include[33m:[39m {[0m
+[0m[31m[1m>[22m[39m[90m 202 |[39m         user[33m:[39m [36mtrue[39m[33m,[39m[0m
+[0m [90m     |[39m         [31m[1m^[22m[39m[0m
+[0m [90m 203 |[39m         leaveRequests[33m:[39m [36mtrue[39m[0m
+[0m [90m 204 |[39m       }[0m
+[0m [90m 205 |[39m     })[33m;[39m[0m
+
+[Test Mode] ./app/api/employees/[id]/route.ts:219:28
+Type error: Property 'leaveRequests' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; position: string; ... 9 more ...; totalAvailableHours: number; }'.
+
+[0m [90m 217 |[39m     [36mawait[39m prisma[33m.[39m$transaction([36masync[39m (prisma) [33m=>[39m {[0m
+[0m [90m 218 |[39m       [90m// Delete leave requests first[39m[0m
+[0m[31m[1m>[22m[39m[90m 219 |[39m       [36mif[39m (existingEmployee[33m.[39mleaveRequests[33m.[39mlength [33m>[39m [35m0[39m) {[0m
+[0m [90m     |[39m                            [31m[1m^[22m[39m[0m
+[0m [90m 220 |[39m         [36mawait[39m prisma[33m.[39mleave_requests[33m.[39mdeleteMany({[0m
+[0m [90m 221 |[39m           where[33m:[39m { employeeId[33m:[39m params[33m.[39mid }[0m
+[0m [90m 222 |[39m         })[33m;[39m[0m
+
+[Test Mode] ./app/api/employees/[id]/route.ts:226:20
+Type error: Property 'delete' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">'.
+
+[0m [90m 224 |[39m[0m
+[0m [90m 225 |[39m       [90m// Delete employee (this will also delete related records due to cascade)[39m[0m
+[0m[31m[1m>[22m[39m[90m 226 |[39m       [36mawait[39m prisma[33m.[39m[36mdelete[39m({[0m
+[0m [90m     |[39m                    [31m[1m^[22m[39m[0m
+[0m [90m 227 |[39m         where[33m:[39m { id[33m:[39m params[33m.[39mid }[0m
+[0m [90m 228 |[39m       })[33m;[39m[0m
+[0m [90m 229 |[39m[0m
+
+[Test Mode] ./app/api/employees/[id]/route.ts:236:38
+Type error: Property 'leaveRequests' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; position: string; ... 9 more ...; totalAvailableHours: number; }'.
+
+[0m [90m 234 |[39m     })[33m;[39m[0m
+[0m [90m 235 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 236 |[39m     [36mconst[39m message [33m=[39m existingEmployee[33m.[39mleaveRequests[33m.[39mlength [33m>[39m [35m0[39m [0m
+[0m [90m     |[39m                                      [31m[1m^[22m[39m[0m
+[0m [90m 237 |[39m       [33m?[39m [32m`Empleado eliminado exitosamente junto con ${existingEmployee.leaveRequests.length} solicitud(es) de licencia`[39m[0m
+[0m [90m 238 |[39m       [33m:[39m [32m'Empleado eliminado exitosamente'[39m[33m;[39m[0m
+[0m [90m 239 |[39m[0m
+
+[Test Mode] ./app/api/employees/[id]/route.ts:237:71
+Type error: Property 'leaveRequests' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; position: string; ... 9 more ...; totalAvailableHours: number; }'.
+
+[0m [90m 235 |[39m[0m
+[0m [90m 236 |[39m     [36mconst[39m message [33m=[39m existingEmployee[33m.[39mleaveRequests[33m.[39mlength [33m>[39m [35m0[39m [0m
+[0m[31m[1m>[22m[39m[90m 237 |[39m       [33m?[39m [32m`Empleado eliminado exitosamente junto con ${existingEmployee.leaveRequests.length} solicitud(es) de licencia`[39m[0m
+[0m [90m     |[39m                                                                       [31m[1m^[22m[39m[0m
+[0m [90m 238 |[39m       [33m:[39m [32m'Empleado eliminado exitosamente'[39m[33m;[39m[0m
+[0m [90m 239 |[39m[0m
+[0m [90m 240 |[39m     [36mreturn[39m [33mNextResponse[39m[33m.[39mjson({ message })[33m;[39m[0m
+
+[Test Mode] ./app/api/employees/me/route.ts:21:9
+Type error: Type '{ user: { select: { email: true; role: true; }; }; area: true; leaveRequests: { orderBy: { createdAt: string; }; take: number; }; }' is not assignable to type 'employeesInclude<DefaultArgs>'.
+  Object literal may only specify known properties, but 'user' does not exist in type 'employeesInclude<DefaultArgs>'. Did you mean to write 'User'?
+
+[0m [90m 19 |[39m       where[33m:[39m { userId[33m:[39m session[33m.[39muser[33m.[39mid }[33m,[39m[0m
+[0m [90m 20 |[39m       include[33m:[39m {[0m
+[0m[31m[1m>[22m[39m[90m 21 |[39m         user[33m:[39m {[0m
+[0m [90m    |[39m         [31m[1m^[22m[39m[0m
+[0m [90m 22 |[39m           select[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m role[33m:[39m [36mtrue[39m }[0m
+[0m [90m 23 |[39m         }[33m,[39m[0m
+[0m [90m 24 |[39m         area[33m:[39m [36mtrue[39m[33m,[39m[0m
+
+[Test Mode] ./app/api/employees/route.ts:24:9
+Type error: Type '{ user: { select: { email: true; role: true; }; }; area: true; leaveRequests: { orderBy: { createdAt: string; }; take: number; }; }' is not assignable to type 'employeesInclude<DefaultArgs>'.
+  Object literal may only specify known properties, but 'user' does not exist in type 'employeesInclude<DefaultArgs>'. Did you mean to write 'User'?
+
+[0m [90m 22 |[39m     [36mconst[39m employees [33m=[39m [36mawait[39m prisma[33m.[39memployees[33m.[39mfindMany({[0m
+[0m [90m 23 |[39m       include[33m:[39m {[0m
+[0m[31m[1m>[22m[39m[90m 24 |[39m         user[33m:[39m {[0m
+[0m [90m    |[39m         [31m[1m^[22m[39m[0m
+[0m [90m 25 |[39m           select[33m:[39m { email[33m:[39m [36mtrue[39m[33m,[39m role[33m:[39m [36mtrue[39m }[0m
+[0m [90m 26 |[39m         }[33m,[39m[0m
+[0m [90m 27 |[39m         area[33m:[39m [36mtrue[39m[33m,[39m[0m
+
+[Test Mode] ./app/api/employees/route.ts:119:37
+Type error: Property 'create' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">'.
+
+[0m [90m 117 |[39m       })[33m;[39m[0m
+[0m [90m 118 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 119 |[39m       [36mconst[39m employee [33m=[39m [36mawait[39m prisma[33m.[39mcreate({[0m
+[0m [90m     |[39m                                     [31m[1m^[22m[39m[0m
+[0m [90m 120 |[39m         data[33m:[39m {[0m
+[0m [90m 121 |[39m           userId[33m:[39m user[33m.[39mid[33m,[39m[0m
+[0m [90m 122 |[39m           dni[33m,[39m[0m
+
+[Test Mode] ./app/api/leave-requests/[id]/approve/route.ts:80:11
+Type error: Type '{ employee: { include: { area: true; user: true; }; }; }' is not assignable to type 'leave_requestsInclude<DefaultArgs>'.
+  Object literal may only specify known properties, but 'employee' does not exist in type 'leave_requestsInclude<DefaultArgs>'. Did you mean to write 'employees'?
+
+[0m [90m 78 |[39m         }[33m,[39m[0m
+[0m [90m 79 |[39m         include[33m:[39m {[0m
+[0m[31m[1m>[22m[39m[90m 80 |[39m           employee[33m:[39m {[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 81 |[39m             include[33m:[39m {[0m
+[0m [90m 82 |[39m               area[33m:[39m [36mtrue[39m[33m,[39m[0m
+[0m [90m 83 |[39m               user[33m:[39m [36mtrue[39m[0m
+
+[Test Mode] ./app/api/leave-requests/[id]/approve/route.ts:95:50
+Type error: Property 'vacationDays' does not exist on type '{ employees: { id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; ... 10 more ...; totalAvailableHours: number; }; } & { ...; }'.
+
+[0m [90m 93 |[39m         [36mcase[39m [32m'LICENSE'[39m[33m:[39m[0m
+[0m [90m 94 |[39m           [90m// LICENSE deducts vacation days (keep existing logic)[39m[0m
+[0m[31m[1m>[22m[39m[90m 95 |[39m           updateData[33m.[39mvacationDays [33m=[39m leaveRequest[33m.[39mvacationDays [33m-[39m daysToDeduct[33m;[39m[0m
+[0m [90m    |[39m                                                  [31m[1m^[22m[39m[0m
+[0m [90m 96 |[39m           [36mbreak[39m[33m;[39m[0m
+[0m [90m 97 |[39m         [36mcase[39m [32m'PERSONAL'[39m[33m:[39m[0m
+[0m [90m 98 |[39m           [90m// PERSONAL deducts from personalHours[39m[0m
+
+[Test Mode] ./app/api/leave-requests/[id]/approve/route.ts:99:51
+Type error: Property 'personalHours' does not exist on type '{ employees: { id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; ... 10 more ...; totalAvailableHours: number; }; } & { ...; }'.
+
+[0m [90m  97 |[39m         [36mcase[39m [32m'PERSONAL'[39m[33m:[39m[0m
+[0m [90m  98 |[39m           [90m// PERSONAL deducts from personalHours[39m[0m
+[0m[31m[1m>[22m[39m[90m  99 |[39m           updateData[33m.[39mpersonalHours [33m=[39m leaveRequest[33m.[39mpersonalHours [33m-[39m hoursToDeduct[33m;[39m[0m
+[0m [90m     |[39m                                                   [31m[1m^[22m[39m[0m
+[0m [90m 100 |[39m           [36mbreak[39m[33m;[39m[0m
+[0m [90m 101 |[39m         [36mcase[39m [32m'REMOTE'[39m[33m:[39m[0m
+[0m [90m 102 |[39m           [90m// REMOTE deducts from remoteHours[39m[0m
+
+[Test Mode] ./app/api/leave-requests/[id]/approve/route.ts:103:49
+Type error: Property 'remoteHours' does not exist on type '{ employees: { id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; ... 10 more ...; totalAvailableHours: number; }; } & { ...; }'.
+
+[0m [90m 101 |[39m         [36mcase[39m [32m'REMOTE'[39m[33m:[39m[0m
+[0m [90m 102 |[39m           [90m// REMOTE deducts from remoteHours[39m[0m
+[0m[31m[1m>[22m[39m[90m 103 |[39m           updateData[33m.[39mremoteHours [33m=[39m leaveRequest[33m.[39mremoteHours [33m-[39m hoursToDeduct[33m;[39m[0m
+[0m [90m     |[39m                                                 [31m[1m^[22m[39m[0m
+[0m [90m 104 |[39m           [36mbreak[39m[33m;[39m[0m
+[0m [90m 105 |[39m         [36mcase[39m [32m'HOURS'[39m[33m:[39m[0m
+[0m [90m 106 |[39m           [90m// HOURS deducts from availableHours[39m[0m
+
+[Test Mode] ./app/api/leave-requests/[id]/approve/route.ts:107:52
+Type error: Property 'availableHours' does not exist on type '{ employees: { id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; ... 10 more ...; totalAvailableHours: number; }; } & { ...; }'.
+
+[0m [90m 105 |[39m         [36mcase[39m [32m'HOURS'[39m[33m:[39m[0m
+[0m [90m 106 |[39m           [90m// HOURS deducts from availableHours[39m[0m
+[0m[31m[1m>[22m[39m[90m 107 |[39m           updateData[33m.[39mavailableHours [33m=[39m leaveRequest[33m.[39mavailableHours [33m-[39m hoursToDeduct[33m;[39m[0m
+[0m [90m     |[39m                                                    [31m[1m^[22m[39m[0m
+[0m [90m 108 |[39m           [36mbreak[39m[33m;[39m[0m
+[0m [90m 109 |[39m       }[0m
+[0m [90m 110 |[39m[0m
+
+[Test Mode] ./app/api/leave-requests/[id]/approve/route.ts:112:22
+Type error: Property 'update' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">'.
+
+[0m [90m 110 |[39m[0m
+[0m [90m 111 |[39m       [36mif[39m ([33mObject[39m[33m.[39mkeys(updateData)[33m.[39mlength [33m>[39m [35m0[39m) {[0m
+[0m[31m[1m>[22m[39m[90m 112 |[39m         [36mawait[39m prisma[33m.[39mupdate({[0m
+[0m [90m     |[39m                      [31m[1m^[22m[39m[0m
+[0m [90m 113 |[39m           where[33m:[39m { id[33m:[39m leaveRequest[33m.[39memployeeId }[33m,[39m[0m
+[0m [90m 114 |[39m           data[33m:[39m updateData[0m
+[0m [90m 115 |[39m         })[33m;[39m[0m
+
+[Test Mode] ./app/api/leave-requests/[id]/approve/route.ts:145:30
+Type error: Property 'user' does not exist on type '{ type: LeaveRequestType; id: string; createdAt: Date; updatedAt: Date; status: RequestStatus; employeeId: string; startDate: Date; endDate: Date; ... 6 more ...; adminNotes: string | null; }'.
+
+[0m [90m 143 |[39m[0m
+[0m [90m 144 |[39m       [36mconst[39m emailData[33m:[39m [33mRequestStatusEmailData[39m [33m=[39m {[0m
+[0m[31m[1m>[22m[39m[90m 145 |[39m         employeeName[33m:[39m result[33m.[39muser[33m.[39mname [33m||[39m [32m'Usuario'[39m[33m,[39m[0m
+[0m [90m     |[39m                              [31m[1m^[22m[39m[0m
+[0m [90m 146 |[39m         requestType[33m:[39m [33mLEAVE_REQUEST_TYPE_LABELS[39m[result[33m.[39mtype [36mas[39m keyof [36mtypeof[39m [33mLEAVE_REQUEST_TYPE_LABELS[39m] [33m||[39m result[33m.[39mtype[33m,[39m[0m
+[0m [90m 147 |[39m         requestDate[33m:[39m displayDate[33m,[39m[0m
+[0m [90m 148 |[39m         status[33m:[39m [32m'approved'[39m[33m,[39m[0m
+
+[Test Mode] ./app/api/leave-requests/[id]/approve/route.ts:153:44
+Type error: Property 'user' does not exist on type '{ type: LeaveRequestType; id: string; createdAt: Date; updatedAt: Date; status: RequestStatus; employeeId: string; startDate: Date; endDate: Date; ... 6 more ...; adminNotes: string | null; }'.
+
+[0m [90m 151 |[39m[0m
+[0m [90m 152 |[39m       [90m// Enviar correo de forma asíncrona para no bloquear la respuesta[39m[0m
+[0m[31m[1m>[22m[39m[90m 153 |[39m       sendRequestStatusNotification(result[33m.[39muser[33m.[39memail[33m,[39m emailData)[33m.[39m[36mcatch[39m(error [33m=>[39m {[0m
+[0m [90m     |[39m                                            [31m[1m^[22m[39m[0m
+[0m [90m 154 |[39m         console[33m.[39merror([32m'Error enviando notificación por correo:'[39m[33m,[39m error)[33m;[39m[0m
+[0m [90m 155 |[39m       })[33m;[39m[0m
+[0m [90m 156 |[39m     } [36mcatch[39m (emailError) {[0m
+
+[Test Mode] ./app/api/leave-requests/[id]/reject/route.ts:45:9
+Type error: Type '{ employee: { include: { area: true; user: true; }; }; }' is not assignable to type 'leave_requestsInclude<DefaultArgs>'.
+  Object literal may only specify known properties, but 'employee' does not exist in type 'leave_requestsInclude<DefaultArgs>'. Did you mean to write 'employees'?
+
+[0m [90m 43 |[39m       }[33m,[39m[0m
+[0m [90m 44 |[39m       include[33m:[39m {[0m
+[0m[31m[1m>[22m[39m[90m 45 |[39m         employee[33m:[39m {[0m
+[0m [90m    |[39m         [31m[1m^[22m[39m[0m
+[0m [90m 46 |[39m           include[33m:[39m {[0m
+[0m [90m 47 |[39m             area[33m:[39m [36mtrue[39m[33m,[39m[0m
+[0m [90m 48 |[39m             user[33m:[39m [36mtrue[39m[0m
+
+[Test Mode] ./app/api/leave-requests/[id]/reject/route.ts:78:38
+Type error: Property 'user' does not exist on type '{ type: LeaveRequestType; id: string; createdAt: Date; updatedAt: Date; status: RequestStatus; employeeId: string; startDate: Date; endDate: Date; ... 6 more ...; adminNotes: string | null; }'.
+
+[0m [90m 76 |[39m[0m
+[0m [90m 77 |[39m       [36mconst[39m emailData[33m:[39m [33mRequestStatusEmailData[39m [33m=[39m {[0m
+[0m[31m[1m>[22m[39m[90m 78 |[39m         employeeName[33m:[39m updatedRequest[33m.[39muser[33m.[39mname [33m||[39m [32m'Usuario'[39m[33m,[39m[0m
+[0m [90m    |[39m                                      [31m[1m^[22m[39m[0m
+[0m [90m 79 |[39m         requestType[33m:[39m [33mLEAVE_REQUEST_TYPE_LABELS[39m[updatedRequest[33m.[39mtype [36mas[39m keyof [36mtypeof[39m [33mLEAVE_REQUEST_TYPE_LABELS[39m] [33m||[39m updatedRequest[33m.[39mtype[33m,[39m[0m
+[0m [90m 80 |[39m         requestDate[33m:[39m displayDate[33m,[39m[0m
+[0m [90m 81 |[39m         status[33m:[39m [32m'rejected'[39m[33m,[39m[0m
+
+[Test Mode] ./app/api/leave-requests/[id]/reject/route.ts:86:52
+Type error: Property 'user' does not exist on type '{ type: LeaveRequestType; id: string; createdAt: Date; updatedAt: Date; status: RequestStatus; employeeId: string; startDate: Date; endDate: Date; ... 6 more ...; adminNotes: string | null; }'.
+
+[0m [90m 84 |[39m[0m
+[0m [90m 85 |[39m       [90m// Enviar correo de forma asíncrona para no bloquear la respuesta[39m[0m
+[0m[31m[1m>[22m[39m[90m 86 |[39m       sendRequestStatusNotification(updatedRequest[33m.[39muser[33m.[39memail[33m,[39m emailData)[33m.[39m[36mcatch[39m(error [33m=>[39m {[0m
+[0m [90m    |[39m                                                    [31m[1m^[22m[39m[0m
+[0m [90m 87 |[39m         console[33m.[39merror([32m'Error enviando notificación por correo:'[39m[33m,[39m error)[33m;[39m[0m
+[0m [90m 88 |[39m       })[33m;[39m[0m
+[0m [90m 89 |[39m     } [36mcatch[39m (emailError) {[0m
+
+[Test Mode] ./app/api/leave-requests/route.ts:51:9
+Type error: Type '{ employee: { include: { area: true; user: true; }; }; attachments: true; }' is not assignable to type 'leave_requestsInclude<DefaultArgs>'.
+  Object literal may only specify known properties, but 'employee' does not exist in type 'leave_requestsInclude<DefaultArgs>'. Did you mean to write 'employees'?
+
+[0m [90m 49 |[39m       where[33m:[39m whereClause[33m,[39m[0m
+[0m [90m 50 |[39m       include[33m:[39m {[0m
+[0m[31m[1m>[22m[39m[90m 51 |[39m         employee[33m:[39m {[0m
+[0m [90m    |[39m         [31m[1m^[22m[39m[0m
+[0m [90m 52 |[39m           include[33m:[39m {[0m
+[0m [90m 53 |[39m             area[33m:[39m [36mtrue[39m[33m,[39m[0m
+[0m [90m 54 |[39m             user[33m:[39m [36mtrue[39m[0m
+
+[Test Mode] ./app/api/leave-requests/route.ts:182:9
+Type error: Type '{ employee: { include: { area: true; user: true; }; }; }' is not assignable to type 'leave_requestsInclude<DefaultArgs>'.
+  Object literal may only specify known properties, but 'employee' does not exist in type 'leave_requestsInclude<DefaultArgs>'. Did you mean to write 'employees'?
+
+[0m [90m 180 |[39m       }[33m,[39m[0m
+[0m [90m 181 |[39m       include[33m:[39m {[0m
+[0m[31m[1m>[22m[39m[90m 182 |[39m         employee[33m:[39m {[0m
+[0m [90m     |[39m         [31m[1m^[22m[39m[0m
+[0m [90m 183 |[39m           include[33m:[39m {[0m
+[0m [90m 184 |[39m             area[33m:[39m [36mtrue[39m[33m,[39m[0m
+[0m [90m 185 |[39m             user[33m:[39m [36mtrue[39m[0m
+
+[Test Mode] ./app/api/leave-requests/route.ts:224:38
+Type error: Property 'user' does not exist on type '{ type: LeaveRequestType; id: string; createdAt: Date; updatedAt: Date; status: RequestStatus; employeeId: string; startDate: Date; endDate: Date; ... 6 more ...; adminNotes: string | null; }'.
+
+[0m [90m 222 |[39m[0m
+[0m [90m 223 |[39m         [36mconst[39m emailData[33m:[39m [33mNewRequestEmailData[39m [33m=[39m {[0m
+[0m[31m[1m>[22m[39m[90m 224 |[39m           employeeName[33m:[39m leaveRequest[33m.[39muser[33m.[39mname [33m||[39m [32m'Usuario'[39m[33m,[39m[0m
+[0m [90m     |[39m                                      [31m[1m^[22m[39m[0m
+[0m [90m 225 |[39m           employeeEmail[33m:[39m leaveRequest[33m.[39muser[33m.[39memail[33m,[39m[0m
+[0m [90m 226 |[39m           requestType[33m:[39m [33mLEAVE_REQUEST_TYPE_LABELS[39m[type [36mas[39m keyof [36mtypeof[39m [33mLEAVE_REQUEST_TYPE_LABELS[39m] [33m||[39m type[33m,[39m[0m
+[0m [90m 227 |[39m           requestDate[33m:[39m displayDate[33m,[39m[0m
+
+[Test Mode] ./app/api/leave-requests/route.ts:225:39
+Type error: Property 'user' does not exist on type '{ type: LeaveRequestType; id: string; createdAt: Date; updatedAt: Date; status: RequestStatus; employeeId: string; startDate: Date; endDate: Date; ... 6 more ...; adminNotes: string | null; }'.
+
+[0m [90m 223 |[39m         [36mconst[39m emailData[33m:[39m [33mNewRequestEmailData[39m [33m=[39m {[0m
+[0m [90m 224 |[39m           employeeName[33m:[39m leaveRequest[33m.[39muser[33m.[39mname [33m||[39m [32m'Usuario'[39m[33m,[39m[0m
+[0m[31m[1m>[22m[39m[90m 225 |[39m           employeeEmail[33m:[39m leaveRequest[33m.[39muser[33m.[39memail[33m,[39m[0m
+[0m [90m     |[39m                                       [31m[1m^[22m[39m[0m
+[0m [90m 226 |[39m           requestType[33m:[39m [33mLEAVE_REQUEST_TYPE_LABELS[39m[type [36mas[39m keyof [36mtypeof[39m [33mLEAVE_REQUEST_TYPE_LABELS[39m] [33m||[39m type[33m,[39m[0m
+[0m [90m 227 |[39m           requestDate[33m:[39m displayDate[33m,[39m[0m
+[0m [90m 228 |[39m           reason[33m:[39m reason[33m,[39m[0m
+
+[Test Mode] ./lib/calendar.ts:69:42
+Type error: Property 'firstName' does not exist on type 'LeaveRequest & { employee: Employee; }'.
+
+[0m [90m 67 |[39m     [0m
+[0m [90m 68 |[39m     [90m// Preparar datos del evento[39m[0m
+[0m[31m[1m>[22m[39m[90m 69 |[39m     [36mconst[39m employeeName [33m=[39m [32m`${leaveRequest.firstName} ${leaveRequest.lastName}`[39m[33m;[39m[0m
+[0m [90m    |[39m                                          [31m[1m^[22m[39m[0m
+[0m [90m 70 |[39m     [36mconst[39m requestType [33m=[39m [33mLEAVE_REQUEST_TYPE_LABELS[39m[leaveRequest[33m.[39mtype] [33m||[39m leaveRequest[33m.[39mtype[33m;[39m[0m
+[0m [90m 71 |[39m     [0m
+[0m [90m 72 |[39m     [36mconst[39m eventData[33m:[39m [33mCalendarEventData[39m [33m=[39m {[0m
+
+[Test Mode] ./lib/calendar.ts:69:68
+Type error: Property 'lastName' does not exist on type 'LeaveRequest & { employee: Employee; }'.
+
+[0m [90m 67 |[39m     [0m
+[0m [90m 68 |[39m     [90m// Preparar datos del evento[39m[0m
+[0m[31m[1m>[22m[39m[90m 69 |[39m     [36mconst[39m employeeName [33m=[39m [32m`${leaveRequest.firstName} ${leaveRequest.lastName}`[39m[33m;[39m[0m
+[0m [90m    |[39m                                                                    [31m[1m^[22m[39m[0m
+[0m [90m 70 |[39m     [36mconst[39m requestType [33m=[39m [33mLEAVE_REQUEST_TYPE_LABELS[39m[leaveRequest[33m.[39mtype] [33m||[39m leaveRequest[33m.[39mtype[33m;[39m[0m
+[0m [90m 71 |[39m     [0m
+[0m [90m 72 |[39m     [36mconst[39m eventData[33m:[39m [33mCalendarEventData[39m [33m=[39m {[0m
+
+[Test Mode] ./scripts/seed-development.ts:23:16
+Type error: Property 'attachment' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'attachments'?
+
+[0m [90m 21 |[39m[0m
+[0m [90m 22 |[39m   [90m// Limpiar datos existentes (solo en desarrollo)[39m[0m
+[0m[31m[1m>[22m[39m[90m 23 |[39m   [36mawait[39m prisma[33m.[39mattachment[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m    |[39m                [31m[1m^[22m[39m[0m
+[0m [90m 24 |[39m   [36mawait[39m prisma[33m.[39mleave_requests[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m 25 |[39m   [36mawait[39m prisma[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m 26 |[39m   [36mawait[39m prisma[33m.[39muser[33m.[39mdeleteMany()[33m;[39m[0m
+
+[Test Mode] ./scripts/seed-development.ts:25:16
+Type error: Property 'deleteMany' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+
+[0m [90m 23 |[39m   [36mawait[39m prisma[33m.[39mattachment[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m 24 |[39m   [36mawait[39m prisma[33m.[39mleave_requests[33m.[39mdeleteMany()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 25 |[39m   [36mawait[39m prisma[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m    |[39m                [31m[1m^[22m[39m[0m
+[0m [90m 26 |[39m   [36mawait[39m prisma[33m.[39muser[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m 27 |[39m   [36mawait[39m prisma[33m.[39marea[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m 28 |[39m[0m
+
+[Test Mode] ./scripts/seed-development.ts:81:38
+Type error: Property 'create' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+
+[0m [90m 79 |[39m   })[33m;[39m[0m
+[0m [90m 80 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 81 |[39m   [36mconst[39m adminEmployee [33m=[39m [36mawait[39m prisma[33m.[39mcreate({[0m
+[0m [90m    |[39m                                      [31m[1m^[22m[39m[0m
+[0m [90m 82 |[39m     data[33m:[39m {[0m
+[0m [90m 83 |[39m       userId[33m:[39m adminUser[33m.[39mid[33m,[39m[0m
+[0m [90m 84 |[39m       dni[33m:[39m [32m'12345678'[39m[33m,[39m[0m
+
+[Test Mode] ./scripts/seed-development.ts:140:35
+Type error: Property 'create' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+
+[0m [90m 138 |[39m     })[33m;[39m[0m
+[0m [90m 139 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 140 |[39m     [36mconst[39m employee [33m=[39m [36mawait[39m prisma[33m.[39mcreate({[0m
+[0m [90m     |[39m                                   [31m[1m^[22m[39m[0m
+[0m [90m 141 |[39m       data[33m:[39m {[0m
+[0m [90m 142 |[39m         userId[33m:[39m user[33m.[39mid[33m,[39m[0m
+[0m [90m 143 |[39m         dni[33m:[39m data[33m.[39mdni[33m,[39m[0m
+
+[Test Mode] ./scripts/seed-production.ts:72:40
+Type error: Property 'create' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+
+[0m [90m 70 |[39m     })[33m;[39m[0m
+[0m [90m 71 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 72 |[39m     [36mconst[39m adminEmployee [33m=[39m [36mawait[39m prisma[33m.[39mcreate({[0m
+[0m [90m    |[39m                                        [31m[1m^[22m[39m[0m
+[0m [90m 73 |[39m       data[33m:[39m {[0m
+[0m [90m 74 |[39m         userId[33m:[39m adminUser[33m.[39mid[33m,[39m[0m
+[0m [90m 75 |[39m         dni[33m:[39m [32m'12345678'[39m[33m,[39m[0m
+
+[Test Mode] ./scripts/seed.ts:11:16
+Type error: Property 'attachment' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'attachments'?
+
+[0m [90m  9 |[39m[0m
+[0m [90m 10 |[39m   [90m// Limpiar datos existentes (opcional)[39m[0m
+[0m[31m[1m>[22m[39m[90m 11 |[39m   [36mawait[39m prisma[33m.[39mattachment[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m    |[39m                [31m[1m^[22m[39m[0m
+[0m [90m 12 |[39m   [36mawait[39m prisma[33m.[39mleave_requests[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m 13 |[39m   [36mawait[39m prisma[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m 14 |[39m   [36mawait[39m prisma[33m.[39muser[33m.[39mdeleteMany()[33m;[39m[0m
+
+[Test Mode] ./scripts/seed.ts:13:16
+Type error: Property 'deleteMany' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+
+[0m [90m 11 |[39m   [36mawait[39m prisma[33m.[39mattachment[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m 12 |[39m   [36mawait[39m prisma[33m.[39mleave_requests[33m.[39mdeleteMany()[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 13 |[39m   [36mawait[39m prisma[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m    |[39m                [31m[1m^[22m[39m[0m
+[0m [90m 14 |[39m   [36mawait[39m prisma[33m.[39muser[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m 15 |[39m   [36mawait[39m prisma[33m.[39marea[33m.[39mdeleteMany()[33m;[39m[0m
+[0m [90m 16 |[39m[0m
+
+[Test Mode] ./scripts/seed.ts:69:38
+Type error: Property 'create' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+
+[0m [90m 67 |[39m   })[33m;[39m[0m
+[0m [90m 68 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 69 |[39m   [36mconst[39m adminEmployee [33m=[39m [36mawait[39m prisma[33m.[39mcreate({[0m
+[0m [90m    |[39m                                      [31m[1m^[22m[39m[0m
+[0m [90m 70 |[39m     data[33m:[39m {[0m
+[0m [90m 71 |[39m       userId[33m:[39m adminUser[33m.[39mid[33m,[39m[0m
+[0m [90m 72 |[39m       dni[33m:[39m [32m'12345678'[39m[33m,[39m[0m
+
+[Test Mode] ./scripts/seed.ts:194:35
+Type error: Property 'create' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+
+[0m [90m 192 |[39m     })[33m;[39m[0m
+[0m [90m 193 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 194 |[39m     [36mconst[39m employee [33m=[39m [36mawait[39m prisma[33m.[39mcreate({[0m
+[0m [90m     |[39m                                   [31m[1m^[22m[39m[0m
+[0m [90m 195 |[39m       data[33m:[39m {[0m
+[0m [90m 196 |[39m         userId[33m:[39m user[33m.[39mid[33m,[39m[0m
+[0m [90m 197 |[39m         dni[33m:[39m data[33m.[39mdni[33m,[39m[0m
+
+[Test Mode] ./scripts/test-login.ts:45:38
+Type error: Property 'firstName' does not exist on type '{ employees: { id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; ... 10 more ...; totalAvailableHours: number; } | null; } & { ...; }'.
+
+[0m [90m 43 |[39m     [36mif[39m (user[33m.[39memployees) {[0m
+[0m [90m 44 |[39m       console[33m.[39mlog([32m'\n👥 Información del empleado:'[39m)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 45 |[39m       console[33m.[39mlog([32m'   Nombre:'[39m[33m,[39m user[33m.[39mfirstName[33m,[39m user[33m.[39mlastName)[33m;[39m[0m
+[0m [90m    |[39m                                      [31m[1m^[22m[39m[0m
+[0m [90m 46 |[39m       console[33m.[39mlog([32m'   DNI:'[39m[33m,[39m user[33m.[39mdni)[33m;[39m[0m
+[0m [90m 47 |[39m       console[33m.[39mlog([32m'   Área:'[39m[33m,[39m user[33m.[39mareaId)[33m;[39m[0m
+[0m [90m 48 |[39m       console[33m.[39mlog([32m'   Posición:'[39m[33m,[39m user[33m.[39mposition)[33m;[39m[0m
+
+[Test Mode] ./scripts/test-login.ts:45:54
+Type error: Property 'lastName' does not exist on type '{ employees: { id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; ... 10 more ...; totalAvailableHours: number; } | null; } & { ...; }'.
+
+[0m [90m 43 |[39m     [36mif[39m (user[33m.[39memployees) {[0m
+[0m [90m 44 |[39m       console[33m.[39mlog([32m'\n👥 Información del empleado:'[39m)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 45 |[39m       console[33m.[39mlog([32m'   Nombre:'[39m[33m,[39m user[33m.[39mfirstName[33m,[39m user[33m.[39mlastName)[33m;[39m[0m
+[0m [90m    |[39m                                                      [31m[1m^[22m[39m[0m
+[0m [90m 46 |[39m       console[33m.[39mlog([32m'   DNI:'[39m[33m,[39m user[33m.[39mdni)[33m;[39m[0m
+[0m [90m 47 |[39m       console[33m.[39mlog([32m'   Área:'[39m[33m,[39m user[33m.[39mareaId)[33m;[39m[0m
+[0m [90m 48 |[39m       console[33m.[39mlog([32m'   Posición:'[39m[33m,[39m user[33m.[39mposition)[33m;[39m[0m
+
+[Test Mode] ./scripts/test-login.ts:46:35
+Type error: Property 'dni' does not exist on type '{ employees: { id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; ... 10 more ...; totalAvailableHours: number; } | null; } & { ...; }'.
+
+[0m [90m 44 |[39m       console[33m.[39mlog([32m'\n👥 Información del empleado:'[39m)[33m;[39m[0m
+[0m [90m 45 |[39m       console[33m.[39mlog([32m'   Nombre:'[39m[33m,[39m user[33m.[39mfirstName[33m,[39m user[33m.[39mlastName)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 46 |[39m       console[33m.[39mlog([32m'   DNI:'[39m[33m,[39m user[33m.[39mdni)[33m;[39m[0m
+[0m [90m    |[39m                                   [31m[1m^[22m[39m[0m
+[0m [90m 47 |[39m       console[33m.[39mlog([32m'   Área:'[39m[33m,[39m user[33m.[39mareaId)[33m;[39m[0m
+[0m [90m 48 |[39m       console[33m.[39mlog([32m'   Posición:'[39m[33m,[39m user[33m.[39mposition)[33m;[39m[0m
+[0m [90m 49 |[39m     }[0m
+
+[Test Mode] ./scripts/test-login.ts:47:36
+Type error: Property 'areaId' does not exist on type '{ employees: { id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; ... 10 more ...; totalAvailableHours: number; } | null; } & { ...; }'.
+
+[0m [90m 45 |[39m       console[33m.[39mlog([32m'   Nombre:'[39m[33m,[39m user[33m.[39mfirstName[33m,[39m user[33m.[39mlastName)[33m;[39m[0m
+[0m [90m 46 |[39m       console[33m.[39mlog([32m'   DNI:'[39m[33m,[39m user[33m.[39mdni)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 47 |[39m       console[33m.[39mlog([32m'   Área:'[39m[33m,[39m user[33m.[39mareaId)[33m;[39m[0m
+[0m [90m    |[39m                                    [31m[1m^[22m[39m[0m
+[0m [90m 48 |[39m       console[33m.[39mlog([32m'   Posición:'[39m[33m,[39m user[33m.[39mposition)[33m;[39m[0m
+[0m [90m 49 |[39m     }[0m
+[0m [90m 50 |[39m[0m
+
+[Test Mode] ./scripts/test-login.ts:48:40
+Type error: Property 'position' does not exist on type '{ employees: { id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; ... 10 more ...; totalAvailableHours: number; } | null; } & { ...; }'.
+
+[0m [90m 46 |[39m       console[33m.[39mlog([32m'   DNI:'[39m[33m,[39m user[33m.[39mdni)[33m;[39m[0m
+[0m [90m 47 |[39m       console[33m.[39mlog([32m'   Área:'[39m[33m,[39m user[33m.[39mareaId)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 48 |[39m       console[33m.[39mlog([32m'   Posición:'[39m[33m,[39m user[33m.[39mposition)[33m;[39m[0m
+[0m [90m    |[39m                                        [31m[1m^[22m[39m[0m
+[0m [90m 49 |[39m     }[0m
+[0m [90m 50 |[39m[0m
+[0m [90m 51 |[39m   } [36mcatch[39m (error) {[0m
+
+[Test Mode] ./scripts/verify-admin.ts:16:7
+Type error: Type '{ employee: true; }' is not assignable to type 'UserInclude<DefaultArgs>'.
+  Object literal may only specify known properties, but 'employee' does not exist in type 'UserInclude<DefaultArgs>'. Did you mean to write 'employees'?
+
+[0m [90m 14 |[39m     }[33m,[39m[0m
+[0m [90m 15 |[39m     include[33m:[39m {[0m
+[0m[31m[1m>[22m[39m[90m 16 |[39m       employee[33m:[39m [36mtrue[39m[0m
+[0m [90m    |[39m       [31m[1m^[22m[39m[0m
+[0m [90m 17 |[39m     }[0m
+[0m [90m 18 |[39m   })[33m;[39m[0m
+[0m [90m 19 |[39m[0m
+
+[Test Mode] ./scripts/verify-admin.ts:32:17
+Type error: Property 'employee' does not exist on type '{ id: string; name: string | null; email: string; password: string; emailVerified: Date | null; image: string | null; role: UserRole; createdAt: Date; updatedAt: Date; }'.
+
+[0m [90m 30 |[39m   console[33m.[39mlog([32m'- Password Hash:'[39m[33m,[39m adminUser[33m.[39mpassword [33m?[39m [32m'Presente'[39m [33m:[39m [32m'AUSENTE'[39m)[33m;[39m[0m
+[0m [90m 31 |[39m   [0m
+[0m[31m[1m>[22m[39m[90m 32 |[39m   [36mif[39m (adminUser[33m.[39memployee) {[0m
+[0m [90m    |[39m                 [31m[1m^[22m[39m[0m
+[0m [90m 33 |[39m     console[33m.[39mlog([32m'- Empleado vinculado:'[39m[33m,[39m adminUser[33m.[39mfirstName[33m,[39m adminUser[33m.[39mlastName)[33m;[39m[0m
+[0m [90m 34 |[39m   }[0m
+[0m [90m 35 |[39m[0m
+
+[Test Mode] ./scripts/verify-admin.ts:33:52
+Type error: Property 'firstName' does not exist on type '{ id: string; name: string | null; email: string; password: string; emailVerified: Date | null; image: string | null; role: UserRole; createdAt: Date; updatedAt: Date; }'.
+
+[0m [90m 31 |[39m   [0m
+[0m [90m 32 |[39m   [36mif[39m (adminUser[33m.[39memployee) {[0m
+[0m[31m[1m>[22m[39m[90m 33 |[39m     console[33m.[39mlog([32m'- Empleado vinculado:'[39m[33m,[39m adminUser[33m.[39mfirstName[33m,[39m adminUser[33m.[39mlastName)[33m;[39m[0m
+[0m [90m    |[39m                                                    [31m[1m^[22m[39m[0m
+[0m [90m 34 |[39m   }[0m
+[0m [90m 35 |[39m[0m
+[0m [90m 36 |[39m   [90m// Verificar si la contraseña es correcta[39m[0m
+
+[Test Mode] ./scripts/verify-admin.ts:33:73
+Type error: Property 'lastName' does not exist on type '{ id: string; name: string | null; email: string; password: string; emailVerified: Date | null; image: string | null; role: UserRole; createdAt: Date; updatedAt: Date; }'.
+
+[0m [90m 31 |[39m   [0m
+[0m [90m 32 |[39m   [36mif[39m (adminUser[33m.[39memployee) {[0m
+[0m[31m[1m>[22m[39m[90m 33 |[39m     console[33m.[39mlog([32m'- Empleado vinculado:'[39m[33m,[39m adminUser[33m.[39mfirstName[33m,[39m adminUser[33m.[39mlastName)[33m;[39m[0m
+[0m [90m    |[39m                                                                         [31m[1m^[22m[39m[0m
+[0m [90m 34 |[39m   }[0m
+[0m [90m 35 |[39m[0m
+[0m [90m 36 |[39m   [90m// Verificar si la contraseña es correcta[39m[0m
+
+===== TS errors =====
+
+
+Failed to compile.
+
+./app/api/areas/[id]/route.ts:97:14
+Type error: Property 'length' does not exist on type '{ employees: { id: string; createdAt: Date; updatedAt: Date; userId: string; dni: string; firstName: string; lastName: string; birthDate: Date; hireDate: Date; areaId: string; ... 10 more ...; totalAvailableHours: number; }[]; } & { ...; }'.
+
+[0m [90m  95 |[39m     }[0m
+[0m [90m  96 |[39m[0m
+[0m[31m[1m>[22m[39m[90m  97 |[39m     [36mif[39m (area[33m.[39mlength [33m>[39m [35m0[39m) {[0m
+[0m [90m     |[39m              [31m[1m^[22m[39m[0m
+[0m [90m  98 |[39m       [36mreturn[39m [33mNextResponse[39m[33m.[39mjson([0m
+[0m [90m  99 |[39m         { error[33m:[39m [32m'No se puede eliminar un área que tiene empleados asignados'[39m }[33m,[39m[0m
+[0m [90m 100 |[39m         { status[33m:[39m [35m400[39m }[0m
+Next.js build worker exited with code: 1 and signal: null

@@ -1,0 +1,3 @@
+lib/calendar.ts(22,20): error TS2304: Cannot find name 'google'.
+lib/calendar.ts(122,28): error TS2304: Cannot find name 'calendar'.
+exit_code=2

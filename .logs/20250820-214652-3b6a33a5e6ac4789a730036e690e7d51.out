@@ -1,0 +1,2 @@
+lib/email.ts(6,21): error TS2551: Property 'createTransporter' does not exist on type 'typeof import("/opt/hostedapp/node/root/app/node_modules/@types/nodemailer/index")'. Did you mean 'createTransport'?
+exit_code=2

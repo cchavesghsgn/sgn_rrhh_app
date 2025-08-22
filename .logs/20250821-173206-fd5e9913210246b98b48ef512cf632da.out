@@ -1,0 +1,2 @@
+app/api/leave-requests/[id]/approve/route.ts(97,14): error TS2678: Type '"VACATION"' is not comparable to type 'LeaveRequestType'.
+exit_code=2

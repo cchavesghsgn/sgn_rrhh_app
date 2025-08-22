@@ -1,0 +1,10 @@
+No local changes to save
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .abacus.donotdelete
+	modified:   app/.env
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Dropped refs/stash@{0} (ea520bfe2f3244b3775ce1f2f8381a6569dc0634)

@@ -1,0 +1,97 @@
+app/api/areas/route.ts(59,7): error TS2322: Type '{ name: any; description: any; }' is not assignable to type '(Without<AreaCreateInput, AreaUncheckedCreateInput> & AreaUncheckedCreateInput) | (Without<...> & AreaCreateInput)'.
+  Type '{ name: any; description: any; }' is not assignable to type 'Without<AreaUncheckedCreateInput, AreaCreateInput> & AreaCreateInput'.
+    Type '{ name: any; description: any; }' is missing the following properties from type 'AreaCreateInput': id, updatedAt
+app/api/employees/[id]/route.ts(26,35): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+app/api/employees/[id]/route.ts(95,43): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+app/api/employees/[id]/route.ts(123,48): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+app/api/employees/[id]/route.ts(148,44): error TS2551: Property 'employee' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">'. Did you mean 'employees'?
+app/api/employees/[id]/route.ts(199,43): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+app/api/employees/[id]/route.ts(220,22): error TS2551: Property 'leaveRequest' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">'. Did you mean 'leave_requests'?
+app/api/employees/[id]/route.ts(226,20): error TS2551: Property 'employee' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">'. Did you mean 'employees'?
+app/api/employees/me/route.ts(18,35): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+app/api/employees/route.ts(22,36): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+app/api/employees/route.ts(94,43): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+app/api/employees/route.ts(111,9): error TS2322: Type '{ email: any; password: any; name: string; role: any; }' is not assignable to type '(Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)'.
+  Type '{ email: any; password: any; name: string; role: any; }' is not assignable to type 'Without<UserUncheckedCreateInput, UserCreateInput> & UserCreateInput'.
+    Type '{ email: any; password: any; name: string; role: any; }' is missing the following properties from type 'UserCreateInput': id, updatedAt
+app/api/employees/route.ts(119,37): error TS2551: Property 'employee' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">'. Did you mean 'employees'?
+app/api/leave-requests/[id]/approve/route.ts(29,39): error TS2551: Property 'leaveRequest' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'leave_requests'?
+app/api/leave-requests/[id]/approve/route.ts(73,43): error TS2551: Property 'leaveRequest' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">'. Did you mean 'leave_requests'?
+app/api/leave-requests/[id]/approve/route.ts(112,22): error TS2551: Property 'employee' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">'. Did you mean 'employees'?
+app/api/leave-requests/[id]/reject/route.ts(26,39): error TS2551: Property 'leaveRequest' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'leave_requests'?
+app/api/leave-requests/[id]/reject/route.ts(38,41): error TS2551: Property 'leaveRequest' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'leave_requests'?
+app/api/leave-requests/route.ts(29,37): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+app/api/leave-requests/route.ts(48,40): error TS2551: Property 'leaveRequest' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'leave_requests'?
+app/api/leave-requests/route.ts(81,35): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+app/api/leave-requests/route.ts(167,39): error TS2551: Property 'leaveRequest' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'leave_requests'?
+app/api/signup/route.ts(37,7): error TS2322: Type '{ email: any; password: string; name: string; role: "EMPLOYEE"; }' is not assignable to type '(Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)'.
+  Type '{ email: any; password: string; name: string; role: "EMPLOYEE"; }' is not assignable to type 'Without<UserUncheckedCreateInput, UserCreateInput> & UserCreateInput'.
+    Type '{ email: any; password: string; name: string; role: "EMPLOYEE"; }' is missing the following properties from type 'UserCreateInput': id, updatedAt
+scripts/backup-db.ts(28,36): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+scripts/backup-db.ts(29,40): error TS2551: Property 'leaveRequest' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'leave_requests'?
+scripts/seed-development.ts(23,16): error TS2551: Property 'attachment' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'attachments'?
+scripts/seed-development.ts(24,16): error TS2551: Property 'leaveRequest' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'leave_requests'?
+scripts/seed-development.ts(25,16): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+scripts/seed-development.ts(34,7): error TS2322: Type '{ name: string; description: string; }' is not assignable to type '(Without<AreaCreateInput, AreaUncheckedCreateInput> & AreaUncheckedCreateInput) | (Without<...> & AreaCreateInput)'.
+  Type '{ name: string; description: string; }' is not assignable to type 'Without<AreaUncheckedCreateInput, AreaCreateInput> & AreaCreateInput'.
+    Type '{ name: string; description: string; }' is missing the following properties from type 'AreaCreateInput': id, updatedAt
+scripts/seed-development.ts(40,7): error TS2322: Type '{ name: string; description: string; }' is not assignable to type '(Without<AreaCreateInput, AreaUncheckedCreateInput> & AreaUncheckedCreateInput) | (Without<...> & AreaCreateInput)'.
+  Type '{ name: string; description: string; }' is not assignable to type 'Without<AreaUncheckedCreateInput, AreaCreateInput> & AreaCreateInput'.
+    Type '{ name: string; description: string; }' is missing the following properties from type 'AreaCreateInput': id, updatedAt
+scripts/seed-development.ts(46,7): error TS2322: Type '{ name: string; description: string; }' is not assignable to type '(Without<AreaCreateInput, AreaUncheckedCreateInput> & AreaUncheckedCreateInput) | (Without<...> & AreaCreateInput)'.
+  Type '{ name: string; description: string; }' is not assignable to type 'Without<AreaUncheckedCreateInput, AreaCreateInput> & AreaCreateInput'.
+    Type '{ name: string; description: string; }' is missing the following properties from type 'AreaCreateInput': id, updatedAt
+scripts/seed-development.ts(52,7): error TS2322: Type '{ name: string; description: string; }' is not assignable to type '(Without<AreaCreateInput, AreaUncheckedCreateInput> & AreaUncheckedCreateInput) | (Without<...> & AreaCreateInput)'.
+  Type '{ name: string; description: string; }' is not assignable to type 'Without<AreaUncheckedCreateInput, AreaCreateInput> & AreaCreateInput'.
+    Type '{ name: string; description: string; }' is missing the following properties from type 'AreaCreateInput': id, updatedAt
+scripts/seed-development.ts(58,7): error TS2322: Type '{ name: string; description: string; }' is not assignable to type '(Without<AreaCreateInput, AreaUncheckedCreateInput> & AreaUncheckedCreateInput) | (Without<...> & AreaCreateInput)'.
+  Type '{ name: string; description: string; }' is not assignable to type 'Without<AreaUncheckedCreateInput, AreaCreateInput> & AreaCreateInput'.
+    Type '{ name: string; description: string; }' is missing the following properties from type 'AreaCreateInput': id, updatedAt
+scripts/seed-development.ts(73,5): error TS2322: Type '{ email: string; password: string; name: string; role: "ADMIN"; }' is not assignable to type '(Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)'.
+  Type '{ email: string; password: string; name: string; role: "ADMIN"; }' is not assignable to type 'Without<UserUncheckedCreateInput, UserCreateInput> & UserCreateInput'.
+    Type '{ email: string; password: string; name: string; role: "ADMIN"; }' is missing the following properties from type 'UserCreateInput': id, updatedAt
+scripts/seed-development.ts(81,38): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+scripts/seed-development.ts(132,7): error TS2322: Type '{ email: string; password: string; name: string; role: "EMPLOYEE"; }' is not assignable to type '(Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)'.
+  Type '{ email: string; password: string; name: string; role: "EMPLOYEE"; }' is not assignable to type 'Without<UserUncheckedCreateInput, UserCreateInput> & UserCreateInput'.
+    Type '{ email: string; password: string; name: string; role: "EMPLOYEE"; }' is missing the following properties from type 'UserCreateInput': id, updatedAt
+scripts/seed-development.ts(140,35): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+scripts/seed-production.ts(41,9): error TS2322: Type '{ name: string; description: string; }' is not assignable to type '(Without<AreaCreateInput, AreaUncheckedCreateInput> & AreaUncheckedCreateInput) | (Without<...> & AreaCreateInput)'.
+  Type '{ name: string; description: string; }' is not assignable to type 'Without<AreaUncheckedCreateInput, AreaCreateInput> & AreaCreateInput'.
+    Type '{ name: string; description: string; }' is missing the following properties from type 'AreaCreateInput': id, updatedAt
+scripts/seed-production.ts(64,7): error TS2322: Type '{ email: string; password: string; name: string; role: "ADMIN"; }' is not assignable to type '(Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)'.
+  Type '{ email: string; password: string; name: string; role: "ADMIN"; }' is not assignable to type 'Without<UserUncheckedCreateInput, UserCreateInput> & UserCreateInput'.
+    Type '{ email: string; password: string; name: string; role: "ADMIN"; }' is missing the following properties from type 'UserCreateInput': id, updatedAt
+scripts/seed-production.ts(72,40): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+scripts/seed.ts(11,16): error TS2551: Property 'attachment' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'attachments'?
+scripts/seed.ts(12,16): error TS2551: Property 'leaveRequest' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'leave_requests'?
+scripts/seed.ts(13,16): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+scripts/seed.ts(22,7): error TS2322: Type '{ name: string; description: string; }' is not assignable to type '(Without<AreaCreateInput, AreaUncheckedCreateInput> & AreaUncheckedCreateInput) | (Without<...> & AreaCreateInput)'.
+  Type '{ name: string; description: string; }' is not assignable to type 'Without<AreaUncheckedCreateInput, AreaCreateInput> & AreaCreateInput'.
+    Type '{ name: string; description: string; }' is missing the following properties from type 'AreaCreateInput': id, updatedAt
+scripts/seed.ts(28,7): error TS2322: Type '{ name: string; description: string; }' is not assignable to type '(Without<AreaCreateInput, AreaUncheckedCreateInput> & AreaUncheckedCreateInput) | (Without<...> & AreaCreateInput)'.
+  Type '{ name: string; description: string; }' is not assignable to type 'Without<AreaUncheckedCreateInput, AreaCreateInput> & AreaCreateInput'.
+    Type '{ name: string; description: string; }' is missing the following properties from type 'AreaCreateInput': id, updatedAt
+scripts/seed.ts(34,7): error TS2322: Type '{ name: string; description: string; }' is not assignable to type '(Without<AreaCreateInput, AreaUncheckedCreateInput> & AreaUncheckedCreateInput) | (Without<...> & AreaCreateInput)'.
+  Type '{ name: string; description: string; }' is not assignable to type 'Without<AreaUncheckedCreateInput, AreaCreateInput> & AreaCreateInput'.
+    Type '{ name: string; description: string; }' is missing the following properties from type 'AreaCreateInput': id, updatedAt
+scripts/seed.ts(40,7): error TS2322: Type '{ name: string; description: string; }' is not assignable to type '(Without<AreaCreateInput, AreaUncheckedCreateInput> & AreaUncheckedCreateInput) | (Without<...> & AreaCreateInput)'.
+  Type '{ name: string; description: string; }' is not assignable to type 'Without<AreaUncheckedCreateInput, AreaCreateInput> & AreaCreateInput'.
+    Type '{ name: string; description: string; }' is missing the following properties from type 'AreaCreateInput': id, updatedAt
+scripts/seed.ts(46,7): error TS2322: Type '{ name: string; description: string; }' is not assignable to type '(Without<AreaCreateInput, AreaUncheckedCreateInput> & AreaUncheckedCreateInput) | (Without<...> & AreaCreateInput)'.
+  Type '{ name: string; description: string; }' is not assignable to type 'Without<AreaUncheckedCreateInput, AreaCreateInput> & AreaCreateInput'.
+    Type '{ name: string; description: string; }' is missing the following properties from type 'AreaCreateInput': id, updatedAt
+scripts/seed.ts(61,5): error TS2322: Type '{ email: string; password: string; name: string; role: "ADMIN"; }' is not assignable to type '(Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)'.
+  Type '{ email: string; password: string; name: string; role: "ADMIN"; }' is not assignable to type 'Without<UserUncheckedCreateInput, UserCreateInput> & UserCreateInput'.
+    Type '{ email: string; password: string; name: string; role: "ADMIN"; }' is missing the following properties from type 'UserCreateInput': id, updatedAt
+scripts/seed.ts(69,38): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+scripts/seed.ts(186,7): error TS2322: Type '{ email: string; password: string; name: string; role: "EMPLOYEE"; }' is not assignable to type '(Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)'.
+  Type '{ email: string; password: string; name: string; role: "EMPLOYEE"; }' is not assignable to type 'Without<UserUncheckedCreateInput, UserCreateInput> & UserCreateInput'.
+    Type '{ email: string; password: string; name: string; role: "EMPLOYEE"; }' is missing the following properties from type 'UserCreateInput': id, updatedAt
+scripts/seed.ts(194,35): error TS2551: Property 'employee' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'employees'?
+scripts/seed.ts(264,18): error TS2551: Property 'leaveRequest' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'leave_requests'?
+scripts/verify-admin.ts(16,7): error TS2322: Type '{ employee: true; }' is not assignable to type 'UserInclude<DefaultArgs>'.
+  Object literal may only specify known properties, but 'employee' does not exist in type 'UserInclude<DefaultArgs>'. Did you mean to write 'employees'?
+scripts/verify-admin.ts(32,17): error TS2339: Property 'employee' does not exist on type '{ id: string; name: string | null; email: string; password: string; emailVerified: Date | null; image: string | null; role: UserRole; createdAt: Date; updatedAt: Date; }'.
+scripts/verify-admin.ts(33,52): error TS2339: Property 'employee' does not exist on type '{ id: string; name: string | null; email: string; password: string; emailVerified: Date | null; image: string | null; role: UserRole; createdAt: Date; updatedAt: Date; }'.
+scripts/verify-admin.ts(33,82): error TS2339: Property 'employee' does not exist on type '{ id: string; name: string | null; email: string; password: string; emailVerified: Date | null; image: string | null; role: UserRole; createdAt: Date; updatedAt: Date; }'.
+exit_code=2

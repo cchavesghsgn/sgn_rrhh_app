@@ -1,0 +1,4 @@
+[master 655e986] Arreglo autenticación y errores TypeScript
+ 16 files changed, 175 insertions(+), 116 deletions(-)
+ rewrite .abacus.donotdelete (97%)
+###655e986cfdf50d437bfec4e46532a541152e3a21###

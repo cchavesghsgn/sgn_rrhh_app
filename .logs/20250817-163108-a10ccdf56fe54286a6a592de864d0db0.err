@@ -1,0 +1,45 @@
+ ⨯ /home/ubuntu/sgn_rrhh_app/app/.next/server/webpack-runtime.js:212
+;
+ 
+
+SyntaxError: Invalid or unexpected token
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1311:12)
+    at mod.require (/opt/hostedapp/node/root/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:136:16)
+    at /home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/auth/[...nextauth]/route.js:343:27
+    at Object.<anonymous> (/home/ubuntu/sgn_rrhh_app/app/.next/server/app/api/auth/[...nextauth]/route.js:349:3)
+    at Module._compile (node:internal/modules/cjs/loader:1554:14)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1311:12)
+    at mod.require (/opt/hostedapp/node/root/app/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:136:16)
+    at requirePage (/opt/hostedapp/node/root/app/node_modules/next/dist/server/require.js:109:84)
+    at /opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js:103:84
+    at async loadComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:714:36)
+    at async DevServer.findPageComponents (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1910:24)
+    at async DevServer.renderToResponseImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/base-server.js:818:17)
+    at async /opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/opt/hostedapp/node/root/app/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:178:21)
+    at async handleRequest (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:355:24)
+    at async requestHandlerImpl (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/router-server.js:379:13)
+    at async Server.requestListener (/opt/hostedapp/node/root/app/node_modules/next/dist/server/lib/start-server.js:141:13) {
+  page: '/api/auth/session'
+}

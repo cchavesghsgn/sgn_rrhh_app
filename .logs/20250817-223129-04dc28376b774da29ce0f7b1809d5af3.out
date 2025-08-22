@@ -1,0 +1,70 @@
+  ▲ Next.js 14.2.28
+  - Local:        http://localhost:3000
+  - Environments: .env.local, .env
+  - Experiments (use with caution):
+    · outputFileTracingRoot
+
+ ✓ Starting...
+ ✓ Ready in 1368ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.3s (901 modules)
+ GET / 200 in 2574ms
+ GET /login 200 in 2580ms
+ ✓ Compiled /api/auth/[...nextauth] in 171ms (576 modules)
+ GET /api/auth/session 200 in 560ms
+ GET /api/auth/session 200 in 58ms
+ GET /api/auth/session 200 in 24ms
+ GET /login 200 in 68ms
+ GET /api/auth/session 200 in 33ms
+ GET /api/auth/session 200 in 20ms
+ GET /api/auth/session 200 in 23ms
+ GET /api/auth/session 200 in 22ms
+ GET / 200 in 41ms
+ GET / 200 in 36ms
+ GET /api/auth/session 200 in 50ms
+ GET /login?_rsc=1ebxd 200 in 33ms
+ GET /api/auth/session 200 in 43ms
+ GET /api/auth/providers 200 in 34ms
+ GET /api/auth/csrf 200 in 28ms
+🔐 Attempting login for: john@doe.com
+ POST /api/auth/callback/credentials 401 in 103ms
+ GET /api/auth/providers 200 in 34ms
+ GET /api/auth/csrf 200 in 30ms
+🔐 Attempting login for: john@doe.com
+ POST /api/auth/callback/credentials 401 in 97ms
+ GET / 200 in 36ms
+ GET /api/auth/providers 200 in 30ms
+ GET /api/auth/csrf 200 in 35ms
+🔐 Attempting login for: maria.gonzalez@sgn.com
+ POST /api/auth/callback/credentials 401 in 96ms
+ GET / 200 in 35ms
+ GET /api/auth/session 200 in 38ms
+ GET /api/auth/session 200 in 38ms
+ GET /login?_rsc=1ebxd 200 in 43ms
+ GET / 200 in 44ms
+ GET /api/auth/providers 200 in 34ms
+ GET /api/auth/csrf 200 in 38ms
+🔐 Attempting login for: john@doe.com
+ POST /api/auth/callback/credentials 401 in 91ms
+ GET / 200 in 39ms
+ GET /api/auth/providers 200 in 29ms
+ GET /api/auth/csrf 200 in 29ms
+🔐 Attempting login for: john@doe.com
+ POST /api/auth/callback/credentials 401 in 98ms
+ GET / 200 in 36ms
+ GET / 200 in 35ms
+ GET / 200 in 35ms
+ GET / 200 in 31ms
+ GET / 200 in 34ms
+ GET / 200 in 30ms
+ GET / 200 in 31ms
+ GET / 200 in 33ms
+ GET / 200 in 27ms
+ GET / 200 in 35ms
+ GET / 200 in 37ms
+ GET / 200 in 34ms
+ GET / 200 in 37ms
+ GET / 200 in 31ms
+ GET / 200 in 34ms
+ GET / 200 in 41ms
+[?25h
