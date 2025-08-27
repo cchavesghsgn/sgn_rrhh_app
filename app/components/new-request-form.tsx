@@ -128,7 +128,7 @@ export default function NewRequestForm() {
         }
       } else if (formData.type === 'PERSONAL' || formData.type === 'REMOTE') {
         if (!formData.startDate || !formData.shift) {
-          toast.error('Para días personales/remotos debes completar día y turno');
+          toast.error('Para días particulares/remotos debes completar día y turno');
           return;
         }
         
@@ -268,6 +268,9 @@ export default function NewRequestForm() {
                     <SelectItem value={LeaveRequestType.LICENSE}>
                       {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.LICENSE]} (Sin límite)
                     </SelectItem>
+                    <SelectItem value={LeaveRequestType.VACATION}>
+                      {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.VACATION]} (Disponibles: {employee?.vacationDays || 0} de {employee?.totalVacationDays || 20} días)
+                    </SelectItem>
                     <SelectItem value={LeaveRequestType.PERSONAL}>
                       {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.PERSONAL]} (Disponibles: {formatAvailableTime(availableDays.personalHours)})
                     </SelectItem>
@@ -363,7 +366,7 @@ export default function NewRequestForm() {
               </>
             )}
 
-            {/* Personal/Remote day fields */}
+            {/* particular/Remote day fields */}
             {(formData.type === 'PERSONAL' || formData.type === 'REMOTE') && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

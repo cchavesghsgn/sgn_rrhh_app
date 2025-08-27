@@ -129,7 +129,7 @@ export default function EmployeeDashboard() {
             <p className="text-xs text-gray-500 mb-1">
               de {Math.floor((employee.totalPersonalHours || 96) / 8)} días
             </p>
-            <p className="text-sm text-gray-600">Días personales</p>
+            <p className="text-sm text-gray-600">Días particulares</p>
           </CardContent>
         </Card>
 
