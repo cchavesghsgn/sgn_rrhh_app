@@ -266,7 +266,7 @@ export default function NewRequestForm() {
                   <SelectContent>
                     <SelectItem value="none">Seleccionar tipo</SelectItem>
                     <SelectItem value={LeaveRequestType.LICENSE}>
-                      {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.LICENSE]} (Sin límite)
+                      {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.LICENSE]} 
                     </SelectItem>
                     <SelectItem value={LeaveRequestType.VACATION}>
                       {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.VACATION]} (Disponibles: {employee?.vacationDays || 0} de {employee?.totalVacationDays || 20} días)
