@@ -193,8 +193,8 @@ export async function POST(request: NextRequest) {
         id: crypto.randomUUID(),
         employeeId: employee.id,
         type,
-        startDate: new Date(startDate),
-        endDate: endDate ? new Date(endDate) : new Date(startDate), // Use startDate as endDate if not provided
+        startDate: new Date(startDate + 'T12:00:00.000-03:00'), // Mediodía Argentina para evitar problemas de zona horaria
+        endDate: endDate ? new Date(endDate + 'T12:00:00.000-03:00') : new Date(startDate + 'T12:00:00.000-03:00'), // Use startDate as endDate if not provided
         isHalfDay: isHalfDay || false,
         hours: type === 'HOURS' ? hours : null,
         startTime: type === 'HOURS' ? startTime : null,
