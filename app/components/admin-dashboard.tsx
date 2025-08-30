@@ -16,7 +16,7 @@ import {
   Eye
 } from 'lucide-react';
 import Link from 'next/link';
-import { Employee, LeaveRequest, Area, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS } from '../lib/types';
+import { Employee, LeaveRequest, Area, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS, DAY_SHIFT_LABELS } from '../lib/types';
 import { formatAvailableTime, formatAvailablePersonalDays, formatAvailableRemoteDays, calculateTotalLicensesTaken } from '../lib/time-utils';
 
 export default function AdminDashboard() {
@@ -76,6 +76,28 @@ export default function AdminDashboard() {
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  const formatRequestDetails = (request: LeaveRequest) => {
+    if (request.type === 'HOURS') {
+      const timeRange = request.startTime && request.endTime 
+        ? ` • ${request.startTime}-${request.endTime}` 
+        : '';
+      return `${request.hours || 0} horas${timeRange}`;
+    }
+    
+    if (request.type === 'PERSONAL' || request.type === 'REMOTE') {
+      if (request.shift && DAY_SHIFT_LABELS[request.shift as keyof typeof DAY_SHIFT_LABELS]) {
+        return DAY_SHIFT_LABELS[request.shift as keyof typeof DAY_SHIFT_LABELS];
+      }
+      return 'Sin especificar';
+    }
+    
+    if (request.type === 'LICENSE') {
+      return request.isHalfDay ? '0.5 días' : 'Días completos';
+    }
+    
+    return '';
   };
 
   const getStatusBadgeVariant = (status: string) => {
@@ -174,6 +196,9 @@ export default function AdminDashboard() {
                       </p>
                       <p className="text-xs text-gray-600">
                         {LEAVE_REQUEST_TYPE_LABELS[request.type]} • {formatDate(request.startDate.toString())}
+                      </p>
+                      <p className="text-xs text-blue-600 font-medium">
+                        {formatRequestDetails(request)}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">

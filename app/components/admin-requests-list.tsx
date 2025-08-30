@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { 
   FileText,
   Check,
@@ -12,31 +13,43 @@ import {
   Eye,
   User,
   Calendar,
-  Clock
+  Clock,
+  Filter
 } from 'lucide-react';
 import Link from 'next/link';
-import { LeaveRequest, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS } from '../lib/types';
+import { LeaveRequest, Employee, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS, DAY_SHIFT_LABELS } from '../lib/types';
 
 export default function AdminRequestsList() {
   const [requests, setRequests] = useState<LeaveRequest[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [selectedEmployee, setSelectedEmployee] = useState('all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchRequests = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/leave-requests');
-        if (response.ok) {
-          const data = await response.json();
-          setRequests(data);
+        const [requestsRes, employeesRes] = await Promise.all([
+          fetch('/api/leave-requests'),
+          fetch('/api/employees')
+        ]);
+
+        if (requestsRes.ok) {
+          const requestsData = await requestsRes.json();
+          setRequests(requestsData);
+        }
+
+        if (employeesRes.ok) {
+          const employeesData = await employeesRes.json();
+          setEmployees(employeesData);
         }
       } catch (error) {
-        console.error('Error fetching requests:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRequests();
+    fetchData();
   }, []);
 
   const formatDate = (date: string) => {
@@ -68,8 +81,36 @@ export default function AdminRequestsList() {
     return `${diffDays} día${diffDays > 1 ? 's' : ''}`;
   };
 
+  const formatRequestDetails = (request: LeaveRequest) => {
+    if (request.type === 'HOURS') {
+      const timeRange = request.startTime && request.endTime 
+        ? ` • ${request.startTime}-${request.endTime}` 
+        : '';
+      return `${request.hours || 0} horas${timeRange}`;
+    }
+    
+    if (request.type === 'PERSONAL' || request.type === 'REMOTE') {
+      if (request.shift && DAY_SHIFT_LABELS[request.shift as keyof typeof DAY_SHIFT_LABELS]) {
+        return DAY_SHIFT_LABELS[request.shift as keyof typeof DAY_SHIFT_LABELS];
+      }
+      return 'Sin especificar';
+    }
+    
+    if (request.type === 'LICENSE') {
+      return request.isHalfDay ? '0.5 días' : 'Días completos';
+    }
+    
+    return '';
+  };
+
   const pendingRequests = requests.filter(r => r.status === 'PENDING');
-  const processedRequests = requests.filter(r => r.status !== 'PENDING');
+  const processedRequests = requests.filter(r => {
+    const isProcessed = r.status !== 'PENDING';
+    if (!isProcessed) return false;
+    
+    if (selectedEmployee === 'all') return true;
+    return r.employeeId === selectedEmployee;
+  });
 
   if (loading) {
     return (
@@ -153,6 +194,14 @@ export default function AdminRequestsList() {
                         </div>
                       </div>
 
+                      {/* Detalles adicionales */}
+                      <div className="mb-4">
+                        <p className="text-sm text-gray-600">Detalles</p>
+                        <p className="font-medium text-sm">
+                          {formatRequestDetails(request)}
+                        </p>
+                      </div>
+
                       <div className="mb-4">
                         <p className="text-sm text-gray-600 mb-1">Motivo:</p>
                         <p className="text-sm bg-gray-50 p-3 rounded-lg">{request.reason}</p>
@@ -177,9 +226,30 @@ export default function AdminRequestsList() {
 
       {/* Processed Requests */}
       <div>
-        <h2 className="text-xl font-semibold text-sgn-dark mb-4">
-          Solicitudes Procesadas ({processedRequests.length})
-        </h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+          <h2 className="text-xl font-semibold text-sgn-dark">
+            Solicitudes Procesadas ({processedRequests.length})
+          </h2>
+          
+          {/* Employee Filter */}
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-gray-500" />
+            <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Filtrar por empleado" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos los empleados</SelectItem>
+                {employees.map((employee) => (
+                  <SelectItem key={employee.id} value={employee.id}>
+                    {employee.firstName} {employee.lastName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        
         {processedRequests.length > 0 ? (
           <div className="space-y-4">
             {processedRequests.slice(0, 10).map((request) => (
@@ -201,6 +271,9 @@ export default function AdminRequestsList() {
                       </div>
                       <p className="text-sm text-gray-600">
                         {formatDate(request.startDate.toString())} - {formatDate(request.endDate.toString())}
+                      </p>
+                      <p className="text-xs text-blue-600 font-medium">
+                        {formatRequestDetails(request)}
                       </p>
                     </div>
                     <p className="text-xs text-gray-500">
