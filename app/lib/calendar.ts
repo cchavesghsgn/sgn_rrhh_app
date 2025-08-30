@@ -32,21 +32,30 @@ const getAuthClient = () => {
   return auth;
 };
 
-// Formatear título del evento
-const formatEventTitle = (employeeName: string, requestType: string): string => {
-  return `${employeeName} - ${requestType}`;
+// Formatear título del evento con iniciales
+const formatEventTitle = (firstName: string, lastName: string, requestType: string): string => {
+  const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  return `${initials} - ${requestType}`;
+};
+
+// Traducir turnos al castellano
+const translateShift = (shift: string): string => {
+  switch (shift) {
+    case 'FULL_DAY': return 'Todo el día';
+    case 'MORNING': return 'Mañana';
+    case 'AFTERNOON': return 'Tarde';
+    default: return shift;
+  }
 };
 
 // Formatear descripción del evento
 const formatEventDescription = (data: CalendarEventData): string => {
   let description = `Solicitud de ${data.requestType} para ${data.employeeName}\n\n`;
   
-  if (data.reason) {
-    description += `Motivo: ${data.reason}\n`;
-  }
+  // No incluir motivo según solicitud del usuario
   
   if (data.shift) {
-    description += `Turno: ${data.shift}\n`;
+    description += `Turno: ${translateShift(data.shift)}\n`;
   }
   
   description += `\nGenerado automáticamente por el Sistema RRHH SGN`;
@@ -111,7 +120,7 @@ export const createCalendarEvent = async (leaveRequest: LeaveRequest & { employe
     }
 
     const event = {
-      summary: formatEventTitle(employeeName, requestType),
+      summary: formatEventTitle(leaveRequest.employees.firstName, leaveRequest.employees.lastName, requestType),
       description: formatEventDescription(eventData),
       start: eventStart,
       end: eventEnd,
