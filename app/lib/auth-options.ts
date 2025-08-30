@@ -13,6 +13,40 @@ export const authOptions: NextAuthOptions = {
   ...(process.env.NEXTAUTH_URL ? {} : {
     trustHost: true
   }),
+  // Configuración explícita de cookies para preview environments
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        // Auto-detectar secure basado en protocolo
+        secure: process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https:') || false,
+        domain: undefined // Permitir auto-detección del dominio
+      }
+    },
+    callbackUrl: {
+      name: `next-auth.callback-url`,
+      options: {
+        httpOnly: false,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https:') || false,
+        domain: undefined
+      }
+    },
+    csrfToken: {
+      name: `next-auth.csrf-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production' || process.env.NEXTAUTH_URL?.startsWith('https:') || false,
+        domain: undefined
+      }
+    }
+  },
   providers: [
     CredentialsProvider({
       name: 'credentials',
