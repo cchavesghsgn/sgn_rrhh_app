@@ -6,11 +6,24 @@ import EmployeeDashboard from '../../components/employee-dashboard';
 import AdminDashboard from '../../components/admin-dashboard';
 
 export default async function Dashboard() {
+  console.log('🏠 Dashboard: Starting authentication check...');
+  
   const session = await getServerAuthSession();
+  
+  console.log('🏠 Dashboard session check:', { 
+    hasSession: !!session, 
+    userId: session?.user?.id,
+    userRole: session?.user?.role,
+    userEmail: session?.user?.email,
+    expires: session?.expires
+  });
 
   if (!session) {
+    console.log('❌ Dashboard: No session found, redirecting to login');
     redirect('/login');
   }
+  
+  console.log('✅ Dashboard: Session valid, rendering dashboard');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
