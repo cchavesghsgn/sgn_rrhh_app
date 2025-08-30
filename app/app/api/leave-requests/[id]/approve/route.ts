@@ -46,14 +46,14 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     let hoursToDeduct = 0;
     
     // For LICENSE (vacation days), keep old logic with days
-    if (leaveRequest.type === 'LICENSE') {
+    if ((leaveRequest.type as LeaveRequestType) === LeaveRequestType.LICENSE) {
       if (leaveRequest.isHalfDay && daysToDeduct === 1) {
         daysToDeduct = 0.5;
       }
     }
     
     // For PERSONAL/REMOTE, calculate hours based on shift
-    if (leaveRequest.type === 'PERSONAL' || leaveRequest.type === 'REMOTE') {
+    if ((leaveRequest.type as LeaveRequestType) === LeaveRequestType.PERSONAL || (leaveRequest.type as LeaveRequestType) === LeaveRequestType.REMOTE) {
       if (leaveRequest.shift) {
         hoursToDeduct = calculateHoursToDeduct(leaveRequest.shift);
       } else {
@@ -63,7 +63,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     }
     
     // For HOURS type, use the hours specified in the request
-    if (leaveRequest.type === 'HOURS') {
+    if ((leaveRequest.type as LeaveRequestType) === LeaveRequestType.HOURS) {
       hoursToDeduct = leaveRequest.hours || 0;
     }
 
@@ -89,24 +89,24 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       // Update employee available days/hours
       const updateData: any = {};
       
-      switch (leaveRequest.type) {
-        case 'LICENSE':
+      switch (leaveRequest.type as LeaveRequestType) {
+        case LeaveRequestType.LICENSE:
           // LICENSE does NOT deduct from any counter - only tracks taken days
           // No updateData needed - just approve without deducting
           break;
-        case 'VACATION':
+        case LeaveRequestType.VACATION:
           // VACATION deducts from vacation days
           updateData.vacationDays = leaveRequest.employees.vacationDays - daysToDeduct;
           break;
-        case 'PERSONAL':
+        case LeaveRequestType.PERSONAL:
           // PERSONAL deducts from personalHours
           updateData.personalHours = leaveRequest.employees.personalHours - hoursToDeduct;
           break;
-        case 'REMOTE':
+        case LeaveRequestType.REMOTE:
           // REMOTE deducts from remoteHours
           updateData.remoteHours = leaveRequest.employees.remoteHours - hoursToDeduct;
           break;
-        case 'HOURS':
+        case LeaveRequestType.HOURS:
           // HOURS deducts from availableHours
           updateData.availableHours = leaveRequest.employees.availableHours - hoursToDeduct;
           break;

@@ -213,7 +213,7 @@ export default function NewRequestForm() {
 
   const getAvailableForType = () => {
     switch (formData.type) {
-      case LeaveRequestType.VACATION: return `${employee?.vacationDays || 0} de ${employee?.totalVacationDays || 20} días`;
+      case LeaveRequestType.VACATION: return `${employee?.vacationDays || 0} de ${employee?.totalVacationDays} días`;
       case LeaveRequestType.PERSONAL: return formatAvailableTime(availableDays.personalHours);
       case LeaveRequestType.REMOTE: return formatAvailableTime(availableDays.remoteHours);
       case LeaveRequestType.HOURS: return availableDays.hours;
@@ -269,7 +269,7 @@ export default function NewRequestForm() {
                       {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.LICENSE]} 
                     </SelectItem>
                     <SelectItem value={LeaveRequestType.VACATION}>
-                      {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.VACATION]} (Disponibles: {employee?.vacationDays || 0} de {employee?.totalVacationDays || 20} días)
+                      {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.VACATION]} (Disponibles: {employee?.vacationDays || 0} de {employee?.totalVacationDays} días)
                     </SelectItem>
                     <SelectItem value={LeaveRequestType.PERSONAL}>
                       {LEAVE_REQUEST_TYPE_LABELS[LeaveRequestType.PERSONAL]} (Disponibles: {formatAvailableTime(availableDays.personalHours)})

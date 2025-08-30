@@ -264,16 +264,16 @@ export default function AdminDashboard() {
                             Licencias: {totalLicensesTaken} días
                           </div>
                           <div className="text-gray-600">
-                            Vacaciones: {employee.vacationDays || 0} de {employee.totalVacationDays || 20} días
+                            Vacaciones: {employee.vacationDays || 0} de {employee.totalVacationDays} días
                           </div>
                           <div className="text-gray-600">
-                            Personales: {Math.floor((employee.personalHours || 0) / 8)} de {Math.floor((employee.totalPersonalHours || 16) / 8)} días
+                            Personales: {Math.floor((employee.personalHours || 0) / 8)} de {Math.floor((employee.totalPersonalHours) / 8)} días
                           </div>
                           <div className="text-gray-600">
-                            Remotos: {Math.floor((employee.remoteHours || 0) / 8)} de {Math.floor((employee.totalRemoteHours || 40) / 8)} días
+                            Remotos: {Math.floor((employee.remoteHours || 0) / 8)} de {Math.floor((employee.totalRemoteHours) / 8)} días
                           </div>
                           <div className="text-gray-600">
-                            Horas: {employee.availableHours || 0} de {employee.totalAvailableHours || 16} horas
+                            Horas: {employee.availableHours || 0} de {employee.totalAvailableHours} horas
                           </div>
                         </div>
                       </CardContent>
