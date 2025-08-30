@@ -51,7 +51,10 @@ export default function LoginForm() {
         toast.error('Credenciales incorrectas');
       } else {
         toast.success('¡Bienvenido!');
-        router.push('/dashboard');
+        // Delay para permitir sincronización de session en preview environments
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 2000);
       }
     } catch (error) {
       toast.error('Error al iniciar sesión');
