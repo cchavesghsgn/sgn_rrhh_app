@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Employee, LeaveRequest, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS } from '../lib/types';
+import { Employee, LeaveRequest, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS, DAY_SHIFT_LABELS } from '../lib/types';
 import { formatAvailableTime, formatAvailablePersonalDays, formatAvailableRemoteDays, getTimeBreakdown, formatYearsOfService } from '../lib/time-utils';
 
 export default function EmployeeDashboard() {
@@ -73,6 +73,40 @@ export default function EmployeeDashboard() {
       case 'REJECTED': return 'rejected';
       default: return 'pending';
     }
+  };
+
+  // Formatear información adicional de la solicitud (período/horas)
+  const formatRequestDetails = (request: LeaveRequest) => {
+    if (request.type === 'HOURS') {
+      if (request.startTime && request.endTime) {
+        return `${request.startTime} - ${request.endTime} (${request.hours}h)`;
+      }
+      return `${request.hours} horas`;
+    }
+    
+    if ((request.type === 'PERSONAL' || request.type === 'REMOTE') && request.shift) {
+      return DAY_SHIFT_LABELS[request.shift as keyof typeof DAY_SHIFT_LABELS];
+    }
+    
+    if (request.type === 'LICENSE') {
+      const start = new Date(request.startDate);
+      const end = new Date(request.endDate);
+      const diffTime = end.getTime() - start.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+      
+      if (request.isHalfDay && diffDays === 1) {
+        return '0.5 días';
+      }
+      
+      return `${diffDays} día${diffDays > 1 ? 's' : ''}`;
+    }
+    
+    // Para días particulares, remotos, etc. que no tengan shift específico
+    if (request.shift) {
+      return DAY_SHIFT_LABELS[request.shift as keyof typeof DAY_SHIFT_LABELS];
+    }
+    
+    return 'Todo el día'; // Default para días completos
   };
 
   if (loading) {
@@ -242,13 +276,20 @@ export default function EmployeeDashboard() {
                     key={request.id}
                     className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                   >
-                    <div>
+                    <div className="flex-1">
                       <p className="font-medium text-sm">
                         {LEAVE_REQUEST_TYPE_LABELS[request.type]}
                       </p>
-                      <p className="text-xs text-gray-600">
-                        {formatDate(request.startDate.toString())} - {formatDate(request.endDate.toString())}
+                      <p className="text-xs text-gray-600 mb-1">
+                        {request.type === 'LICENSE' 
+                          ? `${formatDate(request.startDate.toString())} - ${formatDate(request.endDate.toString())}`
+                          : formatDate(request.startDate.toString())
+                        }
                       </p>
+                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                        <Clock className="h-3 w-3" />
+                        <span>{formatRequestDetails(request)}</span>
+                      </div>
                     </div>
                     <Badge variant={getStatusBadgeVariant(request.status)}>
                       {REQUEST_STATUS_LABELS[request.status]}
