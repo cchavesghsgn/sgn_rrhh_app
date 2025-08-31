@@ -96,6 +96,14 @@ git push -u origin main
 2. **Build and test settings**: Automáticamente detecta `amplify.yml`
 3. **Advanced settings** → **Add environment variable**
 
+### 3.4 Notas de configuración (amplify.yml)
+- Node.js: se fija automáticamente a Node 18 si `nvm` está disponible durante el build.
+- Tareas de Base de Datos (seguras): solo se ejecutan en ramas `main`/`master` y cuando defines `RUN_DB_TASKS=1` en variables de entorno de Amplify.
+  - Prebuild (opcional): valida variables con `yarn db:validate`.
+  - Postbuild: si existen migraciones (`prisma/migrations`), usa `npx prisma migrate deploy`; si no, usa `npx prisma db push`.
+  - Seeding: `yarn db:seed-production` solo si `RUN_DB_TASKS=1` en `main/master`.
+- Recomendación: no definas `RUN_DB_TASKS` en previews/branches de prueba para evitar tocar la BD.
+
 ---
 
 ## **PASO 4: Variables de Entorno** 🔐
