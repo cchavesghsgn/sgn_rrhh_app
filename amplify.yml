@@ -15,7 +15,7 @@ applications:
             - export TMPDIR=/tmp
             - mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE" "$TMPDIR"
 
-            # Variables que Prisma respeta para engines/tarballs/caches
+            # Prisma caches también en /tmp
             - export PRISMA_CACHE_DIR=/tmp/.cache/prisma
             - export PRISMA_ENGINES_DIR=/tmp/prisma-engines
             - export PRISMA_ENGINE_TARBALL_CACHE_DIR=/tmp/prisma-tarballs
@@ -27,10 +27,25 @@ applications:
             # Verificar CLI local de prisma
             - test -x ./node_modules/.bin/prisma || (echo "❌ Prisma CLI no encontrado"; ls -la ./node_modules/.bin; exit 1)
 
-            # Debug: qué homedir ve Node? (para entender por qué intenta /home/ubuntu)
+            # Debug: homedir que ve Node (debería ser /tmp)
             - node -e "console.log('os.homedir() =>', require('os').homedir())"
 
-            # Prisma generate (SIN env -i, usando exports anteriores)
+            # 👉 Forzar rutas de engines a los binarios locales en node_modules/@prisma/engines
+            - export PRISMA_QUERY_ENGINE_LIBRARY="$(ls ./node_modules/@prisma/engines/libquery_engine-*.so.node | head -n1)"
+            - export PRISMA_QUERY_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/query-engine-* | head -n1)"
+            - export PRISMA_SCHEMA_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/schema-engine-* | head -n1)"
+            - export PRISMA_FMT_BINARY="$(ls ./node_modules/@prisma/engines/prisma-fmt-* | head -n1)"
+            - export PRISMA_INTROSPECTION_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/introspection-engine-* | head -n1)"
+            # Asegurar permisos de ejecución en binarios
+            - chmod +x "$PRISMA_QUERY_ENGINE_BINARY" "$PRISMA_SCHEMA_ENGINE_BINARY" "$PRISMA_FMT_BINARY" "$PRISMA_INTROSPECTION_ENGINE_BINARY" 2>/dev/null || true
+            # Ver de qué rutas estamos tirando (debug útil)
+            - echo "PRISMA_QUERY_ENGINE_LIBRARY=$PRISMA_QUERY_ENGINE_LIBRARY"
+            - echo "PRISMA_QUERY_ENGINE_BINARY=$PRISMA_QUERY_ENGINE_BINARY"
+            - echo "PRISMA_SCHEMA_ENGINE_BINARY=$PRISMA_SCHEMA_ENGINE_BINARY"
+            - echo "PRISMA_FMT_BINARY=$PRISMA_FMT_BINARY"
+            - echo "PRISMA_INTROSPECTION_ENGINE_BINARY=$PRISMA_INTROSPECTION_ENGINE_BINARY"
+
+            # Prisma generate (usando exports anteriores)
             - ./node_modules/.bin/prisma generate --schema ./prisma/schema.prisma
 
             # Validaciones opcionales (solo en main/master con RUN_DB_TASKS=1)
@@ -54,6 +69,14 @@ applications:
             - export PRISMA_ENGINES_DIR=/tmp/prisma-engines
             - export PRISMA_ENGINE_TARBALL_CACHE_DIR=/tmp/prisma-tarballs
             - mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE" "$TMPDIR" "$PRISMA_CACHE_DIR" "$PRISMA_ENGINES_DIR" "$PRISMA_ENGINE_TARBALL_CACHE_DIR"
+
+            # Volver a exportar rutas a engines locales (por si cambia el contexto)
+            - export PRISMA_QUERY_ENGINE_LIBRARY="$(ls ./node_modules/@prisma/engines/libquery_engine-*.so.node | head -n1)"
+            - export PRISMA_QUERY_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/query-engine-* | head -n1)"
+            - export PRISMA_SCHEMA_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/schema-engine-* | head -n1)"
+            - export PRISMA_FMT_BINARY="$(ls ./node_modules/@prisma/engines/prisma-fmt-* | head -n1)"
+            - export PRISMA_INTROSPECTION_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/introspection-engine-* | head -n1)"
+            - chmod +x "$PRISMA_QUERY_ENGINE_BINARY" "$PRISMA_SCHEMA_ENGINE_BINARY" "$PRISMA_FMT_BINARY" "$PRISMA_INTROSPECTION_ENGINE_BINARY" 2>/dev/null || true
 
             # Migraciones / sincronización de schema (condicional)
             - |
