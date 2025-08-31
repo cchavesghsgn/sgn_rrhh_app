@@ -9,6 +9,7 @@ applications:
             - export HOME=/tmp && export XDG_CACHE_HOME=/tmp/.cache && export NPM_CONFIG_CACHE=/tmp/.npm && mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE"
             - yarn install --frozen-lockfile --production=false
             - HOME=/tmp XDG_CACHE_HOME=/tmp/.cache NPM_CONFIG_CACHE=/tmp/.npm TMPDIR=/tmp PRISMA_CACHE_DIR=/tmp/.cache/prisma ./node_modules/.bin/prisma generate --schema ./prisma/schema.prisma
+            - |
               if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
                 yarn db:validate
               fi
@@ -21,8 +22,21 @@ applications:
             - |
               if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
                 if [ -d prisma/migrations ] && [ "$(ls -A prisma/migrations 2>/dev/null)" ]; then
-                  - HOME=/tmp XDG_CACHE_HOME=/tmp/.cache NPM_CONFIG_CACHE=/tmp/.npm TMPDIR=/tmp PRISMA_CACHE_DIR=/tmp/.cache/prisma ./node_modules/.bin/prisma migrate deploy --schema ./prisma/schema.prisma
+                  HOME=/tmp XDG_CACHE_HOME=/tmp/.cache NPM_CONFIG_CACHE=/tmp/.npm TMPDIR=/tmp PRISMA_CACHE_DIR=/tmp/.cache/prisma ./node_modules/.bin/prisma migrate deploy --schema ./prisma/schema.prisma
                 else
-                  - HOME=/tmp XDG_CACHE_HOME=/tmp/.cache NPM_CONFIG_CACHE=/tmp/.npm TMPDIR=/tmp PRISMA_CACHE_DIR=/tmp/.cache/prisma ./node_modules/.bin/prisma db push --skip-generate --schema ./prisma/schema.prisma
+                  HOME=/tmp XDG_CACHE_HOME=/tmp/.cache NPM_CONFIG_CACHE=/tmp/.npm TMPDIR=/tmp PRISMA_CACHE_DIR=/tmp/.cache/prisma ./node_modules/.bin/prisma db push --skip-generate --schema ./prisma/schema.prisma
                 fi
               fi
+            - |
+              if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
+                yarn db:seed-production
+              fi
+      artifacts:
+        baseDirectory: .next
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
+          - .next/cache/**/*
+        
