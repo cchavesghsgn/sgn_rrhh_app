@@ -6,11 +6,16 @@ applications:
       phases:
         preBuild:
           commands:
-            - echo "🔍 Validating environment variables..."
-            - yarn install --frozen-lockfile
-            - yarn db:validate
+            - echo "🔧 Selecting Node.js version..."
+            - if command -v nvm >/dev/null 2>&1; then nvm install 18 && nvm use 18; else echo "nvm not found, using default Node"; fi
             - echo "📦 Installing dependencies..."
-            - echo "🔧 Setting up Prisma..."
+            - yarn install --frozen-lockfile
+            - echo "🔍 Validating environment variables (prod only)..."
+            - |
+              if [ "$AMPLIFY_BRANCH" = "master" ] || [ "$AMPLIFY_BRANCH" = "main" ]; then
+                if [ "$RUN_DB_TASKS" = "1" ]; then yarn db:validate; fi;
+              fi
+            - echo "🔧 Generating Prisma client..."
             - npx prisma generate
         build:
           commands:
@@ -18,10 +23,24 @@ applications:
             - yarn build
         postBuild:
           commands:
-            - echo "🔄 Running safe database migrations..."
-            - npx prisma db push --skip-generate
-            - echo "🌱 Setting up initial data (safe for production)..."
-            - yarn db:seed-production
+            - echo "🔄 Applying database changes (prod only)..."
+            - |
+              if [ "$AMPLIFY_BRANCH" = "master" ] || [ "$AMPLIFY_BRANCH" = "main" ]; then
+                if [ "$RUN_DB_TASKS" = "1" ]; then
+                  if [ -d prisma/migrations ] && [ "$(ls -A prisma/migrations 2>/dev/null)" ]; then
+                    echo "Using prisma migrate deploy";
+                    npx prisma migrate deploy;
+                  else
+                    echo "No migrations found, using prisma db push";
+                    npx prisma db push --skip-generate;
+                  fi
+                fi;
+              fi
+            - echo "🌱 Seeding database (prod only, idempotent)..."
+            - |
+              if [ "$AMPLIFY_BRANCH" = "master" ] || [ "$AMPLIFY_BRANCH" = "main" ]; then
+                if [ "$RUN_DB_TASKS" = "1" ]; then yarn db:seed-production; fi;
+              fi
             - echo "✅ Build completed successfully!"
       artifacts:
         baseDirectory: .next
