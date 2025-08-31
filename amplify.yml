@@ -8,47 +8,40 @@ applications:
             # Node 18
             - if command -v nvm >/dev/null 2>&1; then nvm install 18 && nvm use 18; else echo "nvm not found"; fi
 
-            # Caches y dirs temporales seguros
+            # Caches y tmp seguros
             - export HOME=/tmp
             - export XDG_CACHE_HOME=/tmp/.cache
             - export NPM_CONFIG_CACHE=/tmp/.npm
             - export TMPDIR=/tmp
             - mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE" "$TMPDIR"
 
-            # Prisma caches también en /tmp
+            # Caches de Prisma en /tmp
             - export PRISMA_CACHE_DIR=/tmp/.cache/prisma
-            - export PRISMA_ENGINES_DIR=/tmp/prisma-engines
-            - export PRISMA_ENGINE_TARBALL_CACHE_DIR=/tmp/prisma-tarballs
-            - mkdir -p "$PRISMA_CACHE_DIR" "$PRISMA_ENGINES_DIR" "$PRISMA_ENGINE_TARBALL_CACHE_DIR"
+            - mkdir -p "$PRISMA_CACHE_DIR"
 
-            # Dependencias (incluye devDependencies)
+            # Instalar deps (incluye devDependencies)
             - yarn install --frozen-lockfile --production=false
 
             # Verificar CLI local de prisma
             - test -x ./node_modules/.bin/prisma || (echo "❌ Prisma CLI no encontrado"; ls -la ./node_modules/.bin; exit 1)
 
-            # Debug: homedir que ve Node (debería ser /tmp)
+            # Debug: homedir
             - node -e "console.log('os.homedir() =>', require('os').homedir())"
 
-            # 👉 Forzar rutas de engines a los binarios locales en node_modules/@prisma/engines
+            # Forzar uso de Node-API y rutas a engines que sí existen
+            - export PRISMA_CLI_QUERY_ENGINE_TYPE=library
             - export PRISMA_QUERY_ENGINE_LIBRARY="$(ls ./node_modules/@prisma/engines/libquery_engine-*.so.node | head -n1)"
-            - export PRISMA_QUERY_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/query-engine-* | head -n1)"
             - export PRISMA_SCHEMA_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/schema-engine-* | head -n1)"
-            - export PRISMA_FMT_BINARY="$(ls ./node_modules/@prisma/engines/prisma-fmt-* | head -n1)"
-            - export PRISMA_INTROSPECTION_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/introspection-engine-* | head -n1)"
-            # Asegurar permisos de ejecución en binarios
-            - chmod +x "$PRISMA_QUERY_ENGINE_BINARY" "$PRISMA_SCHEMA_ENGINE_BINARY" "$PRISMA_FMT_BINARY" "$PRISMA_INTROSPECTION_ENGINE_BINARY" 2>/dev/null || true
-            # Ver de qué rutas estamos tirando (debug útil)
             - echo "PRISMA_QUERY_ENGINE_LIBRARY=$PRISMA_QUERY_ENGINE_LIBRARY"
-            - echo "PRISMA_QUERY_ENGINE_BINARY=$PRISMA_QUERY_ENGINE_BINARY"
             - echo "PRISMA_SCHEMA_ENGINE_BINARY=$PRISMA_SCHEMA_ENGINE_BINARY"
-            - echo "PRISMA_FMT_BINARY=$PRISMA_FMT_BINARY"
-            - echo "PRISMA_INTROSPECTION_ENGINE_BINARY=$PRISMA_INTROSPECTION_ENGINE_BINARY"
+            - [ -n "$PRISMA_QUERY_ENGINE_LIBRARY" ] || (echo "❌ libquery_engine no encontrado"; ls -la ./node_modules/@prisma/engines; exit 1)
+            - [ -n "$PRISMA_SCHEMA_ENGINE_BINARY" ] || (echo "❌ schema-engine no encontrado"; ls -la ./node_modules/@prisma/engines; exit 1)
+            - chmod +x "$PRISMA_SCHEMA_ENGINE_BINARY" 2>/dev/null || true
 
-            # Prisma generate (usando exports anteriores)
+            # Prisma generate
             - ./node_modules/.bin/prisma generate --schema ./prisma/schema.prisma
 
-            # Validaciones opcionales (solo en main/master con RUN_DB_TASKS=1)
+            # Validación opcional
             - |
               if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
                 yarn db:validate
@@ -60,25 +53,24 @@ applications:
 
         postBuild:
           commands:
-            # Reasegurar exports y dirs (por si la fase reinicia contexto)
+            # Re-export para esta fase
             - export HOME=/tmp
             - export XDG_CACHE_HOME=/tmp/.cache
             - export NPM_CONFIG_CACHE=/tmp/.npm
             - export TMPDIR=/tmp
             - export PRISMA_CACHE_DIR=/tmp/.cache/prisma
-            - export PRISMA_ENGINES_DIR=/tmp/prisma-engines
-            - export PRISMA_ENGINE_TARBALL_CACHE_DIR=/tmp/prisma-tarballs
-            - mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE" "$TMPDIR" "$PRISMA_CACHE_DIR" "$PRISMA_ENGINES_DIR" "$PRISMA_ENGINE_TARBALL_CACHE_DIR"
+            - mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE" "$TMPDIR" "$PRISMA_CACHE_DIR"
 
-            # Volver a exportar rutas a engines locales (por si cambia el contexto)
+            - export PRISMA_CLI_QUERY_ENGINE_TYPE=library
             - export PRISMA_QUERY_ENGINE_LIBRARY="$(ls ./node_modules/@prisma/engines/libquery_engine-*.so.node | head -n1)"
-            - export PRISMA_QUERY_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/query-engine-* | head -n1)"
             - export PRISMA_SCHEMA_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/schema-engine-* | head -n1)"
-            - export PRISMA_FMT_BINARY="$(ls ./node_modules/@prisma/engines/prisma-fmt-* | head -n1)"
-            - export PRISMA_INTROSPECTION_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/introspection-engine-* | head -n1)"
-            - chmod +x "$PRISMA_QUERY_ENGINE_BINARY" "$PRISMA_SCHEMA_ENGINE_BINARY" "$PRISMA_FMT_BINARY" "$PRISMA_INTROSPECTION_ENGINE_BINARY" 2>/dev/null || true
+            - echo "PRISMA_QUERY_ENGINE_LIBRARY=$PRISMA_QUERY_ENGINE_LIBRARY"
+            - echo "PRISMA_SCHEMA_ENGINE_BINARY=$PRISMA_SCHEMA_ENGINE_BINARY"
+            - [ -n "$PRISMA_QUERY_ENGINE_LIBRARY" ] || (echo "❌ libquery_engine no encontrado"; ls -la ./node_modules/@prisma/engines; exit 1)
+            - [ -n "$PRISMA_SCHEMA_ENGINE_BINARY" ] || (echo "❌ schema-engine no encontrado"; ls -la ./node_modules/@prisma/engines; exit 1)
+            - chmod +x "$PRISMA_SCHEMA_ENGINE_BINARY" 2>/dev/null || true
 
-            # Migraciones / sincronización de schema (condicional)
+            # Migraciones / sync de schema (condicional)
             - |
               if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
                 if [ -d prisma/migrations ] && [ "$(ls -A prisma/migrations 2>/dev/null)" ]; then
