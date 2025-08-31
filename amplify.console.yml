@@ -1,0 +1,43 @@
+version: 1
+applications:
+  - frontend:
+      phases:
+        preBuild:
+          commands:
+            - if command -v nvm >/dev/null 2>&1; then nvm install 18 && nvm use 18; else echo "nvm not found"; fi
+            - cd app
+            - yarn install --frozen-lockfile --production=false
+            - npx prisma generate
+            - |
+              if [ "$AMPLIFY_BRANCH" = "master" ] || [ "$AMPLIFY_BRANCH" = "main" ]; then
+                if [ "$RUN_DB_TASKS" = "1" ]; then yarn db:validate; fi
+              fi
+        build:
+          commands:
+            - cd app
+            - yarn build
+        postBuild:
+          commands:
+            - cd app
+            - |
+              if [ "$AMPLIFY_BRANCH" = "master" ] || [ "$AMPLIFY_BRANCH" = "main" ]; then
+                if [ "$RUN_DB_TASKS" = "1" ]; then
+                  if [ -d prisma/migrations ] && [ "$(ls -A prisma/migrations 2>/dev/null)" ]; then
+                    npx prisma migrate deploy
+                  else
+                    npx prisma db push --skip-generate
+                  fi
+                fi
+              fi
+            - |
+              if [ "$AMPLIFY_BRANCH" = "master" ] || [ "$AMPLIFY_BRANCH" = "main" ]; then
+                if [ "$RUN_DB_TASKS" = "1" ]; then yarn db:seed-production; fi
+              fi
+      artifacts:
+        baseDirectory: app/.next
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - app/node_modules/**/*
+          - app/.next/cache/**/*
