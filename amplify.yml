@@ -5,6 +5,8 @@ applications:
       phases:
         preBuild:
           commands:
+            - mkdir -p /tmp/prisma-ci
+            - export DATABASE_URL="${DATABASE_URL:-file:/tmp/prisma-ci/dev.db}"
             - if command -v nvm >/dev/null 2>&1; then nvm install 18 && nvm use 18; else echo "nvm not found"; fi
             - export HOME=/tmp
             - export XDG_CACHE_HOME=/tmp/.cache
