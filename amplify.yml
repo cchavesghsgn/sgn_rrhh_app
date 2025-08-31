@@ -1,16 +1,15 @@
 version: 1
 applications:
-  - appRoot: app
-    frontend:
+  - frontend:
       phases:
         preBuild:
           commands:
             - if command -v nvm >/dev/null 2>&1; then nvm install 18 && nvm use 18; else echo "nvm not found"; fi
             - yarn install --frozen-lockfile --production=false
-            - npx prisma generate
+            - HOME=/tmp XDG_CACHE_HOME=/tmp/.cache npx prisma generate
             - |
-              if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
-                yarn db:validate
+              if [ "$AMPLIFY_BRANCH" = "master" ] || [ "$AMPLIFY_BRANCH" = "main" ]; then
+                if [ "$RUN_DB_TASKS" = "1" ]; then yarn db:validate; fi
               fi
         build:
           commands:
@@ -18,16 +17,18 @@ applications:
         postBuild:
           commands:
             - |
-              if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
-                if [ -d prisma/migrations ] && [ "$(ls -A prisma/migrations 2>/dev/null)" ]; then
-                  npx prisma migrate deploy
-                else
-                  npx prisma db push --skip-generate
+              if [ "$AMPLIFY_BRANCH" = "master" ] || [ "$AMPLIFY_BRANCH" = "main" ]; then
+                if [ "$RUN_DB_TASKS" = "1" ]; then
+                  if [ -d prisma/migrations ] && [ "$(ls -A prisma/migrations 2>/dev/null)" ]; then
+                    HOME=/tmp XDG_CACHE_HOME=/tmp/.cache npx prisma migrate deploy
+                  else
+                    HOME=/tmp XDG_CACHE_HOME=/tmp/.cache npx prisma db push --skip-generate
+                  fi
                 fi
               fi
             - |
-              if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
-                yarn db:seed-production
+              if [ "$AMPLIFY_BRANCH" = "master" ] || [ "$AMPLIFY_BRANCH" = "main" ]; then
+                if [ "$RUN_DB_TASKS" = "1" ]; then yarn db:seed-production; fi
               fi
       artifacts:
         baseDirectory: .next
