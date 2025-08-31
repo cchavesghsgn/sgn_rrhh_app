@@ -5,25 +5,48 @@ applications:
       phases:
         preBuild:
           commands:
+            # Node 18 con nvm
             - if command -v nvm >/dev/null 2>&1; then nvm install 18 && nvm use 18; else echo "nvm not found"; fi
+
+            # Caches en /tmp (rápido y escribible)
             - export HOME=/tmp && export XDG_CACHE_HOME=/tmp/.cache && export NPM_CONFIG_CACHE=/tmp/.npm && mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE"
+
+            # Dependencias (incluye devDeps para prisma/tsx/etc)
             - yarn install --frozen-lockfile --production=false
-            # ➜ NUEVO: capturar la ruta de node y su carpeta
+
+            # Capturar ruta real de node para usar con env -i
             - export NODE_BIN="$(command -v node)"
             - export NODE_DIR="$(dirname "$NODE_BIN")"
-            # Prisma generate con PATH que incluye NODE_DIR y node_modules/.bin
+            - echo "NODE_BIN=$NODE_BIN"
+            - echo "NODE_DIR=$NODE_DIR"
+
+            # WORKAROUND: dar acceso a /home/ubuntu por si Prisma lo usa igual
+            - mkdir -p /home/ubuntu/.cache/prisma || true
+            - chmod -R 777 /home/ubuntu || true
+
+            # Prisma generate (entorno limpio, PATH explícito y caches en /tmp)
             - env -i HOME=/tmp XDG_CACHE_HOME=/tmp/.cache NPM_CONFIG_CACHE=/tmp/.npm TMPDIR=/tmp PRISMA_CACHE_DIR=/tmp/.cache/prisma PATH="$NODE_DIR:./node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/bin" ./node_modules/.bin/prisma generate --schema ./prisma/schema.prisma
+
+            # Validación opcional solo en main/master con RUN_DB_TASKS=1
             - |
               if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
                 yarn db:validate
               fi
+
         build:
           commands:
             - yarn build
+
         postBuild:
           commands:
+            # Reaplicar caches/paths (misma shell de la fase, pero por las dudas)
             - export HOME=/tmp && export XDG_CACHE_HOME=/tmp/.cache && export NPM_CONFIG_CACHE=/tmp/.npm && mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE"
-            # usar el mismo NODE_DIR calculado en preBuild (CodeBuild mantiene la misma shell entre comandos de la fase)
+
+            # WORKAROUND también antes de migrar/empijar el schema
+            - mkdir -p /home/ubuntu/.cache/prisma || true
+            - chmod -R 777 /home/ubuntu || true
+
+            # Migraciones o db push solo en main/master con RUN_DB_TASKS=1
             - |
               if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
                 if [ -d prisma/migrations ] && [ "$(ls -A prisma/migrations 2>/dev/null)" ]; then
@@ -32,14 +55,18 @@ applications:
                   env -i HOME=/tmp XDG_CACHE_HOME=/tmp/.cache NPM_CONFIG_CACHE=/tmp/.npm TMPDIR=/tmp PRISMA_CACHE_DIR=/tmp/.cache/prisma PATH="$NODE_DIR:./node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/bin" ./node_modules/.bin/prisma db push --skip-generate --schema ./prisma/schema.prisma
                 fi
               fi
+
+            # Seed opcional
             - |
               if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
                 yarn db:seed-production
               fi
+
       artifacts:
         baseDirectory: .next
         files:
           - '**/*'
+
       cache:
         paths:
           - node_modules/**/*
