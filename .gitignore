@@ -40,3 +40,7 @@ yarn-error.log*
 **/uploads/
 **/backups/
 **/exports/
+
+# Local build artifacts
+.deploy/
+.logs/
