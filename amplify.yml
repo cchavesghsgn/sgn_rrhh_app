@@ -5,72 +5,49 @@ applications:
       phases:
         preBuild:
           commands:
-            # Node 18
             - if command -v nvm >/dev/null 2>&1; then nvm install 18 && nvm use 18; else echo "nvm not found"; fi
-
-            # Caches y tmp seguros
             - export HOME=/tmp
             - export XDG_CACHE_HOME=/tmp/.cache
             - export NPM_CONFIG_CACHE=/tmp/.npm
             - export TMPDIR=/tmp
             - mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE" "$TMPDIR"
-
-            # Caches de Prisma en /tmp
             - export PRISMA_CACHE_DIR=/tmp/.cache/prisma
             - mkdir -p "$PRISMA_CACHE_DIR"
-
-            # Instalar deps (incluye devDependencies)
             - yarn install --frozen-lockfile --production=false
-
-            # Verificar CLI local de prisma
-            - test -x ./node_modules/.bin/prisma || (echo "❌ Prisma CLI no encontrado"; ls -la ./node_modules/.bin; exit 1)
-
-            # Debug: homedir
+            - test -x ./node_modules/.bin/prisma || (echo "Prisma CLI not found in node_modules/.bin"; ls -la ./node_modules/.bin; exit 1)
             - node -e "console.log('os.homedir() =>', require('os').homedir())"
-
-            # Forzar uso de Node-API y rutas a engines que sí existen
             - export PRISMA_CLI_QUERY_ENGINE_TYPE=library
             - export PRISMA_QUERY_ENGINE_LIBRARY="$(ls ./node_modules/@prisma/engines/libquery_engine-*.so.node | head -n1)"
             - export PRISMA_SCHEMA_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/schema-engine-* | head -n1)"
             - echo "PRISMA_QUERY_ENGINE_LIBRARY=$PRISMA_QUERY_ENGINE_LIBRARY"
             - echo "PRISMA_SCHEMA_ENGINE_BINARY=$PRISMA_SCHEMA_ENGINE_BINARY"
-            - [ -n "$PRISMA_QUERY_ENGINE_LIBRARY" ] || (echo "❌ libquery_engine no encontrado"; ls -la ./node_modules/@prisma/engines; exit 1)
-            - [ -n "$PRISMA_SCHEMA_ENGINE_BINARY" ] || (echo "❌ schema-engine no encontrado"; ls -la ./node_modules/@prisma/engines; exit 1)
+            - '[ -n "$PRISMA_QUERY_ENGINE_LIBRARY" ] || (echo "libquery_engine library not found"; ls -la ./node_modules/@prisma/engines; exit 1)'
+            - '[ -n "$PRISMA_SCHEMA_ENGINE_BINARY" ] || (echo "schema-engine binary not found"; ls -la ./node_modules/@prisma/engines; exit 1)'
             - chmod +x "$PRISMA_SCHEMA_ENGINE_BINARY" 2>/dev/null || true
-
-            # Prisma generate
             - ./node_modules/.bin/prisma generate --schema ./prisma/schema.prisma
-
-            # Validación opcional
             - |
               if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
                 yarn db:validate
               fi
-
         build:
           commands:
             - yarn build
-
         postBuild:
           commands:
-            # Re-export para esta fase
             - export HOME=/tmp
             - export XDG_CACHE_HOME=/tmp/.cache
             - export NPM_CONFIG_CACHE=/tmp/.npm
             - export TMPDIR=/tmp
             - export PRISMA_CACHE_DIR=/tmp/.cache/prisma
             - mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE" "$TMPDIR" "$PRISMA_CACHE_DIR"
-
             - export PRISMA_CLI_QUERY_ENGINE_TYPE=library
             - export PRISMA_QUERY_ENGINE_LIBRARY="$(ls ./node_modules/@prisma/engines/libquery_engine-*.so.node | head -n1)"
             - export PRISMA_SCHEMA_ENGINE_BINARY="$(ls ./node_modules/@prisma/engines/schema-engine-* | head -n1)"
             - echo "PRISMA_QUERY_ENGINE_LIBRARY=$PRISMA_QUERY_ENGINE_LIBRARY"
             - echo "PRISMA_SCHEMA_ENGINE_BINARY=$PRISMA_SCHEMA_ENGINE_BINARY"
-            - [ -n "$PRISMA_QUERY_ENGINE_LIBRARY" ] || (echo "❌ libquery_engine no encontrado"; ls -la ./node_modules/@prisma/engines; exit 1)
-            - [ -n "$PRISMA_SCHEMA_ENGINE_BINARY" ] || (echo "❌ schema-engine no encontrado"; ls -la ./node_modules/@prisma/engines; exit 1)
+            - '[ -n "$PRISMA_QUERY_ENGINE_LIBRARY" ] || (echo "libquery_engine library not found"; ls -la ./node_modules/@prisma/engines; exit 1)'
+            - '[ -n "$PRISMA_SCHEMA_ENGINE_BINARY" ] || (echo "schema-engine binary not found"; ls -la ./node_modules/@prisma/engines; exit 1)'
             - chmod +x "$PRISMA_SCHEMA_ENGINE_BINARY" 2>/dev/null || true
-
-            # Migraciones / sync de schema (condicional)
             - |
               if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
                 if [ -d prisma/migrations ] && [ "$(ls -A prisma/migrations 2>/dev/null)" ]; then
@@ -79,18 +56,14 @@ applications:
                   ./node_modules/.bin/prisma db push --skip-generate --schema ./prisma/schema.prisma
                 fi
               fi
-
-            # Seed opcional
             - |
               if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
                 yarn db:seed-production
               fi
-
       artifacts:
         baseDirectory: .next
         files:
           - '**/*'
-
       cache:
         paths:
           - node_modules/**/*
