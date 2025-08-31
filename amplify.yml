@@ -12,24 +12,26 @@ applications:
             - export HOME=/tmp
             - export XDG_CACHE_HOME=/tmp/.cache
             - export NPM_CONFIG_CACHE=/tmp/.npm
-            - mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE"
+            - export TMPDIR=/tmp
+            - mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE" "$TMPDIR"
+
+            # Variables que Prisma respeta para engines/tarballs/caches
+            - export PRISMA_CACHE_DIR=/tmp/.cache/prisma
+            - export PRISMA_ENGINES_DIR=/tmp/prisma-engines
+            - export PRISMA_ENGINE_TARBALL_CACHE_DIR=/tmp/prisma-tarballs
+            - mkdir -p "$PRISMA_CACHE_DIR" "$PRISMA_ENGINES_DIR" "$PRISMA_ENGINE_TARBALL_CACHE_DIR"
 
             # Dependencias (incluye devDependencies)
             - yarn install --frozen-lockfile --production=false
 
-            # Verificar que prisma CLI exista en node_modules
+            # Verificar CLI local de prisma
             - test -x ./node_modules/.bin/prisma || (echo "❌ Prisma CLI no encontrado"; ls -la ./node_modules/.bin; exit 1)
 
-            # Capturamos la ruta real de node para usarla con env -i
-            - export NODE_BIN="$(command -v node)"
-            - export NODE_DIR="$(dirname "$NODE_BIN")"
-            - echo "NODE_DIR=$NODE_DIR"
+            # Debug: qué homedir ve Node? (para entender por qué intenta /home/ubuntu)
+            - node -e "console.log('os.homedir() =>', require('os').homedir())"
 
-            # Crear dirs para engines/cache en /tmp
-            - mkdir -p /tmp/.cache/prisma /tmp/prisma-engines /tmp/prisma-tarballs /tmp/.npm || true
-
-            # Prisma generate
-            - env -i HOME=/tmp XDG_CACHE_HOME=/tmp/.cache NPM_CONFIG_CACHE=/tmp/.npm TMPDIR=/tmp PRISMA_CACHE_DIR=/tmp/.cache/prisma PRISMA_ENGINES_DIR=/tmp/prisma-engines PRISMA_ENGINE_TARBALL_CACHE_DIR=/tmp/prisma-tarballs PATH="$NODE_DIR:./node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/bin" ./node_modules/.bin/prisma generate --schema ./prisma/schema.prisma
+            # Prisma generate (SIN env -i, usando exports anteriores)
+            - ./node_modules/.bin/prisma generate --schema ./prisma/schema.prisma
 
             # Validaciones opcionales (solo en main/master con RUN_DB_TASKS=1)
             - |
@@ -43,20 +45,23 @@ applications:
 
         postBuild:
           commands:
-            # Reasegurar caches y dirs de prisma en /tmp
+            # Reasegurar exports y dirs (por si la fase reinicia contexto)
             - export HOME=/tmp
             - export XDG_CACHE_HOME=/tmp/.cache
             - export NPM_CONFIG_CACHE=/tmp/.npm
-            - mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE"
-            - mkdir -p /tmp/.cache/prisma /tmp/prisma-engines /tmp/prisma-tarballs /tmp/.npm || true
+            - export TMPDIR=/tmp
+            - export PRISMA_CACHE_DIR=/tmp/.cache/prisma
+            - export PRISMA_ENGINES_DIR=/tmp/prisma-engines
+            - export PRISMA_ENGINE_TARBALL_CACHE_DIR=/tmp/prisma-tarballs
+            - mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE" "$TMPDIR" "$PRISMA_CACHE_DIR" "$PRISMA_ENGINES_DIR" "$PRISMA_ENGINE_TARBALL_CACHE_DIR"
 
             # Migraciones / sincronización de schema (condicional)
             - |
               if [[ "$AMPLIFY_BRANCH" =~ ^(master|main)$ && "$RUN_DB_TASKS" = "1" ]]; then
                 if [ -d prisma/migrations ] && [ "$(ls -A prisma/migrations 2>/dev/null)" ]; then
-                  env -i HOME=/tmp XDG_CACHE_HOME=/tmp/.cache NPM_CONFIG_CACHE=/tmp/.npm TMPDIR=/tmp PRISMA_CACHE_DIR=/tmp/.cache/prisma PRISMA_ENGINES_DIR=/tmp/prisma-engines PRISMA_ENGINE_TARBALL_CACHE_DIR=/tmp/prisma-tarballs PATH="$NODE_DIR:./node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/bin" ./node_modules/.bin/prisma migrate deploy --schema ./prisma/schema.prisma
+                  ./node_modules/.bin/prisma migrate deploy --schema ./prisma/schema.prisma
                 else
-                  env -i HOME=/tmp XDG_CACHE_HOME=/tmp/.cache NPM_CONFIG_CACHE=/tmp/.npm TMPDIR=/tmp PRISMA_CACHE_DIR=/tmp/.cache/prisma PRISMA_ENGINES_DIR=/tmp/prisma-engines PRISMA_ENGINE_TARBALL_CACHE_DIR=/tmp/prisma-tarballs PATH="$NODE_DIR:./node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/bin" ./node_modules/.bin/prisma db push --skip-generate --schema ./prisma/schema.prisma
+                  ./node_modules/.bin/prisma db push --skip-generate --schema ./prisma/schema.prisma
                 fi
               fi
 
