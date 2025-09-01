@@ -1,6 +1,4 @@
-// app/page.tsx
-import { redirect } from "next/navigation";
-
+// app/app/page.tsx
 export default function Home() {
-  redirect("/login");  // o "/app", lo que corresponda
+  return <main style={{padding:20}}>OK / (home)</main>;
 }
