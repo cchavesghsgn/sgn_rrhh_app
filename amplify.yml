@@ -9,7 +9,7 @@ applications:
             - if command -v nvm >/dev/null 2>&1; then nvm install 18 && nvm use 18; else echo "nvm not found"; fi
 
             # Minimal diagnostics: confirm we are at appRoot and list contents
-            - echo ">> preBuild cwd: $(pwd)"
+            - 'echo ">> preBuild cwd: $(pwd)"'
             - ls -la
 
             # Caches y tmp seguros
@@ -68,7 +68,7 @@ applications:
             - mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE" "$TMPDIR" "$PRISMA_CACHE_DIR"
 
             # Minimal diagnostics: confirm cwd and contents before publishing
-            - echo ">> postBuild cwd: $(pwd)"
+            - 'echo ">> postBuild cwd: $(pwd)"'
             - ls -la
 
             # Re-export Node-API por si el contexto cambia
