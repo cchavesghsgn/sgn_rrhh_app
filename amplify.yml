@@ -70,6 +70,12 @@ applications:
             # Minimal diagnostics: confirm cwd and contents before publishing
             - 'echo ">> postBuild cwd: $(pwd)"'
             - ls -la
+            - echo ">> listing .next root" && ls -la .next || true
+            - echo ">> listing .next/server" && ls -la .next/server || true
+            - echo ">> listing .next/server/app" && ls -la .next/server/app || true
+            - echo ">> BUILD_ID" && cat .next/BUILD_ID 2>/dev/null || true
+            - echo ">> manifests in .next (maxdepth 2)" && find .next -maxdepth 2 -type f -name "*manifest*.json" -print || true
+            - sed -n '1,120p' .next/required-server-files.json 2>/dev/null || true
 
             # Re-export Node-API por si el contexto cambia
             - export PRISMA_CLI_QUERY_ENGINE_TYPE=library
