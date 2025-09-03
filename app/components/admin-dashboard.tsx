@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -20,6 +20,9 @@ import { Employee, LeaveRequest, Area, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS
 import { formatAvailableTime, formatAvailablePersonalDays, formatAvailableRemoteDays, calculateTotalLicensesTaken } from '../lib/time-utils';
 
 export default function AdminDashboard() {
+  const gridRef = useRef<HTMLDivElement | null>(null);
+  const firstCardRef = useRef<HTMLDivElement | null>(null);
+  const [maxGridHeight, setMaxGridHeight] = useState<number>();
   const [stats, setStats] = useState({
     totalEmployees: 0,
     pendingRequests: 0,
@@ -69,6 +72,21 @@ export default function AdminDashboard() {
 
     fetchDashboardData();
   }, []);
+
+  // Measure first card height and row gap to fit exactly 2 rows without cutting
+  useEffect(() => {
+    const measure = () => {
+      if (!gridRef.current || !firstCardRef.current) return;
+      const cardH = firstCardRef.current.getBoundingClientRect().height;
+      const styles = getComputedStyle(gridRef.current);
+      const rowGap = parseFloat(styles.rowGap || '0') || 0;
+      setMaxGridHeight(cardH * 2 + rowGap);
+    };
+    // wait for layout
+    requestAnimationFrame(measure);
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [employees]);
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('es-ES', {
@@ -237,13 +255,18 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             {employees.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 max-h-96 overflow-y-auto">
-                {employees.slice(0, 12).map((employee) => {
+              <div
+                ref={gridRef}
+                className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 overflow-y-auto"
+                style={maxGridHeight ? { maxHeight: `${Math.round(maxGridHeight)}px` } : undefined}
+              >
+                {employees.slice(0, 12).map((employee, i) => {
                   const totalLicensesTaken = calculateTotalLicensesTaken(employee);
                   
                   return (
-                    <Card key={employee.id} className="hover:shadow-md transition-shadow">
-                      <CardContent className="p-3">
+                    <div ref={i === 0 ? firstCardRef : undefined}>
+                      <Card key={employee.id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-3">
                         <div className="mb-2">
                           <h4 className="font-semibold text-xs text-sgn-dark leading-tight">
                             {employee.firstName} {employee.lastName}
@@ -276,8 +299,9 @@ export default function AdminDashboard() {
                             Horas: {employee.availableHours || 0} de {employee.totalAvailableHours} horas
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
+                        </CardContent>
+                      </Card>
+                    </div>
                   );
                 })}
               </div>

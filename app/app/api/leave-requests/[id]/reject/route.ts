@@ -9,6 +9,16 @@ const prisma = new PrismaClient();
 
 export const dynamic = 'force-dynamic';
 
+const fromDbType = (t: string) => {
+  switch (t) {
+    case 'License': return 'LICENSE';
+    case 'Personal': return 'PERSONAL';
+    case 'Remote': return 'REMOTE';
+    case 'Hours': return 'HOURS';
+    default: return t;
+  }
+};
+
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getServerAuthSession();
@@ -60,7 +70,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       }
 
       // Si es solicitud de horas, agregar información del horario
-      if (updatedRequest.type === 'HOURS' && updatedRequest.startTime && updatedRequest.endTime) {
+      const resultType = fromDbType(updatedRequest.type as unknown as string);
+      if (resultType === 'HOURS' && updatedRequest.startTime && updatedRequest.endTime) {
         displayDate += ` (${updatedRequest.startTime} - ${updatedRequest.endTime})`;
       }
 
@@ -76,7 +87,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
       const emailData: RequestStatusEmailData = {
         employeeName: updatedRequest.employees.User.name || 'Usuario',
-        requestType: LEAVE_REQUEST_TYPE_LABELS[updatedRequest.type as keyof typeof LEAVE_REQUEST_TYPE_LABELS] || updatedRequest.type,
+        requestType: LEAVE_REQUEST_TYPE_LABELS[resultType as keyof typeof LEAVE_REQUEST_TYPE_LABELS] || resultType,
         requestDate: displayDate,
         status: 'rejected',
         adminComment: adminNotes || undefined
@@ -91,7 +102,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       // No fallar el rechazo por errores de correo
     }
 
-    return NextResponse.json(updatedRequest);
+    return NextResponse.json({ ...updatedRequest, type: fromDbType(updatedRequest.type as unknown as string) });
   } catch (error) {
     console.error('Reject leave request error:', error);
     return NextResponse.json(

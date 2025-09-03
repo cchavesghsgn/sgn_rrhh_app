@@ -10,6 +10,17 @@ const prisma = new PrismaClient();
 
 export const dynamic = 'force-dynamic';
 
+// Normalize DB enum -> App enum
+const fromDbType = (t: string) => {
+  switch (t) {
+    case 'License': return 'LICENSE';
+    case 'Personal': return 'PERSONAL';
+    case 'Remote': return 'REMOTE';
+    case 'Hours': return 'HOURS';
+    default: return t;
+  }
+};
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerAuthSession();
@@ -39,6 +50,10 @@ export async function GET(request: NextRequest) {
     // Format response to match frontend expectations (lowercase field names)
     const formattedEmployees = employees.map((employee: any) => ({
       ...employee,
+      // Normalize nested leave_requests.type to UPPERCASE for UI logic
+      leave_requests: Array.isArray(employee.leave_requests)
+        ? employee.leave_requests.map((lr: any) => ({ ...lr, type: fromDbType(lr.type) }))
+        : employee.leave_requests,
       user: employee.User, // Lowercase for frontend compatibility
       area: employee.Area, // Lowercase for frontend compatibility
       User: undefined, // Remove uppercase version

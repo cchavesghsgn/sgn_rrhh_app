@@ -252,22 +252,57 @@ export async function PUT(
         phone: phone || null
       };
 
-      // Add vacation and hours data if provided
+      // Add vacation and hours data if provided (apply delta logic to preserve usage)
+      // Vacations (days)
       if (vacationDays !== undefined) {
-        employeeUpdateData.vacationDays = Number(vacationDays);
-        employeeUpdateData.totalVacationDays = Number(vacationDays);
+        const newTotalDays = Number(vacationDays);
+        const prevTotalDays = existingEmployee.totalVacationDays || 0;
+        const deltaDays = newTotalDays - prevTotalDays;
+
+        employeeUpdateData.totalVacationDays = newTotalDays;
+        employeeUpdateData.vacationDays = Math.max(
+          0,
+          Math.min(newTotalDays, (existingEmployee.vacationDays || 0) + deltaDays)
+        );
       }
+
+      // Personal days (stored as hours)
       if (personalHours !== undefined) {
-        employeeUpdateData.personalHours = Number(personalHours);
-        employeeUpdateData.totalPersonalHours = Number(personalHours);
+        const newTotalHours = Number(personalHours);
+        const prevTotalHours = existingEmployee.totalPersonalHours || 0;
+        const delta = newTotalHours - prevTotalHours;
+
+        employeeUpdateData.totalPersonalHours = newTotalHours;
+        employeeUpdateData.personalHours = Math.max(
+          0,
+          Math.min(newTotalHours, (existingEmployee.personalHours || 0) + delta)
+        );
       }
+
+      // Remote days (stored as hours)
       if (remoteHours !== undefined) {
-        employeeUpdateData.remoteHours = Number(remoteHours);
-        employeeUpdateData.totalRemoteHours = Number(remoteHours);
+        const newTotalHours = Number(remoteHours);
+        const prevTotalHours = existingEmployee.totalRemoteHours || 0;
+        const delta = newTotalHours - prevTotalHours;
+
+        employeeUpdateData.totalRemoteHours = newTotalHours;
+        employeeUpdateData.remoteHours = Math.max(
+          0,
+          Math.min(newTotalHours, (existingEmployee.remoteHours || 0) + delta)
+        );
       }
+
+      // Hours bucket used by type HOURS requests (stored as hours)
       if (availableHours !== undefined) {
-        employeeUpdateData.availableHours = Number(availableHours);
-        employeeUpdateData.totalAvailableHours = Number(availableHours);
+        const newTotalHours = Number(availableHours);
+        const prevTotalHours = existingEmployee.totalAvailableHours || 0;
+        const delta = newTotalHours - prevTotalHours;
+
+        employeeUpdateData.totalAvailableHours = newTotalHours;
+        employeeUpdateData.availableHours = Math.max(
+          0,
+          Math.min(newTotalHours, (existingEmployee.availableHours || 0) + delta)
+        );
       }
 
       // Add profile image path if uploaded

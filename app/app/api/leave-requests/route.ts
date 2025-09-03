@@ -11,6 +11,27 @@ const prisma = new PrismaClient();
 
 export const dynamic = 'force-dynamic';
 
+// Bridge enum mismatch: DB stores TitleCase values, app uses UPPERCASE
+const toDbType = (t: string) => {
+  switch (t) {
+    case 'LICENSE': return 'License';
+    case 'PERSONAL': return 'Personal';
+    case 'REMOTE': return 'Remote';
+    case 'HOURS': return 'Hours';
+    default: return t;
+  }
+};
+
+const fromDbType = (t: string) => {
+  switch (t) {
+    case 'License': return 'LICENSE';
+    case 'Personal': return 'PERSONAL';
+    case 'Remote': return 'REMOTE';
+    case 'Hours': return 'HOURS';
+    default: return t;
+  }
+};
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerAuthSession();
@@ -63,6 +84,7 @@ export async function GET(request: NextRequest) {
     // Format response to match frontend expectations (employee instead of employees)
     const formattedRequests = leaveRequests.map((request: any) => ({
       ...request,
+      type: fromDbType(request.type),
       employee: request.employees ? {
         ...request.employees,
         user: request.employees.User,
@@ -192,7 +214,7 @@ export async function POST(request: NextRequest) {
       data: {
         id: crypto.randomUUID(),
         employeeId: employee.id,
-        type,
+        type: toDbType(type) as any,
         startDate: new Date(startDate + 'T12:00:00.000-03:00'), // Mediodía Argentina para evitar problemas de zona horaria
         endDate: endDate ? new Date(endDate + 'T12:00:00.000-03:00') : new Date(startDate + 'T12:00:00.000-03:00'), // Use startDate as endDate if not provided
         isHalfDay: isHalfDay || false,
@@ -268,6 +290,7 @@ export async function POST(request: NextRequest) {
     // Format response to match frontend expectations (employee instead of employees)
     const formattedLeaveRequest = {
       ...leaveRequest,
+      type: fromDbType((leaveRequest as any).type),
       employee: leaveRequest.employees ? {
         ...leaveRequest.employees,
         user: leaveRequest.employees.User,

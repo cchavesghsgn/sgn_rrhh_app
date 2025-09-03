@@ -7,6 +7,16 @@ const prisma = new PrismaClient();
 
 export const dynamic = 'force-dynamic';
 
+const fromDbType = (t: string) => {
+  switch (t) {
+    case 'License': return 'LICENSE';
+    case 'Personal': return 'PERSONAL';
+    case 'Remote': return 'REMOTE';
+    case 'Hours': return 'HOURS';
+    default: return t;
+  }
+};
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerAuthSession();
@@ -36,6 +46,10 @@ export async function GET(request: NextRequest) {
     // Transformar los nombres de las relaciones para consistencia con el frontend
     const transformedEmployee = {
       ...employee,
+      // Normalize nested leave_requests.type to UPPERCASE for UI
+      leave_requests: Array.isArray(employee.leave_requests)
+        ? employee.leave_requests.map((lr: any) => ({ ...lr, type: fromDbType(lr.type) }))
+        : employee.leave_requests,
       user: employee.User,
       area: employee.Area,
     };

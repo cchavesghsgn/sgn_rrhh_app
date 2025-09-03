@@ -11,6 +11,17 @@ const prisma = new PrismaClient();
 
 export const dynamic = 'force-dynamic';
 
+// Bridge enum mismatch between DB (TitleCase) and app (UPPERCASE)
+const fromDbType = (t: string) => {
+  switch (t) {
+    case 'License': return 'LICENSE';
+    case 'Personal': return 'PERSONAL';
+    case 'Remote': return 'REMOTE';
+    case 'Hours': return 'HOURS';
+    default: return t;
+  }
+};
+
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getServerAuthSession();
@@ -44,16 +55,17 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     const end = new Date(leaveRequest.endDate);
     let daysToDeduct = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     let hoursToDeduct = 0;
+    const normalizedType = fromDbType(leaveRequest.type as unknown as string) as LeaveRequestType;
     
     // For LICENSE (vacation days), keep old logic with days
-    if ((leaveRequest.type as LeaveRequestType) === LeaveRequestType.LICENSE) {
+    if (normalizedType === LeaveRequestType.LICENSE) {
       if (leaveRequest.isHalfDay && daysToDeduct === 1) {
         daysToDeduct = 0.5;
       }
     }
     
     // For PERSONAL/REMOTE, calculate hours based on shift
-    if ((leaveRequest.type as LeaveRequestType) === LeaveRequestType.PERSONAL || (leaveRequest.type as LeaveRequestType) === LeaveRequestType.REMOTE) {
+    if (normalizedType === LeaveRequestType.PERSONAL || normalizedType === LeaveRequestType.REMOTE) {
       if (leaveRequest.shift) {
         hoursToDeduct = calculateHoursToDeduct(leaveRequest.shift);
       } else {
@@ -63,7 +75,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     }
     
     // For HOURS type, use the hours specified in the request
-    if ((leaveRequest.type as LeaveRequestType) === LeaveRequestType.HOURS) {
+    if (normalizedType === LeaveRequestType.HOURS) {
       hoursToDeduct = leaveRequest.hours || 0;
     }
 
@@ -89,7 +101,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       // Update employee available days/hours
       const updateData: any = {};
       
-      switch (leaveRequest.type as LeaveRequestType) {
+      switch (normalizedType) {
         case LeaveRequestType.LICENSE:
           // LICENSE does NOT deduct from any counter - only tracks taken days
           // No updateData needed - just approve without deducting
@@ -131,7 +143,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       }
 
       // Si es solicitud de horas, agregar información del horario
-      if (result.type === 'HOURS' && result.startTime && result.endTime) {
+      const resultType = fromDbType(result.type as unknown as string);
+      if (resultType === 'HOURS' && result.startTime && result.endTime) {
         displayDate += ` (${result.startTime} - ${result.endTime})`;
       }
 
@@ -147,7 +160,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
       const emailData: RequestStatusEmailData = {
         employeeName: result.employees.User.name || 'Usuario',
-        requestType: LEAVE_REQUEST_TYPE_LABELS[result.type as keyof typeof LEAVE_REQUEST_TYPE_LABELS] || result.type,
+        requestType: LEAVE_REQUEST_TYPE_LABELS[resultType as keyof typeof LEAVE_REQUEST_TYPE_LABELS] || resultType,
         requestDate: displayDate,
         status: 'approved',
         adminComment: adminNotes || undefined
@@ -178,7 +191,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       // No fallar la aprobación por errores de calendario
     }
 
-    return NextResponse.json(result);
+    // Normalize type in API response for consistency
+    return NextResponse.json({ ...result, type: fromDbType(result.type as unknown as string) });
   } catch (error) {
     console.error('Approve leave request error:', error);
     return NextResponse.json(

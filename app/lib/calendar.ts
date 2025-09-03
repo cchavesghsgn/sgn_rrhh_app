@@ -32,6 +32,29 @@ const getAuthClient = () => {
   return auth;
 };
 
+// Normalizar tipo desde DB (TitleCase) a formato de app (UPPERCASE)
+const fromDbType = (t: string) => {
+  switch (t) {
+    case 'License': return 'LICENSE';
+    case 'Personal': return 'PERSONAL';
+    case 'Remote': return 'REMOTE';
+    case 'Hours': return 'HOURS';
+    default: return t;
+  }
+};
+
+// Etiquetas específicas para títulos de Calendar
+const calendarTypeLabel = (type: string): string => {
+  switch (type) {
+    case 'HOURS': return 'Hora Particular';
+    case 'PERSONAL': return 'Día Particular';
+    case 'REMOTE': return 'Día Remoto';
+    case 'VACATION': return 'Vacaciones';
+    case 'LICENSE': return 'Licencia';
+    default: return type;
+  }
+};
+
 // Formatear título del evento con iniciales
 const formatEventTitle = (firstName: string, lastName: string, requestType: string): string => {
   const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
@@ -50,16 +73,21 @@ const translateShift = (shift: string): string => {
 
 // Formatear descripción del evento
 const formatEventDescription = (data: CalendarEventData): string => {
+  const fmtTime = (t: string) => (t && t.includes(':') ? t : `${t}:00`);
+
   let description = `Solicitud de ${data.requestType} para ${data.employeeName}\n\n`;
-  
-  // No incluir motivo según solicitud del usuario
-  
+
+  // Agregar horario si está especificado
+  if (data.startTime && data.endTime) {
+    description += `Horario: ${fmtTime(data.startTime)} - ${fmtTime(data.endTime)}\n`;
+  }
+
+  // Agregar turno si está presente
   if (data.shift) {
     description += `Turno: ${translateShift(data.shift)}\n`;
   }
-  
+
   description += `\nGenerado automáticamente por el Sistema RRHH SGN`;
-  
   return description;
 };
 
@@ -76,11 +104,15 @@ export const createCalendarEvent = async (leaveRequest: LeaveRequest & { employe
     
     // Preparar datos del evento
     const employeeName = `${leaveRequest.employees.firstName} ${leaveRequest.employees.lastName}`;
-    const requestType = LEAVE_REQUEST_TYPE_LABELS[leaveRequest.type] || leaveRequest.type;
+    // Normalizar tipo y usar etiquetas específicas de Calendar para el título
+    const normalizedType = fromDbType(leaveRequest.type as unknown as string);
+    const requestTypeForTitle = calendarTypeLabel(normalizedType);
+    // Unificar: usar misma etiqueta que el título también en la descripción
+    const requestTypeForDescription = requestTypeForTitle;
     
     const eventData: CalendarEventData = {
       employeeName,
-      requestType,
+      requestType: requestTypeForDescription,
       startDate: leaveRequest.startDate,
       endDate: leaveRequest.endDate,
       startTime: leaveRequest.startTime,
@@ -93,14 +125,20 @@ export const createCalendarEvent = async (leaveRequest: LeaveRequest & { employe
     let eventStart: any;
     let eventEnd: any;
 
-    if (leaveRequest.type === 'HOURS' && leaveRequest.startTime && leaveRequest.endTime) {
+    if (normalizedType === 'HOURS' && leaveRequest.startTime && leaveRequest.endTime) {
       // Para solicitudes de horas, crear evento con hora específica
       const startDateTime = new Date(leaveRequest.startDate);
       const endDateTime = new Date(leaveRequest.startDate);
       
-      // Parsear horas (formato HH:MM)
-      const [startHour, startMinute] = leaveRequest.startTime.split(':').map(Number);
-      const [endHour, endMinute] = leaveRequest.endTime.split(':').map(Number);
+      // Parsear horas (admite HH o HH:MM)
+      const parse = (t: string): [number, number] => {
+        const [h, m] = (t || '').split(':');
+        const hour = Number(h);
+        const minute = m != null ? Number(m) : 0;
+        return [isNaN(hour) ? 0 : hour, isNaN(minute) ? 0 : minute];
+      };
+      const [startHour, startMinute] = parse(leaveRequest.startTime);
+      const [endHour, endMinute] = parse(leaveRequest.endTime);
       
       startDateTime.setHours(startHour, startMinute, 0, 0);
       endDateTime.setHours(endHour, endMinute, 0, 0);
@@ -120,11 +158,11 @@ export const createCalendarEvent = async (leaveRequest: LeaveRequest & { employe
     }
 
     const event = {
-      summary: formatEventTitle(leaveRequest.employees.firstName, leaveRequest.employees.lastName, requestType),
+      summary: formatEventTitle(leaveRequest.employees.firstName, leaveRequest.employees.lastName, requestTypeForTitle),
       description: formatEventDescription(eventData),
       start: eventStart,
       end: eventEnd,
-      colorId: getEventColor(leaveRequest.type), // Color según tipo de solicitud
+      colorId: getEventColor(normalizedType), // Color según tipo de solicitud
     };
 
     // Crear evento en el calendario
@@ -150,7 +188,8 @@ export const createCalendarEvent = async (leaveRequest: LeaveRequest & { employe
 
 // Obtener color del evento según tipo de solicitud
 const getEventColor = (type: string): string => {
-  switch (type) {
+  const t = fromDbType(type) as string;
+  switch (t) {
     case 'LICENSE': return '6'; // Naranja
     case 'PERSONAL': return '10'; // Verde
     case 'REMOTE': return '9'; // Azul
