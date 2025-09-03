@@ -8,6 +8,10 @@ applications:
             # Node 18
             - if command -v nvm >/dev/null 2>&1; then nvm install 18 && nvm use 18; else echo "nvm not found"; fi
 
+            # Minimal diagnostics: confirm we are at appRoot and list contents
+            - echo ">> preBuild cwd: $(pwd)"
+            - ls -la
+
             # Caches y tmp seguros
             - export HOME=/tmp
             - export XDG_CACHE_HOME=/tmp/.cache
@@ -26,10 +30,8 @@ applications:
             # Dependencias (incluye devDependencies)
             - yarn install --frozen-lockfile --production=false
 
-            # Info útil / sanity checks
-            - test -x ./node_modules/.bin/prisma || (echo "Prisma CLI not found in node_modules/.bin"; ls -la ./node_modules/.bin; exit 1)
-            - node -e "console.log('os.homedir() =>', require('os').homedir())"
-            - '[ -d "./node_modules/@prisma/engines" ] && ls -1 ./node_modules/@prisma/engines || true'
+            # Sanity check: prisma CLI must exist after install
+            - test -x ./node_modules/.bin/prisma || (echo "Prisma CLI not found in node_modules/.bin"; exit 1)
 
             # Forzar Node-API (library) y rutas que existen
             - export PRISMA_CLI_QUERY_ENGINE_TYPE=library
@@ -38,8 +40,7 @@ applications:
             - '[ -n "$PRISMA_QUERY_ENGINE_LIBRARY" ] || (echo "libquery_engine library not found"; ls -la ./node_modules/@prisma/engines; exit 1)'
             - '[ -n "$PRISMA_SCHEMA_ENGINE_BINARY" ] || (echo "schema-engine binary not found"; ls -la ./node_modules/@prisma/engines; exit 1)'
             - chmod +x "$PRISMA_SCHEMA_ENGINE_BINARY" 2>/dev/null || true
-            - echo "PRISMA_QUERY_ENGINE_LIBRARY=$PRISMA_QUERY_ENGINE_LIBRARY"
-            - echo "PRISMA_SCHEMA_ENGINE_BINARY=$PRISMA_SCHEMA_ENGINE_BINARY"
+            # Keep logs concise; avoid echoing engine paths
 
             # ⚠️ Generar el cliente de Prisma explícitamente (evita el error en Next build)
             - ./node_modules/.bin/prisma generate --schema ./prisma/schema.prisma
@@ -65,6 +66,10 @@ applications:
             - export TMPDIR=/tmp
             - export PRISMA_CACHE_DIR=/tmp/.cache/prisma
             - mkdir -p "$HOME" "$XDG_CACHE_HOME" "$NPM_CONFIG_CACHE" "$TMPDIR" "$PRISMA_CACHE_DIR"
+
+            # Minimal diagnostics: confirm cwd and contents before publishing
+            - echo ">> postBuild cwd: $(pwd)"
+            - ls -la
 
             # Re-export Node-API por si el contexto cambia
             - export PRISMA_CLI_QUERY_ENGINE_TYPE=library
