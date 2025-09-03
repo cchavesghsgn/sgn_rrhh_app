@@ -8,6 +8,9 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
+  // Explicit secret so NextAuth doesn't rely only on env detection
+  // Required in production; in dev it can be undefined
+  secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === 'development',
   // Permitir auto-detección de URL en preview/producción
   ...(process.env.NEXTAUTH_URL ? {} : {
