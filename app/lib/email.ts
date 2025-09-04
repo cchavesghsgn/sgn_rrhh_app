@@ -191,16 +191,20 @@ export const sendNewRequestNotification = async (adminEmails: string[], data: Ne
     }
     const template = getNewRequestEmailTemplate(data);
 
+    console.log('SMTP: sending new-request notifications', { recipients: adminEmails });
     const results = await Promise.allSettled(
-      adminEmails.map(email => 
-        transporter.sendMail({
+      adminEmails.map(async (email) => {
+        const info = await transporter.sendMail({
           from: `"Sistema RRHH SGN" <${process.env.SMTP_USER}>`,
           to: email,
           subject: template.subject,
           text: template.text,
           html: template.html,
-        })
-      )
+        });
+        console.log('SMTP: sent', { to: email, messageId: info?.messageId, accepted: (info as any)?.accepted, rejected: (info as any)?.rejected });
+        return info;
+      })
+    );
     );
 
     const failed = results.filter(r => r.status === 'rejected');
@@ -234,13 +238,15 @@ export const sendRequestStatusNotification = async (employeeEmail: string, data:
     }
     const template = getRequestStatusEmailTemplate(data);
 
-    await transporter.sendMail({
+    console.log('SMTP: sending status notification', { to: employeeEmail });
+    const info = await transporter.sendMail({
       from: `"Sistema RRHH SGN" <${process.env.SMTP_USER}>`,
       to: employeeEmail,
       subject: template.subject,
       text: template.text,
       html: template.html,
     });
+    console.log('SMTP: sent', { to: employeeEmail, messageId: info?.messageId, accepted: (info as any)?.accepted, rejected: (info as any)?.rejected });
 
     return { success: true, message: 'Correo enviado exitosamente' };
   } catch (error) {
