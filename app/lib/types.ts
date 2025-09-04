@@ -34,6 +34,8 @@ export interface Employee {
   user?: User;
   area?: Area;
   leaveRequests?: LeaveRequest[];
+  // Total de licencias aprobadas (días), provisto por /api/employees/me
+  licensesTakenDays?: number;
 }
 
 export interface Area {

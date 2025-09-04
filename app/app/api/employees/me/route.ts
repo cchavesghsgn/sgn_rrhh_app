@@ -43,6 +43,25 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Empleado no encontrado' }, { status: 404 });
     }
 
+    // Calcular total de licencias aprobadas (histórico)
+    const approvedLicenses = await prisma.leave_requests.findMany({
+      where: {
+        employeeId: employee.id,
+        status: 'APPROVED',
+        type: 'License', // TitleCase según enum en BD
+      },
+      select: { startDate: true, endDate: true, isHalfDay: true },
+    });
+
+    let licensesTakenDays = 0;
+    for (const lr of approvedLicenses) {
+      const start = new Date(lr.startDate);
+      const end = new Date(lr.endDate);
+      let days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      if (lr.isHalfDay && days === 1) days = 0.5 as any;
+      licensesTakenDays += days as number;
+    }
+
     // Transformar los nombres de las relaciones para consistencia con el frontend
     const transformedEmployee = {
       ...employee,
@@ -52,6 +71,7 @@ export async function GET(request: NextRequest) {
         : employee.leave_requests,
       user: employee.User,
       area: employee.Area,
+      licensesTakenDays,
     };
 
     return NextResponse.json(transformedEmployee);

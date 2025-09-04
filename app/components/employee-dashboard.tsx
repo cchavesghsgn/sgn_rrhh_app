@@ -144,6 +144,16 @@ export default function EmployeeDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Licenses taken */}
+        <Card className="sgn-card">
+          <CardContent className="p-6 text-center">
+            <FileText className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
+            <p className="text-2xl font-bold text-sgn-dark">
+              {(employee.licensesTakenDays || 0)} días
+            </p>
+            <p className="text-sm text-gray-600">Licencias tomadas</p>
+          </CardContent>
+        </Card>
         <Card className="sgn-card">
           <CardContent className="p-6 text-center">
             <Calendar className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
