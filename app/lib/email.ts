@@ -1,12 +1,18 @@
 
 import nodemailer from 'nodemailer';
 
-// Configuración del transportador de correo
+// Configuración del transportador de correo, con logs mínimos (sin credenciales)
 const createTransporter = () => {
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const port = parseInt(process.env.SMTP_PORT || '587', 10);
+  const secure = port === 465; // usar TLS implícito si es 465
+
+  console.log('SMTP: creating transporter', { host, port, secure, hasUser: !!process.env.SMTP_USER });
+
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: false, // true for 465, false for other ports
+    host,
+    port,
+    secure,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
@@ -177,6 +183,12 @@ export const sendNewRequestNotification = async (adminEmails: string[], data: Ne
     }
 
     const transporter = createTransporter();
+    try {
+      await transporter.verify();
+      console.log('SMTP: verify OK');
+    } catch (e) {
+      console.error('SMTP: verify FAILED', e);
+    }
     const template = getNewRequestEmailTemplate(data);
 
     const results = await Promise.allSettled(
@@ -214,6 +226,12 @@ export const sendRequestStatusNotification = async (employeeEmail: string, data:
     }
 
     const transporter = createTransporter();
+    try {
+      await transporter.verify();
+      console.log('SMTP: verify OK');
+    } catch (e) {
+      console.error('SMTP: verify FAILED', e);
+    }
     const template = getRequestStatusEmailTemplate(data);
 
     await transporter.sendMail({
