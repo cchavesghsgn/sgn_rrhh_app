@@ -95,8 +95,13 @@ const formatEventDescription = (data: CalendarEventData): string => {
 export const createCalendarEvent = async (leaveRequest: LeaveRequest & { employees: Employee }): Promise<{ success: boolean; eventId?: string; error?: string }> => {
   try {
     // Verificar que las credenciales estén configuradas
-    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_REFRESH_TOKEN) {
-      console.log('Credenciales de Google Calendar no configuradas, saltando creación de evento');
+    const hasClient = !!process.env.GOOGLE_CLIENT_ID;
+    const hasSecret = !!process.env.GOOGLE_CLIENT_SECRET;
+    const hasRefresh = !!process.env.GOOGLE_REFRESH_TOKEN;
+    const calendarId = process.env.GOOGLE_CALENDAR_ID || 'primary';
+    console.log('GCAL: envs', { hasClient, hasSecret, hasRefresh, calendarId });
+    if (!hasClient || !hasSecret || !hasRefresh) {
+      console.warn('GCAL: Credenciales no configuradas; se omite creación de evento');
       return { success: true, error: 'Credenciales no configuradas' };
     }
 
@@ -166,19 +171,25 @@ export const createCalendarEvent = async (leaveRequest: LeaveRequest & { employe
     };
 
     // Crear evento en el calendario
+    console.log('GCAL: creando evento', {
+      requestId: leaveRequest.id,
+      type: normalizedType,
+      calendarId
+    });
     const response = await calendar.events.insert({
       auth,
-      calendarId: process.env.GOOGLE_CALENDAR_ID || 'primary', // ID del calendario SGN
+      calendarId, // ID del calendario SGN o primary
       requestBody: event,
     });
 
+    console.log('GCAL: evento creado', { eventId: response.data.id });
     return {
       success: true,
       eventId: response.data.id || undefined,
     };
 
   } catch (error) {
-    console.error('Error creando evento en Google Calendar:', error);
+    console.error('GCAL: Error creando evento', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Error desconocido',
