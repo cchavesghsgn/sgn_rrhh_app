@@ -175,19 +175,16 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       // No fallar la aprobación por errores de correo
     }
 
-    // Crear evento en Google Calendar de forma asíncrona
+    // Crear evento en Google Calendar (esperar a que termine en runtime serverless)
     try {
-      createCalendarEvent(result).then(calendarResult => {
-        if (calendarResult.success) {
-          console.log('✅ Evento creado exitosamente en Google Calendar:', calendarResult.eventId);
-        } else {
-          console.error('❌ Error creando evento en Google Calendar:', calendarResult.error);
-        }
-      }).catch(calendarError => {
-        console.error('❌ Error creando evento en Google Calendar:', calendarError);
-      });
+      const calendarResult = await createCalendarEvent(result as any);
+      if (calendarResult.success) {
+        console.log('✅ Evento creado exitosamente en Google Calendar:', calendarResult.eventId);
+      } else {
+        console.error('❌ Error creando evento en Google Calendar:', calendarResult.error);
+      }
     } catch (calendarError) {
-      console.error('❌ Error preparando evento de calendario:', calendarError);
+      console.error('❌ Error preparando/creando evento de calendario:', calendarError);
       // No fallar la aprobación por errores de calendario
     }
 
