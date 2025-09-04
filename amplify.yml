@@ -33,6 +33,16 @@ applications:
             # Sanity check: prisma CLI must exist after install
             - test -x ./node_modules/.bin/prisma || (echo "Prisma CLI not found in node_modules/.bin"; exit 1)
 
+            # Ensure NextAuth sees secret/URL at runtime: generate .env.production from Amplify envs
+            # (Avoid echoing values to logs; just write the file)
+            - rm -f .env.production
+            - |
+              {
+                [ -n "$NEXTAUTH_URL" ] && echo "NEXTAUTH_URL=$NEXTAUTH_URL" || true
+                [ -n "$NEXTAUTH_SECRET" ] && echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET" || true
+              } > .env.production
+            - '[ -s .env.production ] || echo ">> WARN: .env.production not written (missing envs)"'
+
             # Forzar Node-API (library) y rutas que existen
             - export PRISMA_CLI_QUERY_ENGINE_TYPE=library
             - export PRISMA_QUERY_ENGINE_LIBRARY="$(ls ./node_modules/@prisma/engines/libquery_engine-*.so.node | head -n1)"
