@@ -166,10 +166,12 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         adminComment: adminNotes || undefined
       };
 
-      // Enviar correo de forma asíncrona para no bloquear la respuesta
-      sendRequestStatusNotification(result.employees.User.email, emailData).catch(error => {
-        console.error('Error enviando notificación por correo:', error);
-      });
+      try {
+        const mailRes = await sendRequestStatusNotification(result.employees.User.email, emailData);
+        console.log('SMTP: status notification result', mailRes);
+      } catch (err) {
+        console.error('Error enviando notificación por correo:', err);
+      }
     } catch (emailError) {
       console.error('Error preparando notificación por correo:', emailError);
       // No fallar la aprobación por errores de correo

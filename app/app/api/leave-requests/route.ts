@@ -277,10 +277,13 @@ export async function POST(request: NextRequest) {
           requestId: leaveRequest.id
         };
 
-        // Enviar correo de forma asíncrona para no bloquear la respuesta
-        sendNewRequestNotification(adminEmails, emailData).catch(error => {
-          console.error('Error enviando notificación por correo:', error);
-        });
+        // Enviar correo y esperar a completar en runtime serverless
+        try {
+          const res = await sendNewRequestNotification(adminEmails, emailData);
+          console.log('SMTP: admin notification result', res);
+        } catch (err) {
+          console.error('Error enviando notificación por correo:', err);
+        }
       }
     } catch (emailError) {
       console.error('Error preparando notificación por correo:', emailError);
