@@ -45,6 +45,10 @@ applications:
                 [ -n "$GOOGLE_CLIENT_SECRET" ] && echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" || true
                 [ -n "$GOOGLE_REFRESH_TOKEN" ] && echo "GOOGLE_REFRESH_TOKEN=$GOOGLE_REFRESH_TOKEN" || true
                 [ -n "$GOOGLE_CALENDAR_ID" ] && echo "GOOGLE_CALENDAR_ID=$GOOGLE_CALENDAR_ID" || true
+                [ -n "$SMTP_HOST" ] && echo "SMTP_HOST=$SMTP_HOST" || true
+                [ -n "$SMTP_PORT" ] && echo "SMTP_PORT=$SMTP_PORT" || true
+                [ -n "$SMTP_USER" ] && echo "SMTP_USER=$SMTP_USER" || true
+                [ -n "$SMTP_PASS" ] && echo "SMTP_PASS=$SMTP_PASS" || true
               } > .env.production
             - '[ -s .env.production ] || echo ">> WARN: .env.production not written (missing envs)"'
 

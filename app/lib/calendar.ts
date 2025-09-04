@@ -126,41 +126,15 @@ export const createCalendarEvent = async (leaveRequest: LeaveRequest & { employe
       reason: leaveRequest.reason,
     };
 
-    // Configurar fechas del evento
+    // Configurar fechas del evento (siempre evento de día completo)
     let eventStart: any;
     let eventEnd: any;
-
-    if (normalizedType === 'HOURS' && leaveRequest.startTime && leaveRequest.endTime) {
-      // Para solicitudes de horas, crear evento con hora específica
-      const startDateTime = new Date(leaveRequest.startDate);
-      const endDateTime = new Date(leaveRequest.startDate);
-      
-      // Parsear horas (admite HH o HH:MM)
-      const parse = (t: string): [number, number] => {
-        const [h, m] = (t || '').split(':');
-        const hour = Number(h);
-        const minute = m != null ? Number(m) : 0;
-        return [isNaN(hour) ? 0 : hour, isNaN(minute) ? 0 : minute];
-      };
-      const [startHour, startMinute] = parse(leaveRequest.startTime);
-      const [endHour, endMinute] = parse(leaveRequest.endTime);
-      
-      startDateTime.setHours(startHour, startMinute, 0, 0);
-      endDateTime.setHours(endHour, endMinute, 0, 0);
-      
-      eventStart = { dateTime: startDateTime.toISOString(), timeZone: 'America/Bogota' };
-      eventEnd = { dateTime: endDateTime.toISOString(), timeZone: 'America/Bogota' };
-    } else {
-      // Para otros tipos de solicitudes, crear evento de día completo
-      const startDate = new Date(leaveRequest.startDate);
-      const endDate = new Date(leaveRequest.endDate);
-      
-      // Para eventos de día completo, agregar 1 día a la fecha de fin
-      endDate.setDate(endDate.getDate() + 1);
-      
-      eventStart = { date: startDate.toISOString().split('T')[0] };
-      eventEnd = { date: endDate.toISOString().split('T')[0] };
-    }
+    const startDate = new Date(leaveRequest.startDate);
+    const endDate = new Date(leaveRequest.endDate);
+    // Para eventos de día completo, Google Calendar espera la fecha final EXCLUSIVA (+1 día)
+    endDate.setDate(endDate.getDate() + 1);
+    eventStart = { date: startDate.toISOString().split('T')[0] };
+    eventEnd = { date: endDate.toISOString().split('T')[0] };
 
     const event = {
       summary: formatEventTitle(leaveRequest.employees.firstName, leaveRequest.employees.lastName, requestTypeForTitle),
