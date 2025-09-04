@@ -1,4 +1,5 @@
 
+import 'server-only';
 import nodemailer from 'nodemailer';
 
 // Configuración del transportador de correo, con logs mínimos (sin credenciales)
@@ -204,7 +205,6 @@ export const sendNewRequestNotification = async (adminEmails: string[], data: Ne
         console.log('SMTP: sent', { to: email, messageId: info?.messageId, accepted: (info as any)?.accepted, rejected: (info as any)?.rejected });
         return info;
       })
-    );
     );
 
     const failed = results.filter(r => r.status === 'rejected');
