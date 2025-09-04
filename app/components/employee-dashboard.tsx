@@ -22,7 +22,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { Employee, LeaveRequest, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS, DAY_SHIFT_LABELS } from '../lib/types';
-import { formatAvailableTime, formatAvailablePersonalDays, formatAvailableRemoteDays, getTimeBreakdown, formatYearsOfService } from '../lib/time-utils';
+import { formatAvailableTime, getTimeBreakdown, formatYearsOfService, formatHoursOfTotalDays } from '../lib/time-utils';
 
 export default function EmployeeDashboard() {
   const { data: session } = useSession();
@@ -158,7 +158,7 @@ export default function EmployeeDashboard() {
           <CardContent className="p-6 text-center">
             <User className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
             <p className="text-2xl font-bold text-sgn-dark">
-              {Math.floor((employee.personalHours || 0) / 8)} de {Math.floor((employee.totalPersonalHours || 0) / 8)}
+              {formatHoursOfTotalDays(employee.personalHours || 0, employee.totalPersonalHours || 0)}
             </p>
             <p className="text-sm text-gray-600">Días particulares</p>
           </CardContent>
@@ -168,7 +168,7 @@ export default function EmployeeDashboard() {
           <CardContent className="p-6 text-center">
             <Laptop className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
             <p className="text-2xl font-bold text-sgn-dark">
-              {Math.floor((employee.remoteHours || 0) / 8)} de {Math.floor((employee.totalRemoteHours || 0) / 8)}
+              {formatHoursOfTotalDays(employee.remoteHours || 0, employee.totalRemoteHours || 0)}
             </p>
             <p className="text-sm text-gray-600">Días remotos</p>
           </CardContent>
@@ -178,7 +178,7 @@ export default function EmployeeDashboard() {
           <CardContent className="p-6 text-center">
             <Clock className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
             <p className="text-2xl font-bold text-sgn-dark">
-              {employee.availableHours} de {employee.totalAvailableHours}
+              {formatHoursOfTotalDays(employee.availableHours || 0, employee.totalAvailableHours || 0)}
             </p>
             <p className="text-sm text-gray-600">Horas disponibles</p>
           </CardContent>

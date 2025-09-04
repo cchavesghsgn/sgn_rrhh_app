@@ -224,6 +224,34 @@ export function formatAvailableHours(availableHours: number): string {
 }
 
 /**
+ * Formatea un total de horas como "X días y Y horas"
+ *  - 20 -> "2 días y 4 horas"
+ *  - 8  -> "1 día"
+ *  - 0  -> "0 horas"
+ */
+export function formatDaysAndHours(totalHours: number): string {
+  const hours = Math.max(0, Math.floor(totalHours || 0));
+  const days = Math.floor(hours / 8);
+  const rem = hours % 8;
+
+  const parts: string[] = [];
+  if (days > 0) parts.push(`${days} día${days > 1 ? 's' : ''}`);
+  if (rem > 0) parts.push(`${rem} hora${rem > 1 ? 's' : ''}`);
+  if (parts.length === 0) return '0 horas';
+  return parts.join(' y ');
+}
+
+/**
+ * Formatea disponibilidad y total en días: "X días y Y horas de N días"
+ * Ej.: available=20, total=96 -> "2 días y 4 horas de 12 días"
+ */
+export function formatHoursOfTotalDays(availableHours: number, totalHours: number): string {
+  const left = formatDaysAndHours(availableHours || 0);
+  const totalDays = Math.floor((totalHours || 0) / 8);
+  return `${left} de ${totalDays} día${totalDays === 1 ? '' : 's'}`;
+}
+
+/**
  * Obtiene un resumen detallado de las horas disponibles
  * @param totalHours Total de horas disponibles
  * @returns Objeto con desglose detallado
@@ -296,4 +324,3 @@ export function formatYearsOfService(hireDate: string | Date): string {
     return `${years} años`;
   }
 }
-

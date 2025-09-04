@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { Employee, LeaveRequest, Area, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS, DAY_SHIFT_LABELS } from '../lib/types';
-import { formatAvailableTime, formatAvailablePersonalDays, formatAvailableRemoteDays, calculateTotalLicensesTaken } from '../lib/time-utils';
+import { formatAvailableTime, formatHoursOfTotalDays, calculateTotalLicensesTaken } from '../lib/time-utils';
 
 export default function AdminDashboard() {
   const gridRef = useRef<HTMLDivElement | null>(null);
@@ -290,13 +290,13 @@ export default function AdminDashboard() {
                             Vacaciones: {employee.vacationDays || 0} de {employee.totalVacationDays} días
                           </div>
                           <div className="text-gray-600">
-                            Personales: {Math.floor((employee.personalHours || 0) / 8)} de {Math.floor((employee.totalPersonalHours) / 8)} días
+                            Personales: {formatHoursOfTotalDays(employee.personalHours || 0, employee.totalPersonalHours || 0)}
                           </div>
                           <div className="text-gray-600">
-                            Remotos: {Math.floor((employee.remoteHours || 0) / 8)} de {Math.floor((employee.totalRemoteHours) / 8)} días
+                            Remotos: {formatHoursOfTotalDays(employee.remoteHours || 0, employee.totalRemoteHours || 0)}
                           </div>
                           <div className="text-gray-600">
-                            Horas: {employee.availableHours || 0} de {employee.totalAvailableHours} horas
+                            Horas: {formatHoursOfTotalDays(employee.availableHours || 0, employee.totalAvailableHours || 0)}
                           </div>
                         </div>
                         </CardContent>
