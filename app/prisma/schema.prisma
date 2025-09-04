@@ -1,6 +1,10 @@
 generator client {
     provider = "prisma-client-js"
-    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    // Include targets for local dev and Amplify Hosting SSR runtime
+    // - native: for local development
+    // - rhel-openssl-1.0.x: Amazon Linux 2 / OpenSSL 1.0.x used by Amplify SSR runtime
+    // - linux-musl-arm64-openssl-3.0.x: kept for previous builds that might rely on musl
+    binaryTargets = ["native", "rhel-openssl-1.0.x", "linux-musl-arm64-openssl-3.0.x"]
     //output = "/home/ubuntu/sgn_rrhh_app/app/node_modules/.prisma/client"
 }
 
