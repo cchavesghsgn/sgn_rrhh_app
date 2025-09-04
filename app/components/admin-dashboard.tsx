@@ -296,7 +296,7 @@ export default function AdminDashboard() {
                             Remotos: {formatHoursOfTotalDays(employee.remoteHours || 0, employee.totalRemoteHours || 0)}
                           </div>
                           <div className="text-gray-600">
-                            Horas: {formatHoursOfTotalDays(employee.availableHours || 0, employee.totalAvailableHours || 0)}
+                            Horas: {(employee.availableHours || 0)} de {(employee.totalAvailableHours || 0)} horas
                           </div>
                         </div>
                         </CardContent>

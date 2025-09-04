@@ -178,7 +178,7 @@ export default function EmployeeDashboard() {
           <CardContent className="p-6 text-center">
             <Clock className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
             <p className="text-2xl font-bold text-sgn-dark">
-              {formatHoursOfTotalDays(employee.availableHours || 0, employee.totalAvailableHours || 0)}
+              {(employee.availableHours || 0)} de {(employee.totalAvailableHours || 0)} horas
             </p>
             <p className="text-sm text-gray-600">Horas disponibles</p>
           </CardContent>
