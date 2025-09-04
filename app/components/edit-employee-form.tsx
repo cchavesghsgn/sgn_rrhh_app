@@ -133,10 +133,11 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
             position: employeeData.position,
             phone: employeeData.phone || '',
             role: employeeData.user.role,
-            vacationDays: String(employeeData.vacationDays || 20),
-            personalHours: String((employeeData.personalHours || 96) / 8), // Convertir horas a días para mostrar
-            remoteHours: String((employeeData.remoteHours || 96) / 8),     // Convertir horas a días para mostrar
-            availableHours: String(employeeData.availableHours || 16)
+            // Mostrar los TOTALES asignados (no los disponibles)
+            vacationDays: String(employeeData.totalVacationDays || employeeData.vacationDays || 20),
+            personalHours: String(((employeeData.totalPersonalHours ?? employeeData.personalHours ?? 96) / 8)),
+            remoteHours: String(((employeeData.totalRemoteHours ?? employeeData.remoteHours ?? 96) / 8)),
+            availableHours: String(employeeData.totalAvailableHours ?? employeeData.availableHours ?? 16)
           });
 
           // Set existing profile image if available

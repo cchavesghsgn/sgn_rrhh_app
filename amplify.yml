@@ -41,6 +41,10 @@ applications:
                 [ -n "$NEXTAUTH_URL" ] && echo "NEXTAUTH_URL=$NEXTAUTH_URL" || true
                 [ -n "$NEXTAUTH_SECRET" ] && echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET" || true
                 [ -n "$DATABASE_URL" ] && echo "DATABASE_URL=$DATABASE_URL" || true
+                [ -n "$GOOGLE_CLIENT_ID" ] && echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" || true
+                [ -n "$GOOGLE_CLIENT_SECRET" ] && echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" || true
+                [ -n "$GOOGLE_REFRESH_TOKEN" ] && echo "GOOGLE_REFRESH_TOKEN=$GOOGLE_REFRESH_TOKEN" || true
+                [ -n "$GOOGLE_CALENDAR_ID" ] && echo "GOOGLE_CALENDAR_ID=$GOOGLE_CALENDAR_ID" || true
               } > .env.production
             - '[ -s .env.production ] || echo ">> WARN: .env.production not written (missing envs)"'
 
