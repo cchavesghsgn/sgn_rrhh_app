@@ -130,7 +130,7 @@ export default function AdminDashboard() {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
           ))}
@@ -152,35 +152,35 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="sgn-card">
-          <CardContent className="p-6 text-center">
-            <Users className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
-            <p className="text-2xl font-bold text-sgn-dark">{stats.totalEmployees}</p>
+          <CardContent className="p-4 text-center">
+            <Users className="h-6 w-6 text-sgn-blue mx-auto mb-2" />
+            <p className="text-xl font-bold text-sgn-dark">{stats.totalEmployees}</p>
             <p className="text-sm text-gray-600">Total Empleados</p>
           </CardContent>
         </Card>
 
         <Card className="sgn-card">
-          <CardContent className="p-6 text-center">
-            <Clock className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-yellow-600">{stats.pendingRequests}</p>
+          <CardContent className="p-4 text-center">
+            <Clock className="h-6 w-6 text-yellow-600 mx-auto mb-2" />
+            <p className="text-xl font-bold text-yellow-600">{stats.pendingRequests}</p>
             <p className="text-sm text-gray-600">Solicitudes Pendientes</p>
           </CardContent>
         </Card>
 
         <Card className="sgn-card">
-          <CardContent className="p-6 text-center">
-            <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-green-600">{stats.approvedRequests}</p>
+          <CardContent className="p-4 text-center">
+            <CheckCircle className="h-6 w-6 text-green-600 mx-auto mb-2" />
+            <p className="text-xl font-bold text-green-600">{stats.approvedRequests}</p>
             <p className="text-sm text-gray-600">Aprobadas</p>
           </CardContent>
         </Card>
 
         <Card className="sgn-card">
-          <CardContent className="p-6 text-center">
-            <XCircle className="h-8 w-8 text-red-600 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-red-600">{stats.rejectedRequests}</p>
+          <CardContent className="p-4 text-center">
+            <XCircle className="h-6 w-6 text-red-600 mx-auto mb-2" />
+            <p className="text-xl font-bold text-red-600">{stats.rejectedRequests}</p>
             <p className="text-sm text-gray-600">Rechazadas</p>
           </CardContent>
         </Card>

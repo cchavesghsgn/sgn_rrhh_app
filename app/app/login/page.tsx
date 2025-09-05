@@ -37,7 +37,7 @@ export default async function LoginPage() {
         </div>
 
         <div className="text-center mt-6 text-sm text-gray-500">
-          <p>SGN © 2024. Todos los derechos reservados.</p>
+          <p>SGN © 2025. Todos los derechos reservados.</p>
         </div>
       </div>
     </div>

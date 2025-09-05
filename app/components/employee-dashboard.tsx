@@ -143,21 +143,21 @@ export default function EmployeeDashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Licenses taken */}
         <Card className="sgn-card">
-          <CardContent className="p-6 text-center">
-            <FileText className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
-            <p className="text-2xl font-bold text-sgn-dark">
+          <CardContent className="p-4 text-center">
+            <FileText className="h-6 w-6 text-sgn-blue mx-auto mb-2" />
+            <p className="text-xl font-bold text-sgn-dark">
               {(employee.licensesTakenDays || 0)} días
             </p>
             <p className="text-sm text-gray-600">Licencias tomadas</p>
           </CardContent>
         </Card>
         <Card className="sgn-card">
-          <CardContent className="p-6 text-center">
-            <Calendar className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
-            <p className="text-2xl font-bold text-sgn-dark">
+          <CardContent className="p-4 text-center">
+            <Calendar className="h-6 w-6 text-sgn-blue mx-auto mb-2" />
+            <p className="text-xl font-bold text-sgn-dark">
               {employee.vacationDays} de {employee.totalVacationDays}
             </p>
             <p className="text-sm text-gray-600">Días de vacaciones</p>
@@ -165,9 +165,9 @@ export default function EmployeeDashboard() {
         </Card>
 
         <Card className="sgn-card">
-          <CardContent className="p-6 text-center">
-            <User className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
-            <p className="text-2xl font-bold text-sgn-dark">
+          <CardContent className="p-4 text-center">
+            <User className="h-6 w-6 text-sgn-blue mx-auto mb-2" />
+            <p className="text-xl font-bold text-sgn-dark">
               {formatHoursOfTotalDays(employee.personalHours || 0, employee.totalPersonalHours || 0)}
             </p>
             <p className="text-sm text-gray-600">Días particulares</p>
@@ -175,9 +175,9 @@ export default function EmployeeDashboard() {
         </Card>
 
         <Card className="sgn-card">
-          <CardContent className="p-6 text-center">
-            <Laptop className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
-            <p className="text-2xl font-bold text-sgn-dark">
+          <CardContent className="p-4 text-center">
+            <Laptop className="h-6 w-6 text-sgn-blue mx-auto mb-2" />
+            <p className="text-xl font-bold text-sgn-dark">
               {formatHoursOfTotalDays(employee.remoteHours || 0, employee.totalRemoteHours || 0)}
             </p>
             <p className="text-sm text-gray-600">Días remotos</p>
@@ -185,9 +185,9 @@ export default function EmployeeDashboard() {
         </Card>
 
         <Card className="sgn-card">
-          <CardContent className="p-6 text-center">
-            <Clock className="h-8 w-8 text-sgn-blue mx-auto mb-2" />
-            <p className="text-2xl font-bold text-sgn-dark">
+          <CardContent className="p-4 text-center">
+            <Clock className="h-6 w-6 text-sgn-blue mx-auto mb-2" />
+            <p className="text-xl font-bold text-sgn-dark">
               {(employee.availableHours || 0)} de {(employee.totalAvailableHours || 0)} horas
             </p>
             <p className="text-sm text-gray-600">Horas disponibles</p>
