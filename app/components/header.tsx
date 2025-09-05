@@ -9,7 +9,7 @@ import { Button } from './ui/button';
 import { 
   User, 
   LogOut, 
-  Settings,
+  Key,
   Users,
   FileText,
   Home,
@@ -17,6 +17,7 @@ import {
   ArrowLeft,
   Menu
 } from 'lucide-react';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './ui/tooltip';
 
 export default function Header() {
   const { data: session } = useSession();
@@ -129,16 +130,26 @@ export default function Header() {
                 </span>
               </div>
 
-              <Link href="/account/password">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-600 hover:text-sgn-blue"
-                >
-                  <Settings className="h-4 w-4" />
-                  <span className="hidden sm:ml-2 sm:inline">Cambiar contraseña</span>
-                </Button>
-              </Link>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="/account/password">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-gray-600 hover:text-sgn-blue"
+                        aria-label="Cambiar contraseña"
+                        title="Cambiar contraseña"
+                      >
+                        <Key className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Cambiar contraseña
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
 
               <Button
                 variant="ghost"
