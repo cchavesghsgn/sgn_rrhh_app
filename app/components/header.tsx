@@ -129,6 +129,17 @@ export default function Header() {
                 </span>
               </div>
 
+              <Link href="/account/password">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 hover:text-sgn-blue"
+                >
+                  <Settings className="h-4 w-4" />
+                  <span className="hidden sm:ml-2 sm:inline">Cambiar contraseña</span>
+                </Button>
+              </Link>
+
               <Button
                 variant="ghost"
                 size="sm"
