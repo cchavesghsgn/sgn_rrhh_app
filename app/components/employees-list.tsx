@@ -203,16 +203,16 @@ export default function EmployeesList() {
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
                     <div>
-                      <span className="font-medium">Vacaciones (total):</span> {employee.vacationDays}
+                      <span className="font-medium">Vacaciones:</span> {employee.vacationDays}
                     </div>
                     <div>
-                      <span className="font-medium">Personales (total):</span> {formatAvailableTime(employee.totalPersonalHours || 0)}
+                      <span className="font-medium">Personales:</span> {formatAvailableTime(employee.totalPersonalHours || 0)}
                     </div>
                     <div>
-                      <span className="font-medium">Remotos (total):</span> {formatAvailableTime(employee.totalRemoteHours || 0)}
+                      <span className="font-medium">Remotos:</span> {formatAvailableTime(employee.totalRemoteHours || 0)}
                     </div>
                     <div>
-                      <span className="font-medium">Horas (total):</span> {employee.totalAvailableHours || 0}
+                      <span className="font-medium">Horas:</span> {employee.totalAvailableHours || 0}
                     </div>
                   </div>
                 </div>

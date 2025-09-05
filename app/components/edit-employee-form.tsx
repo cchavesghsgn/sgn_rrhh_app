@@ -133,8 +133,9 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
             position: employeeData.position,
             phone: employeeData.phone || '',
             role: employeeData.user.role,
-            // Mostrar los TOTALES asignados (no los disponibles)
-            vacationDays: String(employeeData.totalVacationDays || employeeData.vacationDays || 20),
+            // Mostrar los TOTALES (alineado con la lista):
+            // Vacaciones: usamos vacationDays como valor total operativo
+            vacationDays: String((employeeData.vacationDays ?? employeeData.totalVacationDays) ?? 20),
             personalHours: String(((employeeData.totalPersonalHours ?? employeeData.personalHours ?? 96) / 8)),
             remoteHours: String(((employeeData.totalRemoteHours ?? employeeData.remoteHours ?? 96) / 8)),
             availableHours: String(employeeData.totalAvailableHours ?? employeeData.availableHours ?? 16)
