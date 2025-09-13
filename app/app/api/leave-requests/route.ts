@@ -43,20 +43,27 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const employeeId = searchParams.get('employeeId');
+    const scope = searchParams.get('scope'); // e.g., 'me'
 
     let whereClause: any = {};
 
-    if (session.user.role === 'EMPLOYEE') {
-      // Get user's employee record
-      const employee = await prisma.employees.findUnique({
-        where: { userId: session.user.id }
-      });
+    // Resolve current user's employee record if needed
+    let currentEmployee: any = null;
+    if (scope === 'me' || session.user.role === 'EMPLOYEE') {
+      currentEmployee = await prisma.employees.findUnique({ where: { userId: session.user.id } });
+    }
 
-      if (!employee) {
+    // When scope=me, always filter by the current user's employee id (even for admins)
+    if (scope === 'me') {
+      if (!currentEmployee) {
         return NextResponse.json({ error: 'Empleado no encontrado' }, { status: 404 });
       }
-
-      whereClause.employeeId = employee.id;
+      whereClause.employeeId = currentEmployee.id;
+    } else if (session.user.role === 'EMPLOYEE') {
+      if (!currentEmployee) {
+        return NextResponse.json({ error: 'Empleado no encontrado' }, { status: 404 });
+      }
+      whereClause.employeeId = currentEmployee.id;
     }
 
     if (status) {

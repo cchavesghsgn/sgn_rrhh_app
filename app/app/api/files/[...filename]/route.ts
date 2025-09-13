@@ -10,7 +10,7 @@ export async function GET(
 ) {
   try {
     const filepath = params.filename.join('/');
-    const fullPath = join(process.cwd(), 'uploads', filepath);
+    const fullPath = join(process.cwd(), 'public', 'uploads', filepath);
     
     const file = await readFile(fullPath);
     const mimeType = lookup(filepath) || 'application/octet-stream';

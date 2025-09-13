@@ -86,34 +86,23 @@ export async function POST(request: NextRequest) {
       console.log('❌ User is not admin:', session.user.role);
       return NextResponse.json({ error: 'Sin permisos' }, { status: 403 });
     }
-    
-    console.log('✅ Authentication passed for user:', session.user.email);
 
-    // Handle both FormData and JSON
-    let data: any;
+    console.log('✅ Authentication passed for user:', session.user?.email || 'unknown');
+
+    // Prepare containers
+    let data: any = {};
     let profileImage: File | null = null;
 
     const contentType = request.headers.get('content-type') || '';
-    
-    // Try to handle as FormData first, then fallback to JSON
-    console.log('2. Processing request with content-type:', contentType);
-    
+    console.log('2. Content-Type:', contentType);
+
+    // Parse request: prefer FormData when multipart, otherwise JSON
     try {
-      if (contentType.includes('multipart/form-data') || contentType.includes('form-data')) {
-        // Handle FormData (when image is included)
+      if (contentType.includes('multipart/form-data')) {
         console.log('3. Parsing as FormData...');
         const formData = await request.formData();
-        
-        // Log all form data keys for debugging
-        console.log('4. FormData keys:', Array.from(formData.keys()));
-        console.log('5. FormData values preview:', {
-          email: formData.get('email'),
-          dni: formData.get('dni'),
-          firstName: formData.get('firstName'),
-          lastName: formData.get('lastName'),
-          hasProfileImage: !!formData.get('profileImage')
-        });
-        
+
+        // Map expected fields
         data = {
           email: formData.get('email') as string,
           password: formData.get('password') as string,
@@ -125,54 +114,44 @@ export async function POST(request: NextRequest) {
           areaId: formData.get('areaId') as string,
           position: formData.get('position') as string,
           phone: formData.get('phone') as string,
-          role: formData.get('role') as string || 'EMPLOYEE',
+          role: (formData.get('role') as string) || 'EMPLOYEE',
           vacationDays: formData.get('vacationDays') as string,
           personalHours: formData.get('personalHours') as string,
           remoteHours: formData.get('remoteHours') as string,
           availableHours: formData.get('availableHours') as string
         };
 
-        // Get profile image if uploaded
-        console.log('6. Processing profile image...');
+        // Extract image if provided
         const imageFile = formData.get('profileImage');
-        console.log('7. Image file raw:', {
-          exists: !!imageFile,
-          type: typeof imageFile,
-          constructor: imageFile?.constructor?.name,
-          size: (imageFile as any)?.size
-        });
-        
         if (imageFile && imageFile !== 'undefined' && typeof imageFile !== 'string') {
-          // Ensure it's a file-like object with size
-          if (imageFile instanceof File || (imageFile as any).size > 0) {
+          if ((imageFile as any).size || imageFile instanceof File) {
             profileImage = imageFile as File;
-            console.log('8. ✅ Profile image accepted');
+            console.log('4. Profile image found:', {
+              name: (profileImage as any).name,
+              size: (profileImage as any).size,
+              type: (profileImage as any).type
+            });
           } else {
-            console.log('8. ❌ Profile image rejected - invalid size or type');
+            console.log('4. Profile image present but invalid shape');
           }
         } else {
-          console.log('8. ❌ No valid profile image found');
+          console.log('4. No profile image provided');
         }
       } else {
-        // Handle JSON
         console.log('3. Parsing as JSON...');
         data = await request.json();
       }
-    } catch (formDataError) {
-      console.log('FormData parsing failed, trying JSON...', formDataError);
+    } catch (parseError) {
+      console.warn('FormData parsing failed, attempting JSON fallback...', parseError);
       try {
-        // Fallback to JSON if FormData parsing fails
         data = await request.json();
       } catch (jsonError) {
-        console.error('Both FormData and JSON parsing failed:', { formDataError, jsonError });
-        return NextResponse.json(
-          { error: 'Formato de datos inválido' },
-          { status: 400 }
-        );
+        console.error('Both FormData and JSON parsing failed:', { parseError, jsonError });
+        return NextResponse.json({ error: 'Formato de datos inválido' }, { status: 400 });
       }
     }
 
-    console.log('9. Extracting data from parsed input...');
+    // Destructure and set defaults
     const {
       email,
       password,
@@ -191,29 +170,20 @@ export async function POST(request: NextRequest) {
       availableHours = 0
     } = data;
 
-    // Log received data for debugging
-    console.log('10. ✅ Received employee creation data:', {
+    console.log('5. Parsed data preview:', {
       email,
       dni,
       firstName,
       lastName,
-      birthDate,
-      hireDate,
-      areaId,
-      position,
       hasPassword: !!password,
       hasImage: !!profileImage,
       phone,
-      role,
-      vacationDays,
-      personalHours,
-      remoteHours,
-      availableHours
+      role
     });
 
     // Validate required fields
     if (!email || !password || !dni || !firstName || !lastName || !birthDate || !hireDate || !areaId || !position) {
-      console.error('Missing required fields:', {
+      console.error('6. Missing required fields', {
         email: !!email,
         password: !!password,
         dni: !!dni,
@@ -230,91 +200,69 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user email already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email }
-    });
-
+    // Check for existing email
+    const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      return NextResponse.json(
-        { error: 'El email ya está registrado' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'El email ya está registrado' }, { status: 400 });
     }
 
-    // Check if DNI already exists
-    const existingEmployee = await prisma.employees.findUnique({
-      where: { dni }
-    });
-
+    // Check for existing DNI
+    const existingEmployee = await prisma.employees.findUnique({ where: { dni } });
     if (existingEmployee) {
-      return NextResponse.json(
-        { error: 'El DNI ya está registrado' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'El DNI ya está registrado' }, { status: 400 });
     }
 
-    // Generate employee ID first (needed for image filename)
+    // Generate employee ID (used for image filename)
     const employeeId = crypto.randomUUID();
+    console.log('7. Generated employee ID:', employeeId);
 
-    // Handle profile image upload
+    // Prepare for potential image save
     let profileImagePath: string | null = null;
 
     if (profileImage) {
       try {
-        console.log('Processing profile image:', {
-          name: profileImage.name || 'unknown',
-          size: (profileImage as any).size || 'unknown',
-          type: profileImage.type || 'unknown'
+        console.log('8. Preparing to save profile image...', {
+          name: (profileImage as any).name,
+          size: (profileImage as any).size,
+          type: (profileImage as any).type
         });
 
-        // Ensure uploads directory exists
-        const uploadsDir = path.join(process.cwd(), 'uploads');
+        // Basic validations
+        const mime = (profileImage as any).type || '';
+        if (!mime.startsWith('image/')) {
+          console.warn('8. Not an image MIME type, skipping image save:', mime);
+          throw new Error('Invalid image MIME type');
+        }
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if ((profileImage as any).size > maxSize) {
+          console.warn('8. Image too large, skipping image save:', (profileImage as any).size);
+          throw new Error('Image exceeds maximum size');
+        }
+
+        // Ensure uploads directory exists in public folder
+        const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
         await fs.mkdir(uploadsDir, { recursive: true });
-        
-        // Generate unique filename with fallback for extension
-        let fileExtension = 'png'; // default extension
-        if (profileImage.name && profileImage.name.includes('.')) {
-          fileExtension = profileImage.name.split('.').pop() || 'png';
-        } else if (profileImage.type) {
-          // Extract extension from MIME type (e.g., "image/jpeg" -> "jpeg")
-          fileExtension = profileImage.type.split('/').pop() || 'png';
+
+        // Determine extension and filename
+        let fileExtension = 'jpg';
+        const originalName = (profileImage as any).name || '';
+        if (originalName.includes('.')) {
+          fileExtension = originalName.split('.').pop() || fileExtension;
+        } else if (mime.includes('/')) {
+          fileExtension = mime.split('/').pop() || fileExtension;
         }
-        
         const fileName = `employee-${employeeId}-${Date.now()}.${fileExtension}`;
+        const targetPath = path.join(uploadsDir, fileName);
+
+        // Read data and write file
+        const bytes = await (profileImage as any).arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        await fs.writeFile(targetPath, buffer);
+
         profileImagePath = `/uploads/${fileName}`;
-        
-        // Save file - handle both File and Blob-like objects
-        let buffer: Buffer;
-        
-        if (typeof profileImage.arrayBuffer === 'function') {
-          const bytes = await profileImage.arrayBuffer();
-          buffer = Buffer.from(bytes);
-        } else if ((profileImage as any).stream) {
-          // Handle stream-like objects
-          const chunks: Uint8Array[] = [];
-          const reader = (profileImage as any).stream().getReader();
-          let done = false;
-          
-          while (!done) {
-            const { value, done: streamDone } = await reader.read();
-            done = streamDone;
-            if (value) chunks.push(value);
-          }
-          
-          buffer = Buffer.concat(chunks);
-        } else {
-          throw new Error('Unable to read image data from profileImage object');
-        }
-        
-        await fs.writeFile(path.join(uploadsDir, fileName), buffer);
-        
-        console.log('Profile image saved successfully:', {
-          path: profileImagePath,
-          size: buffer.length,
-          fileName
-        });
+        console.log('8. Image saved to', profileImagePath);
       } catch (imageError) {
+        // Log error, but do not fail the whole request — continue without image
         console.error('Error saving profile image:', imageError);
         console.error('ProfileImage object:', {
           type: typeof profileImage,
@@ -428,7 +376,7 @@ export async function POST(request: NextRequest) {
 
       // Add profile image path if uploaded
       if (profileImagePath) {
-        employeeData.profileImage = profileImagePath;
+        employeeData.photo = profileImagePath;
         console.log('✅ Profile image path added to employee data:', profileImagePath);
       }
 

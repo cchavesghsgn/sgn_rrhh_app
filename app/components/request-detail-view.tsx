@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
 import { 
   ArrowLeft,
   Check,
@@ -14,7 +16,11 @@ import {
   Calendar,
   Clock,
   FileText,
-  MessageSquare
+  MessageSquare,
+  Upload,
+  Trash2,
+  Paperclip,
+  Eye
 } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
@@ -30,6 +36,10 @@ export default function RequestDetailView({ requestId }: RequestDetailViewProps)
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [adminNotes, setAdminNotes] = useState('');
+  const [attachments, setAttachments] = useState<any[]>([]);
+  const [attLoading, setAttLoading] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     const fetchRequest = async () => {
@@ -50,8 +60,107 @@ export default function RequestDetailView({ requestId }: RequestDetailViewProps)
       }
     };
 
+    const fetchAttachments = async () => {
+      try {
+        setAttLoading(true);
+        const res = await fetch(`/api/leave-requests/${requestId}/documents`);
+        if (res.ok) {
+          const docs = await res.json();
+          setAttachments(docs || []);
+        }
+      } catch (err) {
+        console.error('Error fetching attachments:', err);
+      } finally {
+        setAttLoading(false);
+      }
+    };
+
     fetchRequest();
+    fetchAttachments();
   }, [requestId]);
+
+  const refreshAttachments = async () => {
+    try {
+      setAttLoading(true);
+      const res = await fetch(`/api/leave-requests/${requestId}/documents`);
+      if (res.ok) {
+        const docs = await res.json();
+        setAttachments(docs || []);
+      }
+    } finally {
+      setAttLoading(false);
+    }
+  };
+
+  const handleFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    // Validaciones básicas por archivo
+    const allowed = [
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'image/jpg',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+    for (const f of Array.from(files)) {
+      if (f.size > 10 * 1024 * 1024) {
+        alert(`El archivo ${f.name} supera 10MB`);
+        return;
+      }
+      if (!allowed.includes(f.type)) {
+        alert(`Tipo no permitido: ${f.name}`);
+        return;
+      }
+    }
+    setSelectedFiles(files);
+  };
+
+  const handleUploadAttachments = async () => {
+    if (!selectedFiles || selectedFiles.length === 0) return;
+    setUploading(true);
+    try {
+      for (const f of Array.from(selectedFiles)) {
+        const fd = new FormData();
+        fd.append('file', f);
+        const res = await fetch(`/api/leave-requests/${requestId}/documents`, {
+          method: 'POST',
+          body: fd,
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || 'Error subiendo adjunto');
+        }
+      }
+      setSelectedFiles(null);
+      await refreshAttachments();
+    } catch (e) {
+      console.error(e);
+      alert((e as Error).message || 'Error al subir adjuntos');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDeleteAttachment = async (attachmentId: string) => {
+    if (!confirm('¿Eliminar este adjunto?')) return;
+    try {
+      const res = await fetch(`/api/leave-requests/${requestId}/documents/${attachmentId}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || 'Error al eliminar adjunto');
+        return;
+      }
+      await refreshAttachments();
+    } catch (e) {
+      console.error(e);
+      alert('Error al eliminar adjunto');
+    }
+  };
 
   const handleApprove = async () => {
     if (!request) return;
@@ -283,6 +392,67 @@ export default function RequestDetailView({ requestId }: RequestDetailViewProps)
             <p className="text-sm text-gray-600 mb-2">Motivo de la Solicitud</p>
             <div className="p-4 bg-gray-50 rounded-lg">
               <p>{request.reason}</p>
+            </div>
+          </div>
+
+          {/* Attachments */}
+          <div className="space-y-3">
+            <p className="text-sm text-gray-600 mb-1 flex items-center gap-2">
+              <Paperclip className="h-4 w-4" /> Adjuntos
+            </p>
+
+            {/* Uploader */}
+            <div className="p-3 border rounded-lg bg-gray-50">
+              <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+                <div className="flex-1">
+                  <Label htmlFor="attachments" className="sr-only">Adjuntar archivos</Label>
+                  <Input id="attachments" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onChange={handleFilesChange} />
+                </div>
+                <Button onClick={handleUploadAttachments} disabled={!selectedFiles || uploading} className="md:w-auto w-full">
+                  {uploading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+                      Subiendo...
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Upload className="h-4 w-4" /> Subir
+                    </div>
+                  )}
+                </Button>
+              </div>
+              {selectedFiles && selectedFiles.length > 0 && (
+                <p className="text-xs text-gray-600 mt-2">{selectedFiles.length} archivo(s) seleccionado(s)</p>
+              )}
+            </div>
+
+            {/* List */}
+            <div className="space-y-2">
+              {attLoading ? (
+                <p className="text-gray-500">Cargando adjuntos...</p>
+              ) : attachments.length === 0 ? (
+                <p className="text-gray-500">No hay adjuntos</p>
+              ) : (
+                attachments.map((att) => (
+                  <div key={att.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <FileText className="h-5 w-5 text-sgn-blue" />
+                      <div>
+                        <p className="font-medium text-sm">{att.originalName || att.fileName}</p>
+                        <p className="text-xs text-gray-500">{att.fileType} • {(att.fileSize / 1024).toFixed(1)} KB</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm" onClick={() => window.open(att.filePath || `/api/files/attachments/${att.fileName}`, '_blank')}>
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleDeleteAttachment(att.id)} className="text-red-600 hover:text-red-700">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 

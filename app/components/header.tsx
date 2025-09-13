@@ -93,7 +93,7 @@ export default function Header() {
                 className="flex items-center space-x-2 text-gray-600 hover:text-sgn-blue transition-colors"
               >
                 <FileText className="h-4 w-4" />
-                <span>Solicitudes</span>
+                <span>Mis Solicitudes</span>
               </Link>
 
               {session.user.role === 'ADMIN' && (
@@ -104,14 +104,6 @@ export default function Header() {
                   >
                     <Users className="h-4 w-4" />
                     <span>Empleados</span>
-                  </Link>
-
-                  <Link
-                    href="/admin/areas"
-                    className="flex items-center space-x-2 text-gray-600 hover:text-sgn-blue transition-colors"
-                  >
-                    <Building2 className="h-4 w-4" />
-                    <span>Áreas</span>
                   </Link>
                 </>
               )}

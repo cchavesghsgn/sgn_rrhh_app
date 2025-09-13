@@ -14,7 +14,8 @@ import {
   User,
   Calendar,
   Clock,
-  Filter
+  Filter,
+  Paperclip
 } from 'lucide-react';
 import Link from 'next/link';
 import { LeaveRequest, Employee, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS, DAY_SHIFT_LABELS } from '../lib/types';
@@ -206,6 +207,30 @@ export default function AdminRequestsList() {
                         <p className="text-sm text-gray-600 mb-1">Motivo:</p>
                         <p className="text-sm bg-gray-50 p-3 rounded-lg">{request.reason}</p>
                       </div>
+
+                      {!!request.attachments && request.attachments.length > 0 && (
+                        <div className="flex items-center gap-2 text-xs text-gray-600 mt-1">
+                          <Paperclip className="h-3 w-3" />
+                          <span>{request.attachments.length} adjunto{request.attachments.length > 1 ? 's' : ''}</span>
+                          <span className="text-gray-400">•</span>
+                          <div className="flex flex-wrap gap-2">
+                            {request.attachments.slice(0, 3).map((att) => (
+                              <a
+                                key={att.id}
+                                href={att.filePath || `/api/files/attachments/${att.fileName}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:underline"
+                              >
+                                {att.originalName || att.fileName}
+                              </a>
+                            ))}
+                            {request.attachments.length > 3 && (
+                              <span className="text-gray-500">+{request.attachments.length - 3} más</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="ml-6 flex flex-col gap-2">
@@ -275,6 +300,29 @@ export default function AdminRequestsList() {
                       <p className="text-xs text-blue-600 font-medium">
                         {formatRequestDetails(request)}
                       </p>
+                      {!!request.attachments && request.attachments.length > 0 && (
+                        <div className="flex items-center gap-2 text-xs text-gray-600 mt-1">
+                          <Paperclip className="h-3 w-3" />
+                          <span>{request.attachments.length} adjunto{request.attachments.length > 1 ? 's' : ''}</span>
+                          <span className="text-gray-400">•</span>
+                          <div className="flex flex-wrap gap-2">
+                            {request.attachments.slice(0, 3).map((att) => (
+                              <a
+                                key={att.id}
+                                href={att.filePath || `/api/files/attachments/${att.fileName}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:underline"
+                              >
+                                {att.originalName || att.fileName}
+                              </a>
+                            ))}
+                            {request.attachments.length > 3 && (
+                              <span className="text-gray-500">+{request.attachments.length - 3} más</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <p className="text-xs text-gray-500">
                       {formatDate(request.updatedAt?.toString() || request.createdAt.toString())}

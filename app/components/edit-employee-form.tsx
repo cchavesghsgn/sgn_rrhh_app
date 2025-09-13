@@ -27,6 +27,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { formatYearsOfService } from '@/lib/time-utils';
+import EmployeeDocuments from './employee-documents';
 
 interface Area {
   id: string;
@@ -142,8 +143,9 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
           });
 
           // Set existing profile image if available
-          if (employeeData.profileImage) {
-            setImagePreview(employeeData.profileImage);
+          if (employeeData.photo) {
+            console.log('Setting image preview:', employeeData.photo);
+            setImagePreview(employeeData.photo);
           }
         } else {
           toast.error('Error al cargar los datos del empleado');
@@ -710,6 +712,14 @@ export default function EditEmployeeForm({ employeeId }: EditEmployeeFormProps) 
                 <strong>Nota:</strong> Estos valores representan la cantidad disponible para el año actual. 
                 Puedes ajustarlos según las políticas de la empresa y las necesidades del puesto.
               </p>
+            </div>
+          </div>
+
+          {/* Sección de Documentos del Empleado */}
+          <div className="space-y-6">
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Documentos del Empleado</h3>
+              <EmployeeDocuments employeeId={employee.id} />
             </div>
           </div>
 

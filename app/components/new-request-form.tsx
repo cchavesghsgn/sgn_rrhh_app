@@ -19,6 +19,7 @@ import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { LEAVE_REQUEST_TYPE_LABELS, LeaveRequestType, DayShift, DAY_SHIFT_LABELS } from '../lib/types';
 import { formatAvailableTime, hoursToDays, canRequestShift, getTimeBreakdown } from '../lib/time-utils';
+import { Paperclip, Upload, Trash2 } from 'lucide-react';
 
 export default function NewRequestForm() {
   const router = useRouter();
@@ -41,6 +42,9 @@ export default function NewRequestForm() {
     shift: '',
     reason: ''
   });
+
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
 
   // Calculate hours automatically based on start and end time
   const calculateHours = (startHour: string, endHour: string): number => {
@@ -183,6 +187,30 @@ export default function NewRequestForm() {
       const result = await response.json();
 
       if (response.ok) {
+        // Si hay adjuntos, subirlos ahora
+        if (attachments.length > 0) {
+          try {
+            setUploading(true);
+            for (const file of attachments) {
+              const fd = new FormData();
+              fd.append('file', file);
+              const upRes = await fetch(`/api/leave-requests/${result.id}/documents`, {
+                method: 'POST',
+                body: fd,
+              });
+              if (!upRes.ok) {
+                const err = await upRes.json().catch(() => ({}));
+                throw new Error(err.error || 'Error al subir adjunto');
+              }
+            }
+          } catch (err) {
+            console.error('Error uploading attachments:', err);
+            toast.error((err as Error).message || 'Error al subir adjuntos');
+          } finally {
+            setUploading(false);
+          }
+        }
+
         toast.success('Solicitud enviada exitosamente');
         router.push('/requests');
       } else {
@@ -194,6 +222,39 @@ export default function NewRequestForm() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const onSelectAttachments = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const allowed = [
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'image/jpg',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+    const selected: File[] = [];
+    for (const f of Array.from(files)) {
+      if (f.size > 10 * 1024 * 1024) {
+        toast.error(`El archivo ${f.name} supera 10MB`);
+        return;
+      }
+      if (!allowed.includes(f.type)) {
+        toast.error(`Tipo no permitido: ${f.name}`);
+        return;
+      }
+      selected.push(f);
+    }
+    setAttachments(prev => [...prev, ...selected]);
+    // Limpiar input para permitir volver a seleccionar mismo archivo si se quita
+    e.currentTarget.value = '';
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
   };
 
   const calculateDaysNeeded = () => {
@@ -510,6 +571,25 @@ export default function NewRequestForm() {
                 className="w-full min-h-[100px] px-3 py-2 border border-input rounded-md text-sm resize-none focus:outline-none focus:ring-1 focus:ring-ring"
                 placeholder="Describe el motivo de tu solicitud..."
               />
+            </div>
+
+            {/* Attachments */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2"><Paperclip className="h-4 w-4" /> Adjuntar documentos (opcional)</Label>
+              <Input type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" multiple onChange={onSelectAttachments} />
+              {attachments.length > 0 && (
+                <div className="space-y-2">
+                  {attachments.map((f, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 border rounded">
+                      <span className="text-sm truncate mr-2">{f.name}</span>
+                      <Button type="button" size="sm" variant="outline" onClick={() => removeAttachment(idx)} className="text-red-600">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <p className="text-xs text-gray-500">PDF, imágenes o Word. Máx 10MB por archivo.</p>
             </div>
 
             {/* Submit Button */}

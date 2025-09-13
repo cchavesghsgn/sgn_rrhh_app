@@ -11,7 +11,8 @@ import {
   Calendar,
   Clock,
   User,
-  MessageSquare
+  MessageSquare,
+  Paperclip
 } from 'lucide-react';
 import Link from 'next/link';
 import { LeaveRequest, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS, DAY_SHIFT_LABELS } from '../lib/types';
@@ -23,7 +24,8 @@ export default function RequestsList() {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await fetch('/api/leave-requests');
+        // For "Mis Solicitudes" always fetch only current user's requests
+        const response = await fetch('/api/leave-requests?scope=me');
         if (response.ok) {
           const data = await response.json();
           setRequests(data);
@@ -155,6 +157,30 @@ export default function RequestsList() {
                       <p className="text-sm text-gray-600 mb-1">Motivo:</p>
                       <p className="text-sm bg-gray-50 p-3 rounded-lg">{request.reason}</p>
                     </div>
+
+                    {!!request.attachments && request.attachments.length > 0 && (
+                      <div className="flex items-center gap-2 text-xs text-gray-600 mt-1">
+                        <Paperclip className="h-3 w-3" />
+                        <span>{request.attachments.length} adjunto{request.attachments.length > 1 ? 's' : ''}</span>
+                        <span className="text-gray-400">•</span>
+                        <div className="flex flex-wrap gap-2">
+                          {request.attachments.slice(0, 3).map((att) => (
+                            <a
+                              key={att.id}
+                              href={att.filePath || `/api/files/attachments/${att.fileName}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:underline"
+                            >
+                              {att.originalName || att.fileName}
+                            </a>
+                          ))}
+                          {request.attachments.length > 3 && (
+                            <span className="text-gray-500">+{request.attachments.length - 3} más</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
                     {request.adminNotes && (
                       <div>

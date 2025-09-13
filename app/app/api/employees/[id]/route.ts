@@ -203,20 +203,20 @@ export async function PUT(
 
     if (profileImage) {
       try {
-        // Ensure uploads directory exists
-        const uploadsDir = path.join(process.cwd(), 'uploads');
+        // Ensure uploads directory exists in public folder
+        const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
         await fs.mkdir(uploadsDir, { recursive: true });
-        
+
         // Generate unique filename
         const fileExtension = profileImage.name.split('.').pop();
         const fileName = `employee-${params.id}-${Date.now()}.${fileExtension}`;
         profileImagePath = `/uploads/${fileName}`;
-        
+
         // Save file
         const bytes = await profileImage.arrayBuffer();
         const buffer = Buffer.from(bytes);
         await fs.writeFile(path.join(uploadsDir, fileName), buffer);
-        
+
         console.log('Profile image saved:', profileImagePath);
       } catch (imageError) {
         console.error('Error saving profile image:', imageError);
@@ -225,9 +225,9 @@ export async function PUT(
     }
 
     // Update employee and user in a transaction
-    const result = await prisma.$transaction(async (prisma: any) => {
+    const result = await prisma.$transaction(async (tx) => {
       // Update user
-      await prisma.user.update({
+      await tx.user.update({
         where: { id: existingEmployee.userId },
         data: {
           email,
@@ -307,11 +307,11 @@ export async function PUT(
 
       // Add profile image path if uploaded
       if (profileImagePath) {
-        employeeUpdateData.profileImage = profileImagePath;
+        employeeUpdateData.photo = profileImagePath;
       }
 
       // Update employee
-      const updatedEmployee = await prisma.employees.update({
+      const updatedEmployee = await tx.employees.update({
         where: { id: params.id },
         data: employeeUpdateData,
         include: {

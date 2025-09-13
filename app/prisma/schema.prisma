@@ -84,9 +84,9 @@ model attachments {
 }
 
 model employees {
-  id                  String           @id
-  userId              String           @unique
-  dni                 String           @unique
+  id                  String                @id
+  userId              String                @unique
+  dni                 String                @unique
   firstName           String
   lastName            String
   birthDate           DateTime
@@ -95,19 +95,38 @@ model employees {
   position            String
   phone               String?
   photo               String?
-  vacationDays        Int              @default(20)
-  personalHours       Int              @default(96)
-  remoteHours         Int              @default(96)
-  availableHours      Int              @default(16)
-  totalVacationDays   Int              @default(20)
-  totalPersonalHours  Int              @default(96)
-  totalRemoteHours    Int              @default(96)
-  totalAvailableHours Int              @default(16)
-  createdAt           DateTime         @default(now())
+  vacationDays        Int                   @default(20)
+  personalHours       Int                   @default(96)
+  remoteHours         Int                   @default(96)
+  availableHours      Int                   @default(16)
+  totalVacationDays   Int                   @default(20)
+  totalPersonalHours  Int                   @default(96)
+  totalRemoteHours    Int                   @default(96)
+  totalAvailableHours Int                   @default(16)
+  createdAt           DateTime              @default(now())
   updatedAt           DateTime
-  Area                Area             @relation(fields: [areaId], references: [id])
-  User                User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Area                Area                  @relation(fields: [areaId], references: [id])
+  User                User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   leave_requests      leave_requests[]
+  employee_documents  employee_documents[]
+}
+
+model employee_documents {
+  id           String    @id
+  employeeId   String
+  fileName     String
+  originalName String
+  filePath     String
+  fileType     String
+  fileSize     Int
+  documentType String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  employees    employees @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([documentType])
+  @@index([createdAt])
 }
 
 model leave_requests {
