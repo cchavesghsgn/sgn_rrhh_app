@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { getSignedGetUrl, deleteObject, buildKey } from '@/lib/s3';
 
 // GET - Descargar/ver un documento específico
 export async function GET(
@@ -28,22 +27,13 @@ export async function GET(
       return NextResponse.json({ error: 'Documento no encontrado' }, { status: 404 });
     }
 
-    // Leer el archivo
-    const fullPath = path.join(process.cwd(), 'public', document.filePath);
-    
     try {
-      const file = await fs.readFile(fullPath);
-      
-      return new NextResponse(file, {
-        headers: {
-          'Content-Type': document.fileType,
-          'Content-Disposition': `inline; filename="${document.originalName}"`,
-          'Cache-Control': 'public, max-age=31536000',
-        },
-      });
+      const key = buildKey(`documents/${document.fileName}`);
+      const url = await getSignedGetUrl(key, document.fileType, document.originalName);
+      return NextResponse.redirect(url, { status: 302 });
     } catch (fileError) {
-      console.error('Error reading file:', fileError);
-      return NextResponse.json({ error: 'Archivo no encontrado en el sistema' }, { status: 404 });
+      console.error('Error generating signed URL:', fileError);
+      return NextResponse.json({ error: 'Archivo no encontrado' }, { status: 404 });
     }
 
   } catch (error) {
@@ -78,13 +68,13 @@ export async function DELETE(
       return NextResponse.json({ error: 'Documento no encontrado' }, { status: 404 });
     }
 
-    // Eliminar archivo físico
-    const fullPath = path.join(process.cwd(), 'public', document.filePath);
+    // Eliminar objeto en S3
     try {
-      await fs.unlink(fullPath);
+      const key = buildKey(`documents/${document.fileName}`);
+      await deleteObject(key);
     } catch (fileError) {
-      console.warn('Could not delete physical file:', fileError);
-      // Continuar con la eliminación de la base de datos aunque el archivo físico no se pueda eliminar
+      console.warn('Could not delete S3 object:', fileError);
+      // Continuar con la eliminación de la base de datos aunque el objeto físico no se pueda eliminar
     }
 
     // Eliminar registro de la base de datos

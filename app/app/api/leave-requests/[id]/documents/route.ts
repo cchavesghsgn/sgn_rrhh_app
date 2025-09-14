@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { putObject, buildKey } from '@/lib/s3';
 
 // GET - Listar documentos de una solicitud
 export async function GET(
@@ -123,19 +122,15 @@ export async function POST(
       }, { status: 400 });
     }
 
-    // Crear directorio si no existe
-    const uploadsDir = join(process.cwd(), 'public', 'uploads', 'attachments');
-    await mkdir(uploadsDir, { recursive: true });
-
     // Generar nombre único para el archivo
     const fileExtension = file.name.split('.').pop();
     const uniqueFileName = `request-${leaveRequestId}-${Date.now()}-${uuidv4()}.${fileExtension}`;
-    const filePath = join(uploadsDir, uniqueFileName);
 
-    // Guardar archivo
+    // Guardar archivo en S3
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
+    const key = buildKey(`attachments/${uniqueFileName}`);
+    await putObject(key, buffer, file.type);
 
     // Guardar información en la base de datos
     const attachment = await prisma.attachments.create({
@@ -144,7 +139,8 @@ export async function POST(
         leaveRequestId,
         fileName: uniqueFileName,
         originalName: file.name,
-        filePath: `/uploads/attachments/${uniqueFileName}`,
+        // Mantener compatibilidad de front: servimos por el endpoint interno que redirige a S3
+        filePath: `/api/files/attachments/${uniqueFileName}`,
         fileType: file.type,
         fileSize: file.size
       }

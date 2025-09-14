@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { deleteObject, buildKey } from '@/lib/s3';
 
 // DELETE - Eliminar un adjunto de una solicitud
 export async function DELETE(
@@ -41,13 +40,13 @@ export async function DELETE(
       return NextResponse.json({ error: 'Sin permisos para eliminar este adjunto' }, { status: 403 });
     }
 
-    // Intentar eliminar el archivo físico
+    // Intentar eliminar el objeto en S3
     try {
-      const fullPath = path.join(process.cwd(), 'public', attachment.filePath);
-      await fs.unlink(fullPath);
+      const key = buildKey(`attachments/${attachment.fileName}`);
+      await deleteObject(key);
     } catch (fileErr) {
-      // No bloquear si no existe físicamente
-      console.warn('No se pudo eliminar el archivo físico del adjunto:', fileErr);
+      // No bloquear si no existe en S3
+      console.warn('No se pudo eliminar el objeto S3 del adjunto:', fileErr);
     }
 
     // Eliminar el registro en la base de datos

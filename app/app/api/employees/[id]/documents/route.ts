@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { putObject, buildKey } from '@/lib/s3';
 
 // GET - Listar documentos de un empleado
 export async function GET(
@@ -94,20 +93,16 @@ export async function POST(
       }, { status: 400 });
     }
 
-    // Crear directorio si no existe
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'documents');
-    await fs.mkdir(uploadsDir, { recursive: true });
-
     // Generar nombre único para el archivo
     const fileExtension = file.name.split('.').pop() || 'bin';
     const fileName = `doc-${params.id}-${Date.now()}.${fileExtension}`;
-    const filePath = `/uploads/documents/${fileName}`;
-    const fullPath = path.join(uploadsDir, fileName);
+    const filePath = `/api/files/documents/${fileName}`;
 
     // Guardar archivo
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await fs.writeFile(fullPath, buffer);
+    const key = buildKey(`documents/${fileName}`);
+    await putObject(key, buffer, file.type);
 
     // Guardar información en la base de datos
     const document = await prisma.employee_documents.create({
