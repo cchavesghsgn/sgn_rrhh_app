@@ -3,8 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '../../../../lib/auth';
 import { PrismaClient } from '@prisma/client';
-import path from 'path';
-import fs from 'fs/promises';
+import { putObject, buildKey, deleteObject } from '@/lib/s3';
 
 const prisma = new PrismaClient();
 
@@ -203,21 +202,19 @@ export async function PUT(
 
     if (profileImage) {
       try {
-        // Ensure uploads directory exists in public folder
-        const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-        await fs.mkdir(uploadsDir, { recursive: true });
-
         // Generate unique filename
         const fileExtension = profileImage.name.split('.').pop();
         const fileName = `employee-${params.id}-${Date.now()}.${fileExtension}`;
-        profileImagePath = `/uploads/${fileName}`;
+        profileImagePath = `/api/files/profile/${fileName}`;
 
-        // Save file
+        // Upload to S3
         const bytes = await profileImage.arrayBuffer();
         const buffer = Buffer.from(bytes);
-        await fs.writeFile(path.join(uploadsDir, fileName), buffer);
+        const mime = (profileImage as any).type || 'application/octet-stream';
+        const key = buildKey(`profile/${fileName}`);
+        await putObject(key, buffer, mime);
 
-        console.log('Profile image saved:', profileImagePath);
+        console.log('Profile image uploaded to S3:', profileImagePath);
       } catch (imageError) {
         console.error('Error saving profile image:', imageError);
         // Continue without image if upload fails
@@ -325,6 +322,19 @@ export async function PUT(
       return updatedEmployee;
     });
 
+    // If we uploaded a new image and there was a previous one stored in S3, delete the old
+    if (profileImagePath && existingEmployee.photo && existingEmployee.photo.startsWith('/api/files/profile/')) {
+      try {
+        const oldName = existingEmployee.photo.split('/').pop() as string;
+        if (oldName) {
+          const oldKey = buildKey(`profile/${oldName}`);
+          await deleteObject(oldKey);
+        }
+      } catch (e) {
+        console.warn('Could not delete previous profile image from S3:', e);
+      }
+    }
+
     return NextResponse.json(result);
   } catch (error) {
     console.error('Update employee error:', error);
@@ -370,6 +380,25 @@ export async function DELETE(
 
     // Always proceed with deletion, regardless of leave requests
 
+    // Capture old photo path to clean up in S3 after successful deletion
+    const oldPhotoPath = existingEmployee.photo || null;
+
+    // Capture employee documents to remove their S3 objects after DB deletion
+    const employeeDocs = await prisma.employee_documents.findMany({
+      where: { employeeId: params.id },
+      select: { fileName: true }
+    });
+
+    // Capture attachments from the employee's leave requests to later delete their S3 objects
+    const employeeAttachments = await prisma.attachments.findMany({
+      where: {
+        leave_requests: {
+          employeeId: params.id
+        }
+      },
+      select: { fileName: true }
+    });
+
     // Delete employee, user and all leave requests in a transaction
     await prisma.$transaction(async (prisma: any) => {
       // Delete leave requests first
@@ -393,6 +422,47 @@ export async function DELETE(
     const message = existingEmployee.leave_requests.length > 0 
       ? `Empleado eliminado exitosamente junto con ${existingEmployee.leave_requests.length} solicitud(es) de licencia`
       : 'Empleado eliminado exitosamente';
+
+    // Try to delete profile image from S3 if it exists and was stored via /api/files/profile/
+    if (oldPhotoPath && oldPhotoPath.startsWith('/api/files/profile/')) {
+      try {
+        const oldName = oldPhotoPath.split('/').pop() as string;
+        if (oldName) {
+          const key = buildKey(`profile/${oldName}`);
+          await deleteObject(key);
+        }
+      } catch (e) {
+        console.warn('Could not delete employee profile image from S3:', e);
+      }
+    }
+
+    // Delete employee documents objects from S3
+    if (employeeDocs && employeeDocs.length > 0) {
+      for (const doc of employeeDocs) {
+        try {
+          if (doc.fileName) {
+            const key = buildKey(`documents/${doc.fileName}`);
+            await deleteObject(key);
+          }
+        } catch (e) {
+          console.warn('Could not delete employee document from S3:', doc.fileName, e);
+        }
+      }
+    }
+
+    // Delete attachments objects from S3
+    if (employeeAttachments && employeeAttachments.length > 0) {
+      for (const att of employeeAttachments) {
+        try {
+          if (att.fileName) {
+            const key = buildKey(`attachments/${att.fileName}`);
+            await deleteObject(key);
+          }
+        } catch (e) {
+          console.warn('Could not delete employee attachment from S3:', att.fileName, e);
+        }
+      }
+    }
 
     return NextResponse.json({ message });
   } catch (error) {

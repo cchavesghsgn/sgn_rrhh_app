@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs/promises';
+import { putObject, buildKey } from '@/lib/s3';
 
 const prisma = new PrismaClient();
 
@@ -239,10 +240,6 @@ export async function POST(request: NextRequest) {
           throw new Error('Image exceeds maximum size');
         }
 
-        // Ensure uploads directory exists in public folder
-        const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-        await fs.mkdir(uploadsDir, { recursive: true });
-
         // Determine extension and filename
         let fileExtension = 'jpg';
         const originalName = (profileImage as any).name || '';
@@ -252,15 +249,14 @@ export async function POST(request: NextRequest) {
           fileExtension = mime.split('/').pop() || fileExtension;
         }
         const fileName = `employee-${employeeId}-${Date.now()}.${fileExtension}`;
-        const targetPath = path.join(uploadsDir, fileName);
-
-        // Read data and write file
+        // Read data and upload to S3
         const bytes = await (profileImage as any).arrayBuffer();
         const buffer = Buffer.from(bytes);
-        await fs.writeFile(targetPath, buffer);
+        const key = buildKey(`profile/${fileName}`);
+        await putObject(key, buffer, mime || 'application/octet-stream');
 
-        profileImagePath = `/uploads/${fileName}`;
-        console.log('8. Image saved to', profileImagePath);
+        profileImagePath = `/api/files/profile/${fileName}`;
+        console.log('8. Image uploaded to S3, path', profileImagePath);
       } catch (imageError) {
         // Log error, but do not fail the whole request — continue without image
         console.error('Error saving profile image:', imageError);
