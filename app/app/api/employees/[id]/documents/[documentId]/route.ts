@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { getSignedGetUrl, deleteObject, buildKey } from '@/lib/s3';
+import { getSignedGetUrl, deleteObject, buildKey, UPLOADS_BUCKET, UPLOADS_PREFIX, REGION } from '@/lib/s3';
 
 // GET - Descargar/ver un documento específico
 export async function GET(
@@ -29,10 +29,11 @@ export async function GET(
 
     try {
       const key = buildKey(`documents/${document.fileName}`);
+      console.log('[S3][EMP DOC GET] bucket=%s region=%s prefix=%s key=%s', UPLOADS_BUCKET, REGION, UPLOADS_PREFIX || '(none)', key);
       const url = await getSignedGetUrl(key, document.fileType, document.originalName);
       return NextResponse.redirect(url, { status: 302 });
     } catch (fileError) {
-      console.error('Error generating signed URL:', fileError);
+      console.error('[S3][EMP DOC GET] Error generating signed URL:', fileError);
       return NextResponse.json({ error: 'Archivo no encontrado' }, { status: 404 });
     }
 
@@ -71,6 +72,7 @@ export async function DELETE(
     // Eliminar objeto en S3
     try {
       const key = buildKey(`documents/${document.fileName}`);
+      console.log('[S3][EMP DOC DELETE] bucket=%s region=%s key=%s', UPLOADS_BUCKET, REGION, key);
       await deleteObject(key);
     } catch (fileError) {
       console.warn('Could not delete S3 object:', fileError);

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { deleteObject, buildKey } from '@/lib/s3';
+import { deleteObject, buildKey, UPLOADS_BUCKET, REGION } from '@/lib/s3';
 
 // DELETE - Eliminar un adjunto de una solicitud
 export async function DELETE(
@@ -43,6 +43,7 @@ export async function DELETE(
     // Intentar eliminar el objeto en S3
     try {
       const key = buildKey(`attachments/${attachment.fileName}`);
+      console.log('[S3][REQ DOC DELETE] bucket=%s region=%s key=%s', UPLOADS_BUCKET, REGION, key);
       await deleteObject(key);
     } catch (fileErr) {
       // No bloquear si no existe en S3

@@ -2,7 +2,7 @@ import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } fro
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 // Amplify restringe variables que comienzan con AWS_. Soportamos ambas.
-const REGION = process.env.REGION_AWS || process.env.AWS_REGION || 'us-east-1';
+export const REGION = process.env.REGION_AWS || process.env.AWS_REGION || 'us-east-1';
 export const UPLOADS_BUCKET = process.env.S3_BUCKET_UPLOADS || '';
 export const UPLOADS_PREFIX = (process.env.S3_UPLOADS_PREFIX || '').replace(/^\/+|\/+$/g, ''); // trim slashes
 

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { putObject, buildKey } from '@/lib/s3';
+import { putObject, buildKey, UPLOADS_BUCKET, UPLOADS_PREFIX, REGION } from '@/lib/s3';
 
 // GET - Listar documentos de un empleado
 export async function GET(
@@ -102,6 +102,7 @@ export async function POST(
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const key = buildKey(`documents/${fileName}`);
+    console.log('[S3][EMP DOCS POST] bucket=%s region=%s prefix=%s key=%s size=%d type=%s', UPLOADS_BUCKET, REGION, UPLOADS_PREFIX || '(none)', key, buffer.length, file.type);
     await putObject(key, buffer, file.type);
 
     // Guardar información en la base de datos
@@ -118,10 +119,8 @@ export async function POST(
       }
     });
 
-    return NextResponse.json({ 
-      message: 'Documento subido exitosamente',
-      document 
-    });
+    console.log('[S3][EMP DOCS POST] upload OK key=%s', key);
+    return NextResponse.json({ message: 'Documento subido exitosamente', document });
 
   } catch (error) {
     console.error('Error uploading document:', error);

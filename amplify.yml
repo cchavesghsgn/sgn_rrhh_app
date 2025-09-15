@@ -49,6 +49,10 @@ applications:
                 [ -n "$SMTP_PORT" ] && echo "SMTP_PORT=$SMTP_PORT" || true
                 [ -n "$SMTP_USER" ] && echo "SMTP_USER=$SMTP_USER" || true
                 [ -n "$SMTP_PASS" ] && echo "SMTP_PASS=$SMTP_PASS" || true
+                # S3 uploads (added)
+                [ -n "$REGION_AWS" ] && echo "REGION_AWS=$REGION_AWS" || true
+                [ -n "$S3_BUCKET_UPLOADS" ] && echo "S3_BUCKET_UPLOADS=$S3_BUCKET_UPLOADS" || true
+                [ -n "$S3_UPLOADS_PREFIX" ] && echo "S3_UPLOADS_PREFIX=$S3_UPLOADS_PREFIX" || true
               } > .env.production
             - '[ -s .env.production ] || echo ">> WARN: .env.production not written (missing envs)"'
 

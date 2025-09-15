@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs/promises';
-import { putObject, buildKey } from '@/lib/s3';
+import { putObject, buildKey, UPLOADS_BUCKET, UPLOADS_PREFIX, REGION } from '@/lib/s3';
 
 const prisma = new PrismaClient();
 
@@ -253,10 +253,11 @@ export async function POST(request: NextRequest) {
         const bytes = await (profileImage as any).arrayBuffer();
         const buffer = Buffer.from(bytes);
         const key = buildKey(`profile/${fileName}`);
+        console.log('[S3][EMP CREATE PHOTO] bucket=%s region=%s prefix=%s key=%s size=%d type=%s', UPLOADS_BUCKET, REGION, UPLOADS_PREFIX || '(none)', key, buffer.length, mime || '');
         await putObject(key, buffer, mime || 'application/octet-stream');
 
         profileImagePath = `/api/files/profile/${fileName}`;
-        console.log('8. Image uploaded to S3, path', profileImagePath);
+        console.log('[S3][EMP CREATE PHOTO] upload OK key=%s path=%s', key, profileImagePath);
       } catch (imageError) {
         // Log error, but do not fail the whole request — continue without image
         console.error('Error saving profile image:', imageError);

@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '../../../../lib/auth';
 import { PrismaClient } from '@prisma/client';
-import { putObject, buildKey, deleteObject } from '@/lib/s3';
+import { putObject, buildKey, deleteObject, UPLOADS_BUCKET, REGION } from '@/lib/s3';
 
 const prisma = new PrismaClient();
 
@@ -212,9 +212,10 @@ export async function PUT(
         const buffer = Buffer.from(bytes);
         const mime = (profileImage as any).type || 'application/octet-stream';
         const key = buildKey(`profile/${fileName}`);
+        console.log('[S3][EMP UPDATE PHOTO] bucket=%s region=%s key=%s size=%d type=%s', UPLOADS_BUCKET, REGION, key, buffer.length, mime);
         await putObject(key, buffer, mime);
 
-        console.log('Profile image uploaded to S3:', profileImagePath);
+        console.log('[S3][EMP UPDATE PHOTO] upload OK key=%s path=%s', key, profileImagePath);
       } catch (imageError) {
         console.error('Error saving profile image:', imageError);
         // Continue without image if upload fails
@@ -328,6 +329,7 @@ export async function PUT(
         const oldName = existingEmployee.photo.split('/').pop() as string;
         if (oldName) {
           const oldKey = buildKey(`profile/${oldName}`);
+          console.log('[S3][EMP UPDATE PHOTO] deleting old key=%s', oldKey);
           await deleteObject(oldKey);
         }
       } catch (e) {

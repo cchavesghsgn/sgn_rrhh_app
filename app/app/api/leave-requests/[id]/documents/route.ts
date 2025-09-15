@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerAuthSession } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { v4 as uuidv4 } from 'uuid';
-import { putObject, buildKey } from '@/lib/s3';
+import { putObject, buildKey, UPLOADS_BUCKET, UPLOADS_PREFIX, REGION } from '@/lib/s3';
 
 // GET - Listar documentos de una solicitud
 export async function GET(
@@ -47,6 +47,7 @@ export async function GET(
       orderBy: { createdAt: 'desc' }
     });
 
+    console.log('[S3][REQ DOCS GET] leaveRequestId=%s docs=%d', leaveRequestId, documents.length);
     return NextResponse.json(documents);
   } catch (error) {
     console.error('Error al obtener documentos de solicitud:', error);
@@ -130,6 +131,7 @@ export async function POST(
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const key = buildKey(`attachments/${uniqueFileName}`);
+    console.log('[S3][REQ DOCS POST] bucket=%s region=%s prefix=%s key=%s size=%d type=%s', UPLOADS_BUCKET, REGION, UPLOADS_PREFIX || '(none)', key, buffer.length, file.type);
     await putObject(key, buffer, file.type);
 
     // Guardar información en la base de datos
@@ -146,6 +148,7 @@ export async function POST(
       }
     });
 
+    console.log('[S3][REQ DOCS POST] upload OK key=%s', key);
     return NextResponse.json(attachment, { status: 201 });
   } catch (error) {
     console.error('Error al subir documento de solicitud:', error);
