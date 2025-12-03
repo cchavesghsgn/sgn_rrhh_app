@@ -1,18 +1,14 @@
 generator client {
-    provider = "prisma-client-js"
-    // Include targets for local dev and Amplify Hosting SSR runtime
-    // - native: for local development
-    // - rhel-openssl-1.0.x: Amazon Linux 2 / OpenSSL 1.0.x used by Amplify SSR runtime
-    // - linux-musl-arm64-openssl-3.0.x: kept for previous builds that might rely on musl
-    binaryTargets = ["native", "rhel-openssl-1.0.x", "linux-musl-arm64-openssl-3.0.x"]
-    //output = "/home/ubuntu/sgn_rrhh_app/app/node_modules/.prisma/client"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x", "linux-musl-arm64-openssl-3.0.x"]
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Account {
   id                String  @id
   userId            String
@@ -31,6 +27,7 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Area {
   id          String      @id
   name        String      @unique
@@ -40,6 +37,7 @@ model Area {
   employees   employees[]
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model Session {
   id           String   @id
   sessionToken String   @unique
@@ -48,6 +46,7 @@ model Session {
   User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model User {
   id            String     @id
   email         String     @unique
@@ -71,6 +70,7 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model attachments {
   id             String         @id
   leaveRequestId String
@@ -83,10 +83,30 @@ model attachments {
   leave_requests leave_requests @relation(fields: [leaveRequestId], references: [id], onDelete: Cascade)
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model employee_documents {
+  id           String    @id @db.VarChar(255)
+  employeeId   String    @db.VarChar(255)
+  fileName     String    @db.VarChar(500)
+  originalName String    @db.VarChar(500)
+  filePath     String    @db.VarChar(1000)
+  fileType     String    @db.VarChar(100)
+  fileSize     Int
+  documentType String    @db.VarChar(100)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now())
+  employees    employees @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([documentType])
+  @@index([employeeId])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model employees {
-  id                  String                @id
-  userId              String                @unique
-  dni                 String                @unique
+  id                  String               @id
+  userId              String               @unique
+  dni                 String               @unique
   firstName           String
   lastName            String
   birthDate           DateTime
@@ -95,40 +115,23 @@ model employees {
   position            String
   phone               String?
   photo               String?
-  vacationDays        Int                   @default(20)
-  personalHours       Int                   @default(96)
-  remoteHours         Int                   @default(96)
-  availableHours      Int                   @default(16)
-  totalVacationDays   Int                   @default(20)
-  totalPersonalHours  Int                   @default(96)
-  totalRemoteHours    Int                   @default(96)
-  totalAvailableHours Int                   @default(16)
-  createdAt           DateTime              @default(now())
+  vacationDays        Int                  @default(20)
+  personalHours       Int                  @default(96)
+  remoteHours         Int                  @default(96)
+  availableHours      Int                  @default(16)
+  totalVacationDays   Int                  @default(20)
+  totalPersonalHours  Int                  @default(96)
+  totalRemoteHours    Int                  @default(96)
+  totalAvailableHours Int                  @default(16)
+  createdAt           DateTime             @default(now())
   updatedAt           DateTime
-  Area                Area                  @relation(fields: [areaId], references: [id])
-  User                User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  leave_requests      leave_requests[]
   employee_documents  employee_documents[]
+  Area                Area                 @relation(fields: [areaId], references: [id])
+  User                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leave_requests      leave_requests[]
 }
 
-model employee_documents {
-  id           String    @id
-  employeeId   String
-  fileName     String
-  originalName String
-  filePath     String
-  fileType     String
-  fileSize     Int
-  documentType String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  employees    employees @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-
-  @@index([employeeId])
-  @@index([documentType])
-  @@index([createdAt])
-}
-
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model leave_requests {
   id          String           @id
   employeeId  String
@@ -157,6 +160,7 @@ enum DayShift {
 
 enum LeaveRequestType {
   License
+  Vacation
   Personal
   Remote
   Hours
@@ -169,6 +173,6 @@ enum RequestStatus {
 }
 
 enum UserRole {
-  EMPLOYEE
   ADMIN
+  EMPLOYEE
 }

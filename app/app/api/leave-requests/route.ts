@@ -15,6 +15,7 @@ export const dynamic = 'force-dynamic';
 const toDbType = (t: string) => {
   switch (t) {
     case 'LICENSE': return 'License';
+    case 'VACATION': return 'Vacation';
     case 'PERSONAL': return 'Personal';
     case 'REMOTE': return 'Remote';
     case 'HOURS': return 'Hours';
@@ -25,6 +26,7 @@ const toDbType = (t: string) => {
 const fromDbType = (t: string) => {
   switch (t) {
     case 'License': return 'LICENSE';
+    case 'Vacation': return 'VACATION';
     case 'Personal': return 'PERSONAL';
     case 'Remote': return 'REMOTE';
     case 'Hours': return 'HOURS';
