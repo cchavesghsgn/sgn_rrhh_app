@@ -5,8 +5,8 @@ applications:
       phases:
         preBuild:
           commands:
-            # Node 18
-            - if command -v nvm >/dev/null 2>&1; then nvm install 18 && nvm use 18; else echo "nvm not found"; fi
+            # Node 20 (AWS Amplify ya no soporta 18)
+            - if command -v nvm >/dev/null 2>&1; then nvm install 20 && nvm use 20; else echo "nvm not found"; fi
 
             # Minimal diagnostics: confirm we are at appRoot and list contents
             - 'echo ">> preBuild cwd: $(pwd)"'
