@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
 
     const licenseRequests = await prisma.leave_requests.findMany({
       where: {
-        type: 'License',
+        type: { in: ['License', 'Vacation'] },
         startDate: { lt: monthEndExclusive },
         endDate: { gte: monthStart }
       },
@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
       return [
         request.id,
         request.status,
-        'LICENSE',
+        request.type === 'Vacation' ? 'VACATION' : 'LICENSE',
         formatDate(request.startDate),
         formatDate(request.endDate),
         formatDate(overlapStart),
