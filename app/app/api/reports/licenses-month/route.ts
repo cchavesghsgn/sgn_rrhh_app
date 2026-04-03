@@ -25,6 +25,15 @@ const formatDate = (date: Date | null | undefined): string => {
   }).format(new Date(date));
 };
 
+const toUtcMidnight = (date: Date): Date =>
+  new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0, 0));
+
+const calculateInclusiveDays = (startDate: Date, endDate: Date): number => {
+  const start = toUtcMidnight(startDate).getTime();
+  const end = toUtcMidnight(endDate).getTime();
+  return Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
+};
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerAuthSession();
@@ -49,6 +58,7 @@ export async function GET(request: NextRequest) {
 
     const [year, month] = monthParam.split('-').map(Number);
     const monthStart = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0));
+    const monthEndInclusive = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999));
     const monthEndExclusive = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0));
 
     const licenseRequests = await prisma.leave_requests.findMany({
@@ -77,6 +87,9 @@ export async function GET(request: NextRequest) {
       'Tipo',
       'Fecha Inicio',
       'Fecha Fin',
+      'Fecha Inicio (Mes Solicitado)',
+      'Fecha Fin (Mes Solicitado)',
+      'Dias en Mes Solicitado',
       'Medio Dia',
       'Horas',
       'Hora Inicio',
@@ -98,6 +111,10 @@ export async function GET(request: NextRequest) {
 
     const rows = licenseRequests.map((request) => {
       const employee = request.employees;
+      const overlapStart = request.startDate > monthStart ? request.startDate : monthStart;
+      const overlapEnd = request.endDate < monthEndInclusive ? request.endDate : monthEndInclusive;
+      const overlapDays = calculateInclusiveDays(overlapStart, overlapEnd);
+      const daysInRequestedMonth = request.isHalfDay && overlapDays === 1 ? 0.5 : overlapDays;
 
       return [
         request.id,
@@ -105,6 +122,9 @@ export async function GET(request: NextRequest) {
         'LICENSE',
         formatDate(request.startDate),
         formatDate(request.endDate),
+        formatDate(overlapStart),
+        formatDate(overlapEnd),
+        daysInRequestedMonth,
         request.isHalfDay ? 'SI' : 'NO',
         request.hours ?? '',
         request.startTime ?? '',
