@@ -5,6 +5,16 @@ import { useEffect, useState, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from './ui/dialog';
 import { 
   Users,
   FileText,
@@ -13,7 +23,8 @@ import {
   Clock,
   Building2,
   Plus,
-  Eye
+  Eye,
+  Download
 } from 'lucide-react';
 import Link from 'next/link';
 import { Employee, LeaveRequest, Area, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS, DAY_SHIFT_LABELS } from '../lib/types';
@@ -32,6 +43,9 @@ export default function AdminDashboard() {
   const [pendingRequests, setPendingRequests] = useState<LeaveRequest[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedMonth, setSelectedMonth] = useState(() => new Date().toISOString().slice(0, 7));
+  const [isDownloadingLicenses, setIsDownloadingLicenses] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -123,6 +137,40 @@ export default function AdminDashboard() {
       case 'APPROVED': return 'approved';
       case 'REJECTED': return 'rejected';
       default: return 'pending';
+    }
+  };
+
+  const handleDownloadMonthlyLicenses = async () => {
+    if (!selectedMonth) {
+      setDownloadError('Debes seleccionar un mes y año.');
+      return;
+    }
+
+    setDownloadError(null);
+    setIsDownloadingLicenses(true);
+
+    try {
+      const response = await fetch(`/api/reports/licenses-month?month=${selectedMonth}`);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'No se pudo generar el archivo.');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `licencias_${selectedMonth}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error inesperado al descargar.';
+      setDownloadError(message);
+    } finally {
+      setIsDownloadingLicenses(false);
     }
   };
 
@@ -348,6 +396,49 @@ export default function AdminDashboard() {
                 Gestionar Empleados
               </Button>
             </Link>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full h-16 flex-col gap-2">
+                  <Download className="h-6 w-6" />
+                  Licencias del Mes
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Descargar Licencias del Mes</DialogTitle>
+                  <DialogDescription>
+                    Selecciona mes y año para exportar las licencias en formato Excel (CSV).
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-2">
+                  <label htmlFor="month-year" className="text-sm font-medium text-sgn-dark">
+                    Mes - Año
+                  </label>
+                  <Input
+                    id="month-year"
+                    type="month"
+                    value={selectedMonth}
+                    onChange={(e) => setSelectedMonth(e.target.value)}
+                    max={new Date().toISOString().slice(0, 7)}
+                  />
+                  {downloadError ? (
+                    <p className="text-sm text-red-600">{downloadError}</p>
+                  ) : null}
+                </div>
+
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    onClick={handleDownloadMonthlyLicenses}
+                    disabled={isDownloadingLicenses || !selectedMonth}
+                  >
+                    {isDownloadingLicenses ? 'Generando archivo...' : 'Descargar Excel'}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </CardContent>
       </Card>
