@@ -34,6 +34,17 @@ const calculateInclusiveDays = (startDate: Date, endDate: Date): number => {
   return Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
 };
 
+const fromDbType = (t: string) => {
+  switch (t) {
+    case 'License': return 'LICENSE';
+    case 'Vacation': return 'VACATION';
+    case 'Personal': return 'PERSONAL';
+    case 'Remote': return 'REMOTE';
+    case 'Hours': return 'HOURS';
+    default: return t;
+  }
+};
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerAuthSession();
@@ -63,7 +74,7 @@ export async function GET(request: NextRequest) {
 
     const licenseRequests = await prisma.leave_requests.findMany({
       where: {
-        type: { in: ['License', 'Vacation'] },
+        status: 'APPROVED',
         startDate: { lt: monthEndExclusive },
         endDate: { gte: monthStart }
       },
@@ -119,7 +130,7 @@ export async function GET(request: NextRequest) {
       return [
         request.id,
         request.status,
-        request.type === 'Vacation' ? 'VACATION' : 'LICENSE',
+        fromDbType(request.type),
         formatDate(request.startDate),
         formatDate(request.endDate),
         formatDate(overlapStart),

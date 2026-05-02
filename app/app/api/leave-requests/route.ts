@@ -87,7 +87,11 @@ export async function GET(request: NextRequest) {
         },
         attachments: true
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: [
+        { startDate: 'desc' },
+        { endDate: 'desc' },
+        { createdAt: 'desc' }
+      ]
     });
 
     // Format response to match frontend expectations (employee instead of employees)
