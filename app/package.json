@@ -11,6 +11,7 @@
     "db:seed": "tsx --require dotenv/config scripts/seed-development.ts",
     "db:seed-production": "tsx --require dotenv/config scripts/seed-production.ts",
     "db:backup": "tsx scripts/backup-db.ts",
+    "db:recalculate-balances": "tsx --require dotenv/config scripts/recalculate-balances.ts",
     "db:validate": "tsx scripts/validate-env.ts",
     "deploy:prepare": "yarn db:validate && yarn db:backup",
     "deploy:safe": "yarn deploy:prepare && yarn db:migrate-safe && yarn db:seed-production"
