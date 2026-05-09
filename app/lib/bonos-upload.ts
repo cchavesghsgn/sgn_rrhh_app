@@ -83,7 +83,7 @@ export const computeFileHash = (bytes: ArrayBuffer): string =>
 
 export const parseHorariosWorkbook = (bytes: ArrayBuffer, mesAnio: string): HorarioRow[] => {
   const { year, month } = toMesAnioParts(mesAnio);
-  const workbook = XLSX.read(Buffer.from(bytes), { type: 'buffer' });
+  const workbook = XLSX.read(Buffer.from(bytes), { type: 'buffer', raw: true });
   const firstSheetName = workbook.SheetNames[0];
   if (!firstSheetName) {
     throw new Error('El archivo de horarios no contiene hojas.');
@@ -123,7 +123,7 @@ export const parseHorariosWorkbook = (bytes: ArrayBuffer, mesAnio: string): Hora
 
 export const parseTicketsWorkbook = (bytes: ArrayBuffer, mesAnio: string): TicketRow[] => {
   toMesAnioParts(mesAnio);
-  const workbook = XLSX.read(Buffer.from(bytes), { type: 'buffer' });
+  const workbook = XLSX.read(Buffer.from(bytes), { type: 'buffer', raw: true });
   const firstSheetName = workbook.SheetNames[0];
   if (!firstSheetName) {
     throw new Error('El archivo de tickets no contiene hojas.');

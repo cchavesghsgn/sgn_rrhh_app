@@ -552,7 +552,7 @@ export default function AdminDashboard() {
                 <DialogHeader>
                   <DialogTitle>Carga de Archivos de Bonos</DialogTitle>
                   <DialogDescription>
-                    Selecciona mes-año, consulta estado actual y carga Horarios / Tickets-Horas (.xlsx).
+                    Selecciona mes-año, consulta estado actual y carga Horarios / Tickets-Horas (.xlsx o .csv).
                   </DialogDescription>
                 </DialogHeader>
 
@@ -583,24 +583,24 @@ export default function AdminDashboard() {
 
                   <div className="space-y-2">
                     <label htmlFor="bonos-horarios-file" className="text-sm font-medium text-sgn-dark">
-                      Horarios (.xlsx)
+                      Horarios (.xlsx o .csv)
                     </label>
                     <Input
                       id="bonos-horarios-file"
                       type="file"
-                      accept=".xlsx"
+                      accept=".xlsx,.csv,text/csv"
                       onChange={(e) => setBonosHorariosFile(e.target.files?.[0] ?? null)}
                     />
                   </div>
 
                   <div className="space-y-2">
                     <label htmlFor="bonos-tickets-file" className="text-sm font-medium text-sgn-dark">
-                      Tickets-Horas (.xlsx)
+                      Tickets-Horas (.xlsx o .csv)
                     </label>
                     <Input
                       id="bonos-tickets-file"
                       type="file"
-                      accept=".xlsx"
+                      accept=".xlsx,.csv,text/csv"
                       onChange={(e) => setBonosTicketsFile(e.target.files?.[0] ?? null)}
                     />
                   </div>

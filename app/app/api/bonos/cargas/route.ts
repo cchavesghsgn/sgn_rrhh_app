@@ -13,7 +13,10 @@ export const dynamic = 'force-dynamic';
 
 const MES_REGEX = /^\d{4}-(0[1-9]|1[0-2])$/;
 
-const validXlsx = (fileName: string) => fileName.toLowerCase().endsWith('.xlsx');
+const validInputFile = (fileName: string) => {
+  const lower = fileName.toLowerCase();
+  return lower.endsWith('.xlsx') || lower.endsWith('.csv');
+};
 
 async function replaceHorarios(
   mesAnio: string,
@@ -146,8 +149,8 @@ export async function POST(request: NextRequest) {
     const response: Record<string, unknown> = { mesAnio };
 
     if (horariosFile && typeof horariosFile !== 'string') {
-      if (!validXlsx(horariosFile.name)) {
-        return NextResponse.json({ error: 'Horarios debe ser .xlsx' }, { status: 400 });
+      if (!validInputFile(horariosFile.name)) {
+        return NextResponse.json({ error: 'Horarios debe ser .xlsx o .csv' }, { status: 400 });
       }
       const bytes = await horariosFile.arrayBuffer();
       const rows = await replaceHorarios(
@@ -161,8 +164,8 @@ export async function POST(request: NextRequest) {
     }
 
     if (ticketsFile && typeof ticketsFile !== 'string') {
-      if (!validXlsx(ticketsFile.name)) {
-        return NextResponse.json({ error: 'Tickets-Horas debe ser .xlsx' }, { status: 400 });
+      if (!validInputFile(ticketsFile.name)) {
+        return NextResponse.json({ error: 'Tickets-Horas debe ser .xlsx o .csv' }, { status: 400 });
       }
       const bytes = await ticketsFile.arrayBuffer();
       const rows = await replaceTickets(
