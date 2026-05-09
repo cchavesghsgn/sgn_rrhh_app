@@ -176,3 +176,66 @@ enum UserRole {
   ADMIN
   EMPLOYEE
 }
+
+enum BonosArchivoTipo {
+  HORARIOS
+  TICKETS_HORAS
+}
+
+model bonos_uploads {
+  id           String            @id
+  mesAnio      String            @db.Char(7)
+  tipoArchivo  BonosArchivoTipo
+  fileName     String            @db.VarChar(500)
+  fileHash     String?           @db.VarChar(64)
+  recordsCount Int               @default(0)
+  loadedBy     String
+  loadedAt     DateTime          @default(now())
+  updatedAt    DateTime
+  horarios     bonos_horarios[]
+  tickets      bonos_tickets_horas[]
+  User         User              @relation(fields: [loadedBy], references: [id], onDelete: Restrict)
+
+  @@unique([mesAnio, tipoArchivo])
+  @@index([mesAnio])
+  @@index([tipoArchivo])
+}
+
+model bonos_horarios {
+  id              String        @id
+  uploadId        String
+  mesAnio         String        @db.Char(7)
+  nombreRelojRaw  String        @db.VarChar(255)
+  nombreRelojNorm String        @db.VarChar(255)
+  fecha           DateTime      @db.Date
+  turno           DayShift
+  horaEntrada     String?       @db.VarChar(5)
+  horaSalida      String?       @db.VarChar(5)
+  rowNumber       Int
+  createdAt       DateTime      @default(now())
+  bonos_uploads   bonos_uploads @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+
+  @@index([mesAnio])
+  @@index([nombreRelojNorm])
+  @@index([fecha])
+}
+
+model bonos_tickets_horas {
+  id                    String        @id
+  uploadId              String
+  mesAnio               String        @db.Char(7)
+  nroTicket             String?       @db.VarChar(100)
+  semana                String?       @db.VarChar(50)
+  responsableRaw        String        @db.VarChar(255)
+  responsableNormApe    String        @db.VarChar(255)
+  asunto                String?       @db.VarChar(500)
+  tipo                  String?       @db.VarChar(100)
+  horasExtras           Float
+  rowNumber             Int
+  createdAt             DateTime      @default(now())
+  bonos_uploads         bonos_uploads @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+
+  @@index([mesAnio])
+  @@index([responsableNormApe])
+  @@index([semana])
+}

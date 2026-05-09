@@ -46,6 +46,17 @@ export default function AdminDashboard() {
   const [selectedMonth, setSelectedMonth] = useState(() => new Date().toISOString().slice(0, 7));
   const [isDownloadingLicenses, setIsDownloadingLicenses] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
+  const [selectedBonosMonth, setSelectedBonosMonth] = useState(() => new Date().toISOString().slice(0, 7));
+  const [bonosHorariosFile, setBonosHorariosFile] = useState<File | null>(null);
+  const [bonosTicketsFile, setBonosTicketsFile] = useState<File | null>(null);
+  const [bonosLoadingStatus, setBonosLoadingStatus] = useState(false);
+  const [bonosSubmitting, setBonosSubmitting] = useState(false);
+  const [bonosError, setBonosError] = useState<string | null>(null);
+  const [bonosSuccess, setBonosSuccess] = useState<string | null>(null);
+  const [bonosStatus, setBonosStatus] = useState<{
+    horarios: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
+    ticketsHoras: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
+  } | null>(null);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -172,6 +183,96 @@ export default function AdminDashboard() {
     } finally {
       setIsDownloadingLicenses(false);
     }
+  };
+
+  const loadBonosStatus = async (month: string) => {
+    if (!month) return;
+    setBonosLoadingStatus(true);
+    setBonosError(null);
+
+    try {
+      const res = await fetch(`/api/bonos/cargas/status?mes=${month}`);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'No se pudo consultar el estado de cargas.');
+      }
+      setBonosStatus(data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error inesperado consultando estado.';
+      setBonosError(message);
+      setBonosStatus(null);
+    } finally {
+      setBonosLoadingStatus(false);
+    }
+  };
+
+  useEffect(() => {
+    loadBonosStatus(selectedBonosMonth);
+  }, [selectedBonosMonth]);
+
+  const handleUploadBonosFiles = async () => {
+    if (!selectedBonosMonth) {
+      setBonosError('Debes seleccionar un mes y año.');
+      return;
+    }
+
+    if (!bonosHorariosFile && !bonosTicketsFile) {
+      setBonosError('Debes seleccionar al menos un archivo.');
+      return;
+    }
+
+    setBonosSubmitting(true);
+    setBonosError(null);
+    setBonosSuccess(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('mes_anio', selectedBonosMonth);
+      if (bonosHorariosFile) formData.append('horarios_file', bonosHorariosFile);
+      if (bonosTicketsFile) formData.append('tickets_file', bonosTicketsFile);
+
+      const res = await fetch('/api/bonos/cargas', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'No se pudo guardar la carga.');
+      }
+
+      const mensajes: string[] = [];
+      if (data.horarios?.replaced) mensajes.push(`Horarios: ${data.horarios.rows} filas`);
+      if (data.ticketsHoras?.replaced) mensajes.push(`Tickets-Horas: ${data.ticketsHoras.rows} filas`);
+      setBonosSuccess(`Carga aplicada para ${selectedBonosMonth}. ${mensajes.join(' · ')}`);
+      setBonosHorariosFile(null);
+      setBonosTicketsFile(null);
+      await loadBonosStatus(selectedBonosMonth);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error inesperado al subir archivos.';
+      setBonosError(message);
+    } finally {
+      setBonosSubmitting(false);
+    }
+  };
+
+  const renderUploadStatus = (
+    label: string,
+    info: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string } | undefined
+  ) => {
+    if (!info?.loaded) {
+      return (
+        <div className="text-sm text-gray-600">
+          <span className="font-medium">{label}:</span> Sin datos cargados
+        </div>
+      );
+    }
+
+    return (
+      <div className="text-sm text-gray-700">
+        <span className="font-medium">{label}:</span> {info.fileName} · {info.rows ?? 0} filas ·{' '}
+        {info.loadedAt ? new Date(info.loadedAt).toLocaleString('es-AR') : '-'} · {info.loadedBy || '-'}
+      </div>
+    );
   };
 
   if (loading) {
@@ -435,6 +536,86 @@ export default function AdminDashboard() {
                     disabled={isDownloadingLicenses || !selectedMonth}
                   >
                     {isDownloadingLicenses ? 'Generando archivo...' : 'Descargar Excel'}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full h-16 flex-col gap-2">
+                  <FileText className="h-6 w-6" />
+                  Carga Archivos Bonos
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Carga de Archivos de Bonos</DialogTitle>
+                  <DialogDescription>
+                    Selecciona mes-año, consulta estado actual y carga Horarios / Tickets-Horas (.xlsx).
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <label htmlFor="bonos-month-year" className="text-sm font-medium text-sgn-dark">
+                      Mes - Año
+                    </label>
+                    <Input
+                      id="bonos-month-year"
+                      type="month"
+                      value={selectedBonosMonth}
+                      onChange={(e) => setSelectedBonosMonth(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="rounded-md border border-gray-200 p-3 space-y-2 bg-gray-50">
+                    <p className="text-sm font-medium text-sgn-dark">Estado del período</p>
+                    {bonosLoadingStatus ? (
+                      <p className="text-sm text-gray-600">Consultando estado...</p>
+                    ) : (
+                      <>
+                        {renderUploadStatus('Horarios', bonosStatus?.horarios)}
+                        {renderUploadStatus('Tickets-Horas', bonosStatus?.ticketsHoras)}
+                      </>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="bonos-horarios-file" className="text-sm font-medium text-sgn-dark">
+                      Horarios (.xlsx)
+                    </label>
+                    <Input
+                      id="bonos-horarios-file"
+                      type="file"
+                      accept=".xlsx"
+                      onChange={(e) => setBonosHorariosFile(e.target.files?.[0] ?? null)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="bonos-tickets-file" className="text-sm font-medium text-sgn-dark">
+                      Tickets-Horas (.xlsx)
+                    </label>
+                    <Input
+                      id="bonos-tickets-file"
+                      type="file"
+                      accept=".xlsx"
+                      onChange={(e) => setBonosTicketsFile(e.target.files?.[0] ?? null)}
+                    />
+                  </div>
+
+                  {bonosError ? <p className="text-sm text-red-600">{bonosError}</p> : null}
+                  {bonosSuccess ? <p className="text-sm text-green-700">{bonosSuccess}</p> : null}
+                </div>
+
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    onClick={handleUploadBonosFiles}
+                    disabled={bonosSubmitting || (!bonosHorariosFile && !bonosTicketsFile)}
+                  >
+                    {bonosSubmitting ? 'Guardando carga...' : 'Guardar Carga'}
                   </Button>
                 </DialogFooter>
               </DialogContent>
