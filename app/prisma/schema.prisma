@@ -60,6 +60,7 @@ model User {
   Account       Account[]
   Session       Session[]
   employees     employees?
+  bonosUploads  bonos_uploads[]
 }
 
 model VerificationToken {
