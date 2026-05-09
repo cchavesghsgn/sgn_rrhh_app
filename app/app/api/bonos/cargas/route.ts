@@ -5,6 +5,7 @@ import { getServerAuthSession } from '../../../../lib/auth';
 import { prisma } from '../../../../lib/prisma';
 import {
   computeFileHash,
+  parseFeriadosCsv,
   parseHorariosWorkbook,
   parseTicketsWorkbook
 } from '../../../../lib/bonos-upload';
@@ -114,6 +115,54 @@ async function replaceTickets(
   return rows.length;
 }
 
+async function replaceFeriados(
+  mesAnio: string,
+  fileName: string,
+  fileHash: string,
+  loadedBy: string,
+  bytes: ArrayBuffer
+) {
+  const rows = parseFeriadosCsv(bytes, mesAnio);
+
+  await prisma.$transaction(async (tx) => {
+    const upload = await tx.bonos_uploads.upsert({
+      where: {
+        mesAnio_tipoArchivo: {
+          mesAnio,
+          tipoArchivo: BonosArchivoTipo.FERIADOS
+        }
+      },
+      create: {
+        id: randomUUID(),
+        mesAnio,
+        tipoArchivo: BonosArchivoTipo.FERIADOS,
+        fileName,
+        fileHash,
+        recordsCount: rows.length,
+        loadedBy,
+        updatedAt: new Date()
+      },
+      update: {
+        fileName,
+        fileHash,
+        recordsCount: rows.length,
+        loadedBy,
+        loadedAt: new Date(),
+        updatedAt: new Date()
+      }
+    });
+
+    await tx.bonos_feriados.deleteMany({ where: { uploadId: upload.id } });
+    if (rows.length > 0) {
+      await tx.bonos_feriados.createMany({
+        data: rows.map((r) => ({ ...r, uploadId: upload.id }))
+      });
+    }
+  });
+
+  return rows.length;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerAuthSession();
@@ -135,13 +184,15 @@ export async function POST(request: NextRequest) {
 
     const horariosFile = formData.get('horarios_file');
     const ticketsFile = formData.get('tickets_file');
+    const feriadosFile = formData.get('feriados_file');
 
     if (
       (!horariosFile || typeof horariosFile === 'string') &&
-      (!ticketsFile || typeof ticketsFile === 'string')
+      (!ticketsFile || typeof ticketsFile === 'string') &&
+      (!feriadosFile || typeof feriadosFile === 'string')
     ) {
       return NextResponse.json(
-        { error: 'Debes subir al menos un archivo: horarios_file o tickets_file.' },
+        { error: 'Debes subir al menos un archivo: horarios_file, tickets_file o feriados_file.' },
         { status: 400 }
       );
     }
@@ -176,6 +227,21 @@ export async function POST(request: NextRequest) {
         bytes
       );
       response.ticketsHoras = { replaced: true, fileName: ticketsFile.name, rows };
+    }
+
+    if (feriadosFile && typeof feriadosFile !== 'string') {
+      if (!feriadosFile.name.toLowerCase().endsWith('.csv')) {
+        return NextResponse.json({ error: 'Calendario Feriados debe ser .csv' }, { status: 400 });
+      }
+      const bytes = await feriadosFile.arrayBuffer();
+      const rows = await replaceFeriados(
+        mesAnio,
+        feriadosFile.name,
+        computeFileHash(bytes),
+        session.user.id,
+        bytes
+      );
+      response.feriados = { replaced: true, fileName: feriadosFile.name, rows };
     }
 
     return NextResponse.json(response);

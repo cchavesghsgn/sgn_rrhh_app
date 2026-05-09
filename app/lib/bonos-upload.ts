@@ -3,7 +3,7 @@ import { createHash } from 'crypto';
 import { randomUUID } from 'crypto';
 import * as XLSX from 'xlsx';
 
-export type BonosArchivoTipo = 'HORARIOS' | 'TICKETS_HORAS';
+export type BonosArchivoTipo = 'HORARIOS' | 'TICKETS_HORAS' | 'FERIADOS';
 
 type HorarioRow = {
   id: string;
@@ -27,6 +27,14 @@ type TicketRow = {
   asunto: string | null;
   tipo: string | null;
   horasExtras: number;
+  rowNumber: number;
+};
+
+type FeriadoRow = {
+  id: string;
+  mesAnio: string;
+  fecha: Date;
+  conmemoracion: string | null;
   rowNumber: number;
 };
 
@@ -76,6 +84,34 @@ const toMesAnioParts = (mesAnio: string) => {
   const m = mesAnio.match(/^(\d{4})-(0[1-9]|1[0-2])$/);
   if (!m) throw new Error('mes_anio inválido. Formato esperado: YYYY-MM');
   return { year: Number(m[1]), month: Number(m[2]) };
+};
+
+const parseFeriadoDate = (value: string, defaultYear: number): Date | null => {
+  const s = value.trim().toLowerCase();
+  if (!s) return null;
+
+  const dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if (dmy) {
+    const d = Number(dmy[1]);
+    const m = Number(dmy[2]);
+    const yRaw = Number(dmy[3]);
+    const y = yRaw < 100 ? 2000 + yRaw : yRaw;
+    return new Date(Date.UTC(y, m - 1, d, 0, 0, 0, 0));
+  }
+
+  const esMonth: Record<string, number> = {
+    ene: 1, feb: 2, mar: 3, abr: 4, may: 5, jun: 6,
+    jul: 7, ago: 8, sep: 9, oct: 10, nov: 11, dic: 12
+  };
+  const dMon = s.match(/^(\d{1,2})[-/ ]([a-z]{3})$/);
+  if (dMon) {
+    const d = Number(dMon[1]);
+    const m = esMonth[dMon[2]];
+    if (!m) return null;
+    return new Date(Date.UTC(defaultYear, m - 1, d, 0, 0, 0, 0));
+  }
+
+  return null;
 };
 
 export const computeFileHash = (bytes: ArrayBuffer): string =>
@@ -154,6 +190,34 @@ export const parseTicketsWorkbook = (bytes: ArrayBuffer, mesAnio: string): Ticke
       asunto: String(row[3] ?? '').trim() || null,
       tipo: String(row[6] ?? '').trim() || null,
       horasExtras: horas,
+      rowNumber: i + 1
+    });
+  }
+
+  return out;
+};
+
+export const parseFeriadosCsv = (bytes: ArrayBuffer, mesAnio: string): FeriadoRow[] => {
+  const { year } = toMesAnioParts(mesAnio);
+  const text = Buffer.from(bytes).toString('utf-8').replace(/^\uFEFF/, '');
+  const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+  if (lines.length === 0) return [];
+
+  const out: FeriadoRow[] = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = lines[i].split(';');
+    const rawDate = String(cols[0] || '').trim();
+    const conmemoracion = String(cols[1] || '').trim() || null;
+    if (!rawDate) continue;
+
+    const fecha = parseFeriadoDate(rawDate, year);
+    if (!fecha) continue;
+
+    out.push({
+      id: randomUUID(),
+      mesAnio,
+      fecha,
+      conmemoracion,
       rowNumber: i + 1
     });
   }

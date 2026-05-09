@@ -49,6 +49,7 @@ export default function AdminDashboard() {
   const [selectedBonosMonth, setSelectedBonosMonth] = useState(() => new Date().toISOString().slice(0, 7));
   const [bonosHorariosFile, setBonosHorariosFile] = useState<File | null>(null);
   const [bonosTicketsFile, setBonosTicketsFile] = useState<File | null>(null);
+  const [bonosFeriadosFile, setBonosFeriadosFile] = useState<File | null>(null);
   const [bonosLoadingStatus, setBonosLoadingStatus] = useState(false);
   const [bonosSubmitting, setBonosSubmitting] = useState(false);
   const [bonosError, setBonosError] = useState<string | null>(null);
@@ -56,6 +57,7 @@ export default function AdminDashboard() {
   const [bonosStatus, setBonosStatus] = useState<{
     horarios: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
     ticketsHoras: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
+    feriados: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
   } | null>(null);
 
   useEffect(() => {
@@ -216,7 +218,7 @@ export default function AdminDashboard() {
       return;
     }
 
-    if (!bonosHorariosFile && !bonosTicketsFile) {
+    if (!bonosHorariosFile && !bonosTicketsFile && !bonosFeriadosFile) {
       setBonosError('Debes seleccionar al menos un archivo.');
       return;
     }
@@ -230,6 +232,7 @@ export default function AdminDashboard() {
       formData.append('mes_anio', selectedBonosMonth);
       if (bonosHorariosFile) formData.append('horarios_file', bonosHorariosFile);
       if (bonosTicketsFile) formData.append('tickets_file', bonosTicketsFile);
+      if (bonosFeriadosFile) formData.append('feriados_file', bonosFeriadosFile);
 
       const res = await fetch('/api/bonos/cargas', {
         method: 'POST',
@@ -243,9 +246,11 @@ export default function AdminDashboard() {
       const mensajes: string[] = [];
       if (data.horarios?.replaced) mensajes.push(`Horarios: ${data.horarios.rows} filas`);
       if (data.ticketsHoras?.replaced) mensajes.push(`Tickets-Horas: ${data.ticketsHoras.rows} filas`);
+      if (data.feriados?.replaced) mensajes.push(`Feriados: ${data.feriados.rows} filas`);
       setBonosSuccess(`Carga aplicada para ${selectedBonosMonth}. ${mensajes.join(' · ')}`);
       setBonosHorariosFile(null);
       setBonosTicketsFile(null);
+      setBonosFeriadosFile(null);
       await loadBonosStatus(selectedBonosMonth);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error inesperado al subir archivos.';
@@ -545,14 +550,14 @@ export default function AdminDashboard() {
               <DialogTrigger asChild>
                 <Button variant="outline" className="w-full h-16 flex-col gap-2">
                   <FileText className="h-6 w-6" />
-                  Carga Archivos Bonos
+                  Carga Archivos para Bonos
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Carga de Archivos de Bonos</DialogTitle>
                   <DialogDescription>
-                    Selecciona mes-año, consulta estado actual y carga Horarios / Tickets-Horas (.xlsx o .csv).
+                    Selecciona mes-año, consulta estado actual y carga Horarios, Tickets-Horas y Calendario Feriados.
                   </DialogDescription>
                 </DialogHeader>
 
@@ -577,6 +582,7 @@ export default function AdminDashboard() {
                       <>
                         {renderUploadStatus('Horarios', bonosStatus?.horarios)}
                         {renderUploadStatus('Tickets-Horas', bonosStatus?.ticketsHoras)}
+                        {renderUploadStatus('Calendario Feriados', bonosStatus?.feriados)}
                       </>
                     )}
                   </div>
@@ -605,6 +611,18 @@ export default function AdminDashboard() {
                     />
                   </div>
 
+                  <div className="space-y-2">
+                    <label htmlFor="bonos-feriados-file" className="text-sm font-medium text-sgn-dark">
+                      Calendario Feriados (.csv)
+                    </label>
+                    <Input
+                      id="bonos-feriados-file"
+                      type="file"
+                      accept=".csv,text/csv"
+                      onChange={(e) => setBonosFeriadosFile(e.target.files?.[0] ?? null)}
+                    />
+                  </div>
+
                   {bonosError ? <p className="text-sm text-red-600">{bonosError}</p> : null}
                   {bonosSuccess ? <p className="text-sm text-green-700">{bonosSuccess}</p> : null}
                 </div>
@@ -613,7 +631,7 @@ export default function AdminDashboard() {
                   <Button
                     type="button"
                     onClick={handleUploadBonosFiles}
-                    disabled={bonosSubmitting || (!bonosHorariosFile && !bonosTicketsFile)}
+                    disabled={bonosSubmitting || (!bonosHorariosFile && !bonosTicketsFile && !bonosFeriadosFile)}
                   >
                     {bonosSubmitting ? 'Guardando carga...' : 'Guardar Carga'}
                   </Button>
