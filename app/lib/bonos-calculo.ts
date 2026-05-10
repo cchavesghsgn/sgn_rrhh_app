@@ -217,8 +217,8 @@ const buildEmployeeHtml = (data: {
     <table>
       <tbody>
         <tr><td>Bono experiencia</td><td>${money(data.bonoExperiencia)}</td></tr>
-        <tr><td>Bono KPI</td><td>${money(data.bonoKpi)}</td></tr>
-        <tr><td>Bono desarrollo</td><td>${money(data.bonoDesarrollo)} (${data.horasExtras} hs)</td></tr>
+        <tr><td>Bono compromiso</td><td>${money(data.bonoKpi)}</td></tr>
+        <tr><td>Horas extras</td><td>${money(data.bonoDesarrollo)} (${data.horasExtras} hs)</td></tr>
         <tr><td>Bono cumplimiento</td><td>${money(data.bonoCumplimiento)}</td></tr>
         <tr><td><strong>Total bono</strong></td><td><strong>${money(data.totalBono)}</strong></td></tr>
       </tbody>
@@ -368,7 +368,7 @@ export async function calcularBonos(
       const weeklyTickets = tickets.filter((t) => normalize(t.semana || '') !== 'total');
       const horasExtras = weeklyTickets.reduce((sum, t) => sum + t.horasExtras, 0);
       const valorHora = sueldo > 0 ? sueldo / 90 : 0;
-      const bonoDesarrollo = normalize(tipo).includes('desarrollo') ? Math.round(valorHora * horasExtras) : 0;
+      const bonoDesarrollo = Math.round(valorHora * horasExtras);
 
       const ticketsBySemana = new Map(weeklyTickets.map((t) => [normalize(t.semana || ''), t]));
       let bonoCumplimiento = 0;

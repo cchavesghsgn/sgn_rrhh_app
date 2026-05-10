@@ -18,6 +18,21 @@ const requireAdmin = async () => {
   return { session };
 };
 
+const getDetailValue = (detail: unknown, key: string): unknown =>
+  detail && typeof detail === 'object' && !Array.isArray(detail)
+    ? (detail as Record<string, unknown>)[key]
+    : undefined;
+
+const detailNumber = (detail: unknown, key: string) => {
+  const value = getDetailValue(detail, key);
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+};
+
+const detailString = (detail: unknown, key: string) => {
+  const value = getDetailValue(detail, key);
+  return typeof value === 'string' ? value : '';
+};
+
 const serializeCalculo = (calculo: Awaited<ReturnType<typeof getBonosCalculo>>) => {
   if (!calculo) return null;
   return {
@@ -27,19 +42,32 @@ const serializeCalculo = (calculo: Awaited<ReturnType<typeof getBonosCalculo>>) 
     totalEmpleados: calculo.totalEmpleados,
     totalBonos: calculo.totalBonos,
     generadoAt: calculo.generadoAt,
-    empleados: calculo.empleados.map((row) => ({
-      id: row.id,
-      empleadoId: row.empleadoId,
-      empleado: `${row.employees.firstName} ${row.employees.lastName}`.replace(/\s+/g, ' ').trim(),
-      sueldoNeto: row.sueldoNeto,
-      bonoExperiencia: row.bonoExperiencia,
-      bonoKpi: row.bonoKpi,
-      bonoDesarrollo: row.bonoDesarrollo,
-      bonoCumplimiento: row.bonoCumplimiento,
-      totalBono: row.totalBono,
-      horasExtras: row.horasExtras,
-      kpiPct: row.kpiPct
-    }))
+    empleados: calculo.empleados.map((row) => {
+      const detail = row.detalleJson;
+      return {
+        id: row.id,
+        empleadoId: row.empleadoId,
+        empleado: `${row.employees.firstName} ${row.employees.lastName}`.replace(/\s+/g, ' ').trim(),
+        tipo: detailString(detail, 'tipo') || row.employees.position || '',
+        antiguedad: detailNumber(detail, 'antiguedad'),
+        sueldoNeto: row.sueldoNeto,
+        tapPres: detailNumber(detail, 'tapPres'),
+        tapTotal: detailNumber(detail, 'tapTotal'),
+        tpeOk: detailNumber(detail, 'tpeOk'),
+        tpeTotal: detailNumber(detail, 'tapTotal'),
+        ieaOk: detailNumber(detail, 'ieaOk'),
+        ieaTotal: detailNumber(detail, 'tapTotal'),
+        tardanzas: detailNumber(detail, 'tardanzas'),
+        sinMarca: detailNumber(detail, 'sinMarca'),
+        kpiPct: row.kpiPct,
+        bonoExperiencia: row.bonoExperiencia,
+        bonoKpi: row.bonoKpi,
+        bonoDesarrollo: row.bonoDesarrollo,
+        bonoCumplimiento: row.bonoCumplimiento,
+        totalBono: row.totalBono,
+        horasExtras: row.horasExtras
+      };
+    })
   };
 };
 

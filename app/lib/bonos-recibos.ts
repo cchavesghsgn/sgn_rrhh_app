@@ -69,6 +69,15 @@ const extractMoneyNear = (lines: string[], startIdx: number, direction: -1 | 1):
   return null;
 };
 
+const extractMoneyBeforeConcept = (line: string, conceptPattern: RegExp): number | null => {
+  const match = line.match(conceptPattern);
+  if (!match || match.index === undefined) return null;
+  const before = line.slice(0, match.index);
+  const matches = before.match(/\d{1,3}(?:,\d{3})*(?:\.\d{2})|\d+(?:\.\d{2})/g);
+  if (!matches) return null;
+  return parseMoney(matches[matches.length - 1]);
+};
+
 const extractSueldoNeto = (pageText: string): number => {
   const lines = pageText.split('\n').map((l) => l.trim()).filter(Boolean);
   let totalNeto: number | null = null;
@@ -82,7 +91,8 @@ const extractSueldoNeto = (pageText: string): number => {
     }
 
     if (line === '471' || /bono\s+adicional\s+no\s+rem/i.test(line)) {
-      const nearby = extractMoneyNear(lines, i, 1);
+      const sameLine = extractMoneyBeforeConcept(line, /471\s*bono\s+adicional\s+no\s+rem|bono\s+adicional\s+no\s+rem/i);
+      const nearby = sameLine ?? extractMoneyNear(lines, i, -1) ?? extractMoneyNear(lines, i, 1);
       if (nearby !== null) bono471 = nearby;
     }
   }

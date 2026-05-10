@@ -82,7 +82,18 @@ export default function AdminDashboard() {
       generadoAt: string;
       empleados: Array<{
         empleado: string;
+        tipo: string;
+        antiguedad: number;
         sueldoNeto: number;
+        tapPres: number;
+        tapTotal: number;
+        tpeOk: number;
+        tpeTotal: number;
+        ieaOk: number;
+        ieaTotal: number;
+        tardanzas: number;
+        sinMarca: number;
+        kpiPct: number;
         bonoExperiencia: number;
         bonoKpi: number;
         bonoDesarrollo: number;
@@ -318,6 +329,21 @@ export default function AdminDashboard() {
 
   const formatMoney = (value: number) =>
     new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value || 0);
+
+  const formatPct = (value: number) => `${((value || 0) * 100).toFixed(2)}%`;
+
+  const metricRatio = (value: number, total: number) => `${value || 0}/${total || 0}`;
+
+  const calculoTotals = calculoData?.calculo?.empleados.reduce(
+    (acc, row) => ({
+      bonoExperiencia: acc.bonoExperiencia + row.bonoExperiencia,
+      bonoKpi: acc.bonoKpi + row.bonoKpi,
+      bonoDesarrollo: acc.bonoDesarrollo + row.bonoDesarrollo,
+      bonoCumplimiento: acc.bonoCumplimiento + row.bonoCumplimiento,
+      totalBono: acc.totalBono + row.totalBono
+    }),
+    { bonoExperiencia: 0, bonoKpi: 0, bonoDesarrollo: 0, bonoCumplimiento: 0, totalBono: 0 }
+  );
 
   const loadCalculoStatus = async (month: string) => {
     if (!month) return;
@@ -706,23 +732,39 @@ export default function AdminDashboard() {
                         </p>
                       </div>
                       <div className="overflow-x-auto rounded-md border">
-                        <table className="w-full text-sm">
-                          <thead className="bg-gray-50">
+                        <table className="min-w-[1320px] w-full text-xs">
+                          <thead className="bg-sgn-blue text-white">
                             <tr>
                               <th className="p-2 text-left">Empleado</th>
+                              <th className="p-2 text-center">Tipo</th>
+                              <th className="p-2 text-center">Antigüed.</th>
                               <th className="p-2 text-right">Sueldo</th>
-                              <th className="p-2 text-right">Exp.</th>
-                              <th className="p-2 text-right">KPI</th>
-                              <th className="p-2 text-right">Des.</th>
-                              <th className="p-2 text-right">Cumpl.</th>
-                              <th className="p-2 text-right">Total</th>
+                              <th className="p-2 text-center">TAP</th>
+                              <th className="p-2 text-center">TPE</th>
+                              <th className="p-2 text-center">IEA</th>
+                              <th className="p-2 text-center">Tard.</th>
+                              <th className="p-2 text-center">S/Marc.</th>
+                              <th className="p-2 text-right">KPI%</th>
+                              <th className="p-2 text-right">Bono Exp.</th>
+                              <th className="p-2 text-right">Bono Compromiso</th>
+                              <th className="p-2 text-right">Horas Extras</th>
+                              <th className="p-2 text-right">Bono Cumpl.</th>
+                              <th className="p-2 text-right">TOTAL BONO</th>
                             </tr>
                           </thead>
                           <tbody>
                             {calculoData.calculo.empleados.map((row) => (
-                              <tr key={row.empleado} className="border-t">
+                              <tr key={row.empleado} className="border-t odd:bg-white even:bg-gray-50">
                                 <td className="p-2">{row.empleado}</td>
+                                <td className="p-2 text-center">{row.tipo}</td>
+                                <td className="p-2 text-center">{row.antiguedad} años</td>
                                 <td className="p-2 text-right">{formatMoney(row.sueldoNeto)}</td>
+                                <td className="p-2 text-center">{metricRatio(row.tapPres, row.tapTotal)}</td>
+                                <td className="p-2 text-center">{metricRatio(row.tpeOk, row.tpeTotal)}</td>
+                                <td className="p-2 text-center">{metricRatio(row.ieaOk, row.ieaTotal)}</td>
+                                <td className="p-2 text-center">{row.tardanzas}</td>
+                                <td className="p-2 text-center">{row.sinMarca}</td>
+                                <td className="p-2 text-right">{formatPct(row.kpiPct)}</td>
                                 <td className="p-2 text-right">{formatMoney(row.bonoExperiencia)}</td>
                                 <td className="p-2 text-right">{formatMoney(row.bonoKpi)}</td>
                                 <td className="p-2 text-right">{formatMoney(row.bonoDesarrollo)}</td>
@@ -731,6 +773,25 @@ export default function AdminDashboard() {
                               </tr>
                             ))}
                           </tbody>
+                          <tfoot className="bg-blue-50 font-semibold">
+                            <tr className="border-t">
+                              <td className="p-2">TOTAL</td>
+                              <td className="p-2" />
+                              <td className="p-2" />
+                              <td className="p-2" />
+                              <td className="p-2" />
+                              <td className="p-2" />
+                              <td className="p-2" />
+                              <td className="p-2" />
+                              <td className="p-2" />
+                              <td className="p-2" />
+                              <td className="p-2 text-right">{formatMoney(calculoTotals?.bonoExperiencia || 0)}</td>
+                              <td className="p-2 text-right">{formatMoney(calculoTotals?.bonoKpi || 0)}</td>
+                              <td className="p-2 text-right">{formatMoney(calculoTotals?.bonoDesarrollo || 0)}</td>
+                              <td className="p-2 text-right">{formatMoney(calculoTotals?.bonoCumplimiento || 0)}</td>
+                              <td className="p-2 text-right">{formatMoney(calculoTotals?.totalBono || 0)}</td>
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </div>
