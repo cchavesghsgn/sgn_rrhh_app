@@ -677,7 +677,7 @@ export default function AdminDashboard() {
                   Calcular Bonos
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+              <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Calcular Bonos del Mes</DialogTitle>
                   <DialogDescription>
@@ -735,15 +735,14 @@ export default function AdminDashboard() {
                         </p>
                       </div>
                       <div className="overflow-x-auto rounded-md border">
-                        <table className="min-w-[920px] w-full text-xs">
+                        <table className="w-full text-xs table-fixed">
                           <thead className="bg-sgn-blue text-white">
                             <tr>
-                              <th className="p-2 text-left">Empleado</th>
-                              <th className="p-2 text-center">Tipo</th>
-                              <th className="p-2 text-center">Antigüed.</th>
+                              <th className="p-2 text-left w-[18%]">Empleado</th>
+                              <th className="p-2 text-center w-[10%]">Antigüed.</th>
                               <th className="p-2 text-right">Sueldo</th>
                               <th className="p-2 text-right">Bono Exp.</th>
-                              <th className="p-2 text-right">Bono Compromiso</th>
+                              <th className="p-2 text-right">Bono Compr.</th>
                               <th className="p-2 text-right">Horas Extras</th>
                               <th className="p-2 text-right">Bono Cumpl.</th>
                               <th className="p-2 text-right">TOTAL BONO</th>
@@ -753,7 +752,6 @@ export default function AdminDashboard() {
                             {calculoData.calculo.empleados.map((row) => (
                               <tr key={row.empleado} className="border-t odd:bg-white even:bg-gray-50">
                                 <td className="p-2">{row.empleado}</td>
-                                <td className="p-2 text-center">{row.tipo}</td>
                                 <td className="p-2 text-center">{row.antiguedad} años</td>
                                 <td className="p-2 text-right">{formatMoney(row.sueldoNeto)}</td>
                                 <td className="p-2 text-right">{formatMoney(row.bonoExperiencia)}</td>
@@ -769,7 +767,6 @@ export default function AdminDashboard() {
                               <td className="p-2">TOTAL</td>
                               <td className="p-2" />
                               <td className="p-2" />
-                              <td className="p-2" />
                               <td className="p-2 text-right">{formatMoney(calculoTotals?.bonoExperiencia || 0)}</td>
                               <td className="p-2 text-right">{formatMoney(calculoTotals?.bonoKpi || 0)}</td>
                               <td className="p-2 text-right">{formatMoney(calculoTotals?.bonoDesarrollo || 0)}</td>
@@ -781,24 +778,22 @@ export default function AdminDashboard() {
                       </div>
                       <div className="rounded-md border border-gray-200 bg-gray-50 p-3">
                         <p className="text-sm font-medium text-sgn-dark mb-2">Archivos generados</p>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-2">
                           {calculoData.calculo.resumenPdfPath ? (
                             <a href={calculoData.calculo.resumenPdfPath} target="_blank" rel="noopener noreferrer">
-                              <Button type="button" size="sm" variant="outline">PDF Resumen</Button>
+                              <Button type="button" size="sm" variant="outline" className="w-full">PDF Resumen</Button>
                             </a>
                           ) : null}
                           {calculoData.calculo.planillaExcelPath ? (
                             <a href={calculoData.calculo.planillaExcelPath} target="_blank" rel="noopener noreferrer">
-                              <Button type="button" size="sm" variant="outline">Excel Contadora</Button>
+                              <Button type="button" size="sm" variant="outline" className="w-full">Excel Contadora</Button>
                             </a>
                           ) : null}
-                        </div>
-                        <div className="mt-2 flex flex-wrap gap-2">
                           {calculoData.calculo.empleados
                             .filter((row) => row.htmlPath)
                             .map((row) => (
                               <a key={row.empleado} href={row.htmlPath} target="_blank" rel="noopener noreferrer">
-                                <Button type="button" size="sm" variant="outline">HTML {row.empleado}</Button>
+                                <Button type="button" size="sm" variant="outline" className="w-full truncate">HTML {row.empleado}</Button>
                               </a>
                             ))}
                         </div>

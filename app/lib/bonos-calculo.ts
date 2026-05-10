@@ -277,10 +277,10 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
     .map((row) => `
       <tr>
         <td>${escapeHtml(row.semana)}</td>
-        <td>${row.tickets}</td>
-        <td>${pct(row.pct)}</td>
-        <td>${row.min} tkts</td>
-        <td>${money(row.bono)}</td>
+        <td class="num">${row.tickets}</td>
+        <td class="num">${pct(row.pct)}</td>
+        <td class="num">${row.min} tkts</td>
+        <td class="num">${money(row.bono)}</td>
       </tr>
     `)
     .join('');
@@ -296,6 +296,8 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
     table{border-collapse:collapse;width:100%;margin-bottom:12px;font-size:13px;}
     th{background:#1F4E79;color:#fff;padding:7px 10px;text-align:left;}
     td{padding:6px 10px;border:1px solid #ddd;}
+    .num{text-align:right;}
+    th.num{text-align:right;}
     tr:nth-child(even){background:#f5f9ff;}
     .ok{color:#375623;font-weight:bold;}
     .warn{color:#843C0C;font-weight:bold;}
@@ -311,42 +313,42 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
 
   <h3>KPIs de Compromiso</h3>
   <table>
-    <tr><th>Indicador</th><th>Resultado</th><th>Porcentaje</th><th>Bono</th></tr>
-    <tr><td>TPE - Puntualidad Estricta</td><td>${detail.tpeOk} / ${detail.tapTotal} días</td><td class="${detail.tpePct >= 0.8 ? 'ok' : 'warn'}">${pct(detail.tpePct)}</td><td>${pct(pctToBonus(detail.tpePct))}</td></tr>
-    <tr><td>TAP - Tasa de Asistencia</td><td>${detail.tapPres} / ${detail.tapTotal} días</td><td class="${detail.tapPct >= 0.8 ? 'ok' : 'warn'}">${pct(detail.tapPct)}</td><td>${pct(detail.tardanzasEfectivas >= 4 ? 0 : pctToBonus(detail.tapPct))}</td></tr>
-    <tr><td>IEA - Esfuerzo Adicional</td><td>${detail.ieaOk} / ${detail.tapTotal} días</td><td class="${detail.ieaPct >= 0.4 ? 'ok' : 'warn'}">${pct(detail.ieaPct)}</td><td>${pct(ieaToBonus(detail.ieaPct))}</td></tr>
-    <tr class="indicator-row"><td>Tardanzas efectivas</td><td>${detail.tardanzas} reales + ${detail.sinMarcaExtra} por marcas faltantes</td><td colspan="2">${detail.tardanzasEfectivas}</td></tr>
-    <tr class="indicator-row"><td>Sin Marcar</td><td colspan="3">${detail.sinMarca} marcas faltantes</td></tr>
+    <tr><th>Indicador</th><th class="num">Resultado</th><th class="num">Porcentaje</th><th class="num">Bono</th></tr>
+    <tr><td>TPE - Puntualidad Estricta</td><td class="num">${detail.tpeOk} / ${detail.tapTotal} días</td><td class="num ${detail.tpePct >= 0.8 ? 'ok' : 'warn'}">${pct(detail.tpePct)}</td><td class="num">${pct(pctToBonus(detail.tpePct))}</td></tr>
+    <tr><td>TAP - Tasa de Asistencia</td><td class="num">${detail.tapPres} / ${detail.tapTotal} días</td><td class="num ${detail.tapPct >= 0.8 ? 'ok' : 'warn'}">${pct(detail.tapPct)}</td><td class="num">${pct(detail.tardanzasEfectivas >= 4 ? 0 : pctToBonus(detail.tapPct))}</td></tr>
+    <tr><td>IEA - Esfuerzo Adicional</td><td class="num">${detail.ieaOk} / ${detail.tapTotal} días</td><td class="num ${detail.ieaPct >= 0.4 ? 'ok' : 'warn'}">${pct(detail.ieaPct)}</td><td class="num">${pct(ieaToBonus(detail.ieaPct))}</td></tr>
+    <tr class="indicator-row"><td>Tardanzas efectivas</td><td>${detail.tardanzas} reales + ${detail.sinMarcaExtra} por marcas faltantes</td><td colspan="2" class="num">${detail.tardanzasEfectivas}</td></tr>
+    <tr class="indicator-row"><td>Sin Marcar</td><td colspan="3" class="num">${detail.sinMarca} marcas faltantes</td></tr>
   </table>
 
   <h3>Liquidación de Bonos</h3>
   <table>
-    <tr><th>Concepto</th><th>Detalle</th><th>Monto</th></tr>
-    <tr><td>Bono Experiencia (${pct(data.expPct)})</td><td>Antigüedad ${detail.antiguedad} años - ${escapeHtml(detail.tipo)}</td><td>${money(data.bonoExperiencia)}</td></tr>
-    <tr><td>Horas Extras</td><td>${data.horasExtras.toFixed(1)} hs x ${money(data.valorHora)}/h</td><td>${money(data.bonoDesarrollo)}</td></tr>
-    <tr><td>Bono Compromiso (${pct(data.kpiPct)})</td><td>TPE + TAP + IEA</td><td>${money(data.bonoKpi)}</td></tr>
-    <tr><td>Bono Cumplimiento</td><td>${detail.cumplimientoDetalle.filter((row) => row.bono > 0).length}/${detail.cumplimientoDetalle.length} semanas calificadas</td><td>${money(data.bonoCumplimiento)}</td></tr>
-    <tr class="total-row"><td colspan="2"><strong>TOTAL BONOS ${escapeHtml(monthLabel(data.mesAnio))}</strong></td><td><strong>${money(data.totalBono)}</strong></td></tr>
+    <tr><th>Concepto</th><th>Detalle</th><th class="num">Monto</th></tr>
+    <tr><td>Bono Experiencia (${pct(data.expPct)})</td><td>Antigüedad ${detail.antiguedad} años - ${escapeHtml(detail.tipo)}</td><td class="num">${money(data.bonoExperiencia)}</td></tr>
+    <tr><td>Horas Extras</td><td>${data.horasExtras.toFixed(1)} hs x ${money(data.valorHora)}/h</td><td class="num">${money(data.bonoDesarrollo)}</td></tr>
+    <tr><td>Bono Compromiso (${pct(data.kpiPct)})</td><td>TPE + TAP + IEA</td><td class="num">${money(data.bonoKpi)}</td></tr>
+    <tr><td>Bono Cumplimiento</td><td>${detail.cumplimientoDetalle.filter((row) => row.bono > 0).length}/${detail.cumplimientoDetalle.length} semanas calificadas</td><td class="num">${money(data.bonoCumplimiento)}</td></tr>
+    <tr class="total-row"><td colspan="2"><strong>TOTAL BONOS ${escapeHtml(monthLabel(data.mesAnio))}</strong></td><td class="num"><strong>${money(data.totalBono)}</strong></td></tr>
   </table>
 
   <h3>Detalle Bono Cumplimiento</h3>
   <table>
-    <tr><th>Semana</th><th>Tickets</th><th>Cumplimiento</th><th>Mínimo</th><th>Bono</th></tr>
+    <tr><th>Semana</th><th class="num">Tickets</th><th class="num">Cumplimiento</th><th class="num">Mínimo</th><th class="num">Bono</th></tr>
     ${cumplimientoRows}
   </table>
 
   <h3>Tabla de Referencia - Bono Experiencia</h3>
   <table class="ref-table">
     <tr><th>Tipo</th><th>&lt;1 año</th><th>1-3 años</th><th>3-6 años</th><th>6-10 años</th><th>&gt;=10 años</th></tr>
-    <tr><td>Desarrollo</td><td>10%</td><td>20%</td><td>30%</td><td>40%</td><td>50%</td></tr>
-    <tr><td>Soporte/Admin/Gerente</td><td>5%</td><td>10%</td><td>15%</td><td>20%</td><td>30%</td></tr>
+    <tr><td>Desarrollo</td><td class="num">10%</td><td class="num">20%</td><td class="num">30%</td><td class="num">40%</td><td class="num">50%</td></tr>
+    <tr><td>Soporte/Admin/Gerente</td><td class="num">5%</td><td class="num">10%</td><td class="num">15%</td><td class="num">20%</td><td class="num">30%</td></tr>
   </table>
 
   <h3>Tabla de Referencia - Bono Compromiso</h3>
   <table class="ref-table">
     <tr><th>KPI</th><th>Mayor o igual 90%</th><th>Mayor o igual 80%</th><th>Menor 80%</th></tr>
-    <tr><td>TPE / TAP</td><td>3.33%</td><td>1.66%</td><td>0%</td></tr>
-    <tr><td>IEA</td><td>3.33% desde 50%</td><td>1.66% desde 40%</td><td>0%</td></tr>
+    <tr><td>TPE / TAP</td><td class="num">3.33%</td><td class="num">1.66%</td><td class="num">0%</td></tr>
+    <tr><td>IEA</td><td class="num">3.33% desde 50%</td><td class="num">1.66% desde 40%</td><td class="num">0%</td></tr>
   </table>
 
   <div class="footer">
@@ -359,6 +361,12 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
 
 const drawText = (page: any, text: string, x: number, y: number, size: number, font: any, color = rgb(0, 0, 0)) => {
   page.drawText(String(text ?? '').slice(0, 70), { x, y, size, font, color });
+};
+
+const drawTextRight = (page: any, text: string, rightX: number, y: number, size: number, font: any, color = rgb(0, 0, 0)) => {
+  const value = String(text ?? '').slice(0, 70);
+  const width = font.widthOfTextAtSize(value, size);
+  page.drawText(value, { x: rightX - width, y, size, font, color });
 };
 
 const generateResumenPdf = async (mesAnio: string, results: CalculoEmpleadoResult[], totalBonos: number) => {
@@ -379,16 +387,19 @@ const generateResumenPdf = async (mesAnio: string, results: CalculoEmpleadoResul
     { label: 'Empleado', x: 34, w: 150 },
     { label: 'Tipo', x: 185, w: 75 },
     { label: 'Ant.', x: 265, w: 45 },
-    { label: 'Sueldo', x: 315, w: 85 },
-    { label: 'B. Exp.', x: 405, w: 80 },
-    { label: 'Compromiso', x: 490, w: 85 },
-    { label: 'Hs Extras', x: 580, w: 80 },
-    { label: 'Cumpl.', x: 665, w: 75 },
-    { label: 'Total', x: 745, w: 75 }
+    { label: 'Sueldo', x: 315, w: 80, right: 395 },
+    { label: 'B. Exp.', x: 405, w: 75, right: 480 },
+    { label: 'B. Compr.', x: 490, w: 85, right: 575 },
+    { label: 'Hs Extras', x: 585, w: 75, right: 660 },
+    { label: 'Cumpl.', x: 670, w: 70, right: 740 },
+    { label: 'Total', x: 748, w: 64, right: 812 }
   ];
 
   page.drawRectangle({ x: 30, y: y - 6, width: 782, height: 22, color: rgb(0.12, 0.31, 0.47) });
-  cols.forEach((col) => drawText(page, col.label, col.x, y, 9, bold, rgb(1, 1, 1)));
+  cols.forEach((col) => {
+    if ('right' in col) drawTextRight(page, col.label, col.right, y, 9, bold, rgb(1, 1, 1));
+    else drawText(page, col.label, col.x, y, 9, bold, rgb(1, 1, 1));
+  });
   y -= 18;
 
   results.forEach((row, idx) => {
@@ -396,23 +407,23 @@ const generateResumenPdf = async (mesAnio: string, results: CalculoEmpleadoResul
     drawText(page, row.empleadoNombre, cols[0].x, y, 8, font);
     drawText(page, row.detalleJson.tipo, cols[1].x, y, 8, font);
     drawText(page, `${row.detalleJson.antiguedad}a`, cols[2].x, y, 8, font);
-    drawText(page, money(row.sueldoNeto), cols[3].x, y, 8, font);
-    drawText(page, money(row.bonoExperiencia), cols[4].x, y, 8, font);
-    drawText(page, money(row.bonoKpi), cols[5].x, y, 8, font);
-    drawText(page, money(row.bonoDesarrollo), cols[6].x, y, 8, font);
-    drawText(page, money(row.bonoCumplimiento), cols[7].x, y, 8, font);
-    drawText(page, money(row.totalBono), cols[8].x, y, 8, bold);
+    drawTextRight(page, money(row.sueldoNeto), cols[3].right, y, 8, font);
+    drawTextRight(page, money(row.bonoExperiencia), cols[4].right, y, 8, font);
+    drawTextRight(page, money(row.bonoKpi), cols[5].right, y, 8, font);
+    drawTextRight(page, money(row.bonoDesarrollo), cols[6].right, y, 8, font);
+    drawTextRight(page, money(row.bonoCumplimiento), cols[7].right, y, 8, font);
+    drawTextRight(page, money(row.totalBono), cols[8].right, y, 8, bold);
     y -= 18;
   });
 
   y -= 4;
   page.drawRectangle({ x: 30, y: y - 5, width: 782, height: 20, color: rgb(0.84, 0.9, 0.95) });
   drawText(page, 'TOTAL', 34, y, 9, bold);
-  drawText(page, money(results.reduce((sum, row) => sum + row.bonoExperiencia, 0)), cols[4].x, y, 9, bold);
-  drawText(page, money(results.reduce((sum, row) => sum + row.bonoKpi, 0)), cols[5].x, y, 9, bold);
-  drawText(page, money(results.reduce((sum, row) => sum + row.bonoDesarrollo, 0)), cols[6].x, y, 9, bold);
-  drawText(page, money(results.reduce((sum, row) => sum + row.bonoCumplimiento, 0)), cols[7].x, y, 9, bold);
-  drawText(page, money(totalBonos), cols[8].x, y, 9, bold);
+  drawTextRight(page, money(results.reduce((sum, row) => sum + row.bonoExperiencia, 0)), cols[4].right, y, 9, bold);
+  drawTextRight(page, money(results.reduce((sum, row) => sum + row.bonoKpi, 0)), cols[5].right, y, 9, bold);
+  drawTextRight(page, money(results.reduce((sum, row) => sum + row.bonoDesarrollo, 0)), cols[6].right, y, 9, bold);
+  drawTextRight(page, money(results.reduce((sum, row) => sum + row.bonoCumplimiento, 0)), cols[7].right, y, 9, bold);
+  drawTextRight(page, money(totalBonos), cols[8].right, y, 9, bold);
 
   return Buffer.from(await pdfDoc.save());
 };
