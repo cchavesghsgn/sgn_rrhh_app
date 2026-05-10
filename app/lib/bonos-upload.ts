@@ -45,6 +45,34 @@ const normalize = (value: string): string =>
     .toLowerCase()
     .trim();
 
+const normalizeHeader = (value: unknown): string =>
+  normalize(String(value ?? ''))
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const findHeaderIndex = (headers: unknown[], candidates: string[], fallback: number): number => {
+  const normalizedCandidates = candidates.map(normalizeHeader);
+  const idx = headers.findIndex((header) => normalizedCandidates.includes(normalizeHeader(header)));
+  return idx >= 0 ? idx : fallback;
+};
+
+const parseDecimal = (value: unknown): number => {
+  if (typeof value === 'number') return value;
+  const raw = String(value ?? '').trim();
+  if (!raw) return Number.NaN;
+
+  const cleaned = raw
+    .replace(/^="?/, '')
+    .replace(/"?$/, '')
+    .replace(/\s*\(.*\)\s*$/, '')
+    .replace(/\./g, '')
+    .replace(',', '.')
+    .trim();
+
+  return Number(cleaned);
+};
+
 const normalizeTime = (value: unknown): string | null => {
   if (value === null || value === undefined) return null;
   const s = String(value).trim();
@@ -166,15 +194,24 @@ export const parseTicketsWorkbook = (bytes: ArrayBuffer, mesAnio: string): Ticke
   }
   const ws = workbook.Sheets[firstSheetName];
   const rows = XLSX.utils.sheet_to_json<unknown[]>(ws, { header: 1, raw: true });
+  const headers = rows[0] || [];
+  const responsableIdx = findHeaderIndex(headers, ['Responsable'], 2);
+  const semanaIdx = findHeaderIndex(headers, ['Semana'], 1);
+  const ticketIdx = findHeaderIndex(headers, ['Nro Ticket', 'Ticket'], 0);
+  const asuntoIdx = findHeaderIndex(headers, ['Asunto'], 3);
+  const tipoIdx = findHeaderIndex(headers, ['Tipo'], 6);
+  const horasExtrasIdx = findHeaderIndex(headers, ['Hs Extras', 'Horas Extras'], 10);
 
   const out: TicketRow[] = [];
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i] || [];
-    const responsableRaw = String(row[2] ?? '').trim();
+    const responsableRaw = String(row[responsableIdx] ?? '').trim();
     if (!responsableRaw) continue;
 
-    const horasRaw = row[10];
-    const horas = Number(horasRaw);
+    const semana = String(row[semanaIdx] ?? '').trim();
+    if (semana.toLowerCase() === 'total') continue;
+
+    const horas = parseDecimal(row[horasExtrasIdx]);
     if (!Number.isFinite(horas) || horas <= 0) continue;
 
     const respParts = responsableRaw.split(/\s+/);
@@ -183,12 +220,12 @@ export const parseTicketsWorkbook = (bytes: ArrayBuffer, mesAnio: string): Ticke
     out.push({
       id: randomUUID(),
       mesAnio,
-      nroTicket: String(row[0] ?? '').trim() || null,
-      semana: String(row[1] ?? '').trim() || null,
+      nroTicket: String(row[ticketIdx] ?? '').trim() || null,
+      semana: semana || null,
       responsableRaw,
       responsableNormApe: normalize(apellido),
-      asunto: String(row[3] ?? '').trim() || null,
-      tipo: String(row[6] ?? '').trim() || null,
+      asunto: String(row[asuntoIdx] ?? '').trim() || null,
+      tipo: String(row[tipoIdx] ?? '').trim() || null,
       horasExtras: horas,
       rowNumber: i + 1
     });
