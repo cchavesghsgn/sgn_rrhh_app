@@ -4,6 +4,7 @@ import type { PrismaClient } from '@prisma/client';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import * as XLSX from 'xlsx';
 import { buildKey, putObject } from './s3';
+import { fetchTicketsDetalleApi } from './bonos-tickets-api';
 
 const MES_REGEX = /^(\d{4})-(0[1-9]|1[0-2])$/;
 
@@ -54,6 +55,15 @@ type SinMarcaDetalle = {
   marca: string;
 };
 
+type HorasExtrasDetalle = {
+  nroTkt: number;
+  semana: string;
+  asunto: string;
+  tipo: string;
+  horasCargadas: number;
+  horasExtras: number;
+};
+
 type CalculoEmpleadoResult = {
   empleadoId: string;
   empleadoNombre: string;
@@ -92,6 +102,8 @@ type CalculoEmpleadoResult = {
     cumplimientoDetalle: CumplimientoDetalle[];
     tardanzasDetalle: TardanzaDetalle[];
     sinMarcaDetalle: SinMarcaDetalle[];
+    horasExtrasDetalle: HorasExtrasDetalle[];
+    ticketsDetalleWarnings: string[];
     licenciasDias: number;
     htmlPath?: string;
   };
@@ -317,6 +329,21 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
       </tr>
     `).join('')
     : '<tr><td colspan="2">Sin marcas faltantes registradas</td></tr>';
+  const horasExtrasRows = detail.horasExtrasDetalle.length > 0
+    ? detail.horasExtrasDetalle.map((row) => `
+      <tr>
+        <td class="num" style="text-align:right">${row.nroTkt || '-'}</td>
+        <td>${escapeHtml(row.semana)}</td>
+        <td>${escapeHtml(row.asunto)}</td>
+        <td>${escapeHtml(row.tipo)}</td>
+        <td class="num" style="text-align:right">${row.horasCargadas.toFixed(1)}</td>
+        <td class="num" style="text-align:right">${row.horasExtras.toFixed(1)}</td>
+      </tr>
+    `).join('')
+    : '<tr><td colspan="6">Sin horas extras registradas en tickets detallados</td></tr>';
+  const ticketsWarnings = detail.ticketsDetalleWarnings.length > 0
+    ? `<p class="warn">${detail.ticketsDetalleWarnings.map(escapeHtml).join('<br>')}</p>`
+    : '';
 
   return `<!DOCTYPE html>
 <html>
@@ -384,10 +411,17 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
 
   <h3>Detalle Horas Extras</h3>
   <table>
-    <tr><th>Concepto</th><th class="num" style="text-align:right">Total</th></tr>
-    <tr><td>Horas extras importadas desde Tickets-Horas</td><td class="num" style="text-align:right">${data.horasExtras.toFixed(1)} hs</td></tr>
+    <tr>
+      <th class="num" style="text-align:right">Ticket</th>
+      <th>Semana</th>
+      <th>Asunto</th>
+      <th>Tipo</th>
+      <th class="num" style="text-align:right">Hs cargadas</th>
+      <th class="num" style="text-align:right">Hs extras</th>
+    </tr>
+    ${horasExtrasRows}
   </table>
-  <p style="font-size:11px;color:#666">El detalle por ticket quedará disponible cuando agreguemos el archivo específico de horas extras.</p>
+  ${ticketsWarnings}
 
   <h3>Tabla de Referencia - Bono Experiencia</h3>
   <table class="ref-table">
@@ -709,6 +743,13 @@ export async function calcularBonos(
   const feriados = new Set(feriadosRows.map((f) => dateKey(f.fecha)));
   const diasHabiles = getDiasHabiles(year, month, feriados);
   const weeks = getMonthWeeks(year, month, feriados);
+  let ticketsDetalleApiAvailable = true;
+  let ticketsDetalleApiError: string | null = null;
+  const ticketsDetalleRows = await fetchTicketsDetalleApi(mesAnio).catch((error) => {
+    ticketsDetalleApiAvailable = false;
+    ticketsDetalleApiError = error instanceof Error ? error.message : 'No se pudo leer la API de tickets detallados.';
+    return [];
+  });
 
   const horariosByName = new Map<string, Map<string, { morning?: typeof horariosRows[number]; afternoon?: typeof horariosRows[number] }>>();
   for (const row of horariosRows) {
@@ -722,21 +763,38 @@ export async function calcularBonos(
     horariosByName.set(name, byDay);
   }
 
-  const empleadosById = new Map(employees.map((e) => [e.id, e]));
   const recibosByEmpleado = new Map(recibosRows.map((r) => [r.empleadoId, r]));
-  const ticketByEmpleado = new Map<string, typeof ticketsRows>();
-  for (const row of ticketsRows) {
-    const normalized = normalize(row.responsableRaw);
+  const findEmployeeForResponsible = (responsableRaw: string) => {
+    const normalized = normalize(responsableRaw);
     const parts = normalized.split(/\s+/).filter(Boolean);
-    const emp = employees.find((e) => {
+    return employees.find((e) => {
       const first = normalize(e.firstName);
       const last = normalize(e.lastName);
       return normalized === normalize(`${e.firstName} ${e.lastName}`) || parts.includes(first) || parts.some((p) => tokenMatches(p, last));
     });
+  };
+  const ticketByEmpleado = new Map<string, typeof ticketsRows>();
+  for (const row of ticketsRows) {
+    const emp = findEmployeeForResponsible(row.responsableRaw);
     if (!emp) continue;
     const existing = ticketByEmpleado.get(emp.id) ?? [];
     existing.push(row);
     ticketByEmpleado.set(emp.id, existing);
+  }
+  const ticketsDetalleByEmpleado = new Map<string, HorasExtrasDetalle[]>();
+  for (const row of ticketsDetalleRows) {
+    const emp = findEmployeeForResponsible(row.responsable);
+    if (!emp) continue;
+    const existing = ticketsDetalleByEmpleado.get(emp.id) ?? [];
+    existing.push({
+      nroTkt: row.nroTkt,
+      semana: row.semana,
+      asunto: row.asunto,
+      tipo: row.tipo,
+      horasCargadas: row.hsCargadasSem,
+      horasExtras: row.hsExtras
+    });
+    ticketsDetalleByEmpleado.set(emp.id, existing);
   }
 
   const licenciasByEmpleado = new Map<string, Set<string>>();
@@ -817,7 +875,17 @@ export async function calcularBonos(
 
       const tickets = ticketByEmpleado.get(emp.id) ?? [];
       const weeklyTickets = tickets.filter((t) => normalize(t.semana || '') !== 'total');
-      const horasExtras = weeklyTickets.reduce((sum, t) => sum + t.horasExtras, 0);
+      const horasExtrasResumen = weeklyTickets.reduce((sum, t) => sum + t.horasExtras, 0);
+      const horasExtrasDetalleRows = ticketsDetalleByEmpleado.get(emp.id) ?? [];
+      const horasExtrasDetalle = horasExtrasDetalleRows.filter((row) => row.horasExtras > 0);
+      const horasExtrasDetalleTotal = horasExtrasDetalle.reduce((sum, row) => sum + row.horasExtras, 0);
+      const horasExtras = ticketsDetalleApiAvailable ? horasExtrasDetalleTotal : horasExtrasResumen;
+      const ticketsDetalleWarnings: string[] = [];
+      if (!ticketsDetalleApiAvailable && ticketsDetalleApiError) {
+        ticketsDetalleWarnings.push(`No se pudo leer la API de tickets detallados. Se usó el total del resumen: ${ticketsDetalleApiError}`);
+      } else if (Math.abs(horasExtrasDetalleTotal - horasExtrasResumen) > 0.01) {
+        ticketsDetalleWarnings.push(`Diferencia entre resumen (${horasExtrasResumen.toFixed(1)} hs) y detalle (${horasExtrasDetalleTotal.toFixed(1)} hs). Se usó el detalle.`);
+      }
       const valorHora = sueldo > 0 ? sueldo / 90 : 0;
       const bonoDesarrollo = Math.round(valorHora * horasExtras);
 
@@ -860,6 +928,8 @@ export async function calcularBonos(
         cumplimientoDetalle,
         tardanzasDetalle,
         sinMarcaDetalle,
+        horasExtrasDetalle,
+        ticketsDetalleWarnings,
         licenciasDias: licenciaSet.size
       };
 

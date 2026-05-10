@@ -17,7 +17,7 @@ type HorarioRow = {
   rowNumber: number;
 };
 
-type TicketRow = {
+export type TicketRow = {
   id: string;
   mesAnio: string;
   semana: string | null;

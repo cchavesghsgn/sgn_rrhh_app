@@ -310,6 +310,38 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleSyncTicketsApi = async () => {
+    if (!selectedBonosMonth) {
+      setBonosError('Debes seleccionar un mes y año.');
+      return;
+    }
+
+    setBonosSubmitting(true);
+    setBonosError(null);
+    setBonosSuccess(null);
+
+    try {
+      const res = await fetch('/api/bonos/cargas/tickets-api', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mes_anio: selectedBonosMonth })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'No se pudo sincronizar Tickets-Horas desde la API.');
+      }
+
+      setBonosSuccess(`Tickets-Horas sincronizado desde API para ${selectedBonosMonth}. ${data.ticketsHoras?.rows ?? 0} filas`);
+      setBonosTicketsFile(null);
+      await loadBonosStatus(selectedBonosMonth);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error inesperado al sincronizar Tickets-Horas.';
+      setBonosError(message);
+    } finally {
+      setBonosSubmitting(false);
+    }
+  };
+
   const renderUploadStatus = (
     label: string,
     info: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string } | undefined
@@ -832,7 +864,7 @@ export default function AdminDashboard() {
                 <DialogHeader>
                   <DialogTitle>Carga de Archivos de Bonos</DialogTitle>
                   <DialogDescription>
-                    Selecciona mes-año y carga Horarios, Tickets-Horas, Calendario Feriados y Recibos Sueldo.
+                    Selecciona mes-año, carga Horarios, Calendario Feriados y Recibos Sueldo. Tickets-Horas se sincroniza desde SGN Tickets.
                   </DialogDescription>
                 </DialogHeader>
 
@@ -875,16 +907,14 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="bonos-tickets-file" className="text-sm font-medium text-sgn-dark">
-                      Tickets-Horas (.xlsx o .csv)
-                    </label>
-                    <Input
-                      id="bonos-tickets-file"
-                      type="file"
-                      accept=".xlsx,.csv,text/csv"
-                      onChange={(e) => setBonosTicketsFile(e.target.files?.[0] ?? null)}
-                    />
+                  <div className="rounded-md border border-gray-200 p-3 space-y-2">
+                    <p className="text-sm font-medium text-sgn-dark">Tickets-Horas</p>
+                    <p className="text-xs text-gray-600">
+                      Sincroniza el resumen desde SGN Tickets para reemplazar la importación manual del CSV.
+                    </p>
+                    <Button type="button" variant="outline" onClick={handleSyncTicketsApi} disabled={bonosSubmitting}>
+                      {bonosSubmitting ? 'Sincronizando...' : 'Sincronizar desde API'}
+                    </Button>
                   </div>
 
                   <div className="space-y-2">
@@ -919,7 +949,7 @@ export default function AdminDashboard() {
                   <Button
                     type="button"
                     onClick={handleUploadBonosFiles}
-                    disabled={bonosSubmitting || (!bonosHorariosFile && !bonosTicketsFile && !bonosFeriadosFile && !bonosRecibosFile)}
+                    disabled={bonosSubmitting || (!bonosHorariosFile && !bonosFeriadosFile && !bonosRecibosFile)}
                   >
                     {bonosSubmitting ? 'Guardando carga...' : 'Guardar Carga'}
                   </Button>
