@@ -249,14 +249,14 @@ model bonos_tickets_horas {
 model bonos_feriados {
   id            String        @id
   uploadId      String
-  mesAnio       String        @db.Char(7)
+  anio          Int
   fecha         DateTime      @db.Date
   conmemoracion String?       @db.VarChar(255)
   rowNumber     Int
   createdAt     DateTime      @default(now())
   bonos_uploads bonos_uploads @relation(fields: [uploadId], references: [id], onDelete: Cascade)
 
-  @@index([mesAnio])
+  @@index([anio])
   @@index([fecha])
 }
 

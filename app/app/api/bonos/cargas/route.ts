@@ -21,6 +21,9 @@ const validInputFile = (fileName: string) => {
   return lower.endsWith('.xlsx') || lower.endsWith('.csv');
 };
 
+const getYearFromMesAnio = (mesAnio: string) => Number(mesAnio.slice(0, 4));
+const getFeriadosUploadMesAnio = (mesAnio: string) => `${getYearFromMesAnio(mesAnio)}-01`;
+
 async function replaceHorarios(
   mesAnio: string,
   fileName: string,
@@ -125,18 +128,19 @@ async function replaceFeriados(
   bytes: ArrayBuffer
 ) {
   const rows = parseFeriadosCsv(bytes, mesAnio);
+  const feriadosMesAnio = getFeriadosUploadMesAnio(mesAnio);
 
   await prisma.$transaction(async (tx) => {
     const upload = await tx.bonos_uploads.upsert({
       where: {
         mesAnio_tipoArchivo: {
-          mesAnio,
+          mesAnio: feriadosMesAnio,
           tipoArchivo: BonosArchivoTipo.FERIADOS
         }
       },
       create: {
         id: randomUUID(),
-        mesAnio,
+        mesAnio: feriadosMesAnio,
         tipoArchivo: BonosArchivoTipo.FERIADOS,
         fileName,
         fileHash,

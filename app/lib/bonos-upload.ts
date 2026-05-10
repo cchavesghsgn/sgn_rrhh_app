@@ -32,7 +32,7 @@ type TicketRow = {
 
 type FeriadoRow = {
   id: string;
-  mesAnio: string;
+  anio: number;
   fecha: Date;
   conmemoracion: string | null;
   rowNumber: number;
@@ -215,7 +215,7 @@ export const parseFeriadosCsv = (bytes: ArrayBuffer, mesAnio: string): FeriadoRo
 
     out.push({
       id: randomUUID(),
-      mesAnio,
+      anio: fecha.getUTCFullYear(),
       fecha,
       conmemoracion,
       rowNumber: i + 1

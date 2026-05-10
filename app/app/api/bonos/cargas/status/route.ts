@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { BonosArchivoTipo } from '@prisma/client';
 import { getServerAuthSession } from '../../../../../lib/auth';
 import { prisma } from '../../../../../lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
 const MES_REGEX = /^\d{4}-(0[1-9]|1[0-2])$/;
+const getFeriadosUploadMesAnio = (mesAnio: string) => `${mesAnio.slice(0, 4)}-01`;
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,7 +28,12 @@ export async function GET(request: NextRequest) {
     }
 
     const uploads = await prisma.bonos_uploads.findMany({
-      where: { mesAnio },
+      where: {
+        OR: [
+          { mesAnio, tipoArchivo: { not: BonosArchivoTipo.FERIADOS } },
+          { mesAnio: getFeriadosUploadMesAnio(mesAnio), tipoArchivo: BonosArchivoTipo.FERIADOS }
+        ]
+      },
       include: { User: true }
     });
 
