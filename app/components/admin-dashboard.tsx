@@ -80,6 +80,8 @@ export default function AdminDashboard() {
       totalEmpleados: number;
       totalBonos: number;
       generadoAt: string;
+      resumenPdfPath?: string | null;
+      planillaExcelPath?: string | null;
       empleados: Array<{
         empleado: string;
         tipo: string;
@@ -100,6 +102,7 @@ export default function AdminDashboard() {
         bonoCumplimiento: number;
         totalBono: number;
         horasExtras: number;
+        htmlPath?: string;
       }>;
     } | null;
   } | null>(null);
@@ -732,19 +735,13 @@ export default function AdminDashboard() {
                         </p>
                       </div>
                       <div className="overflow-x-auto rounded-md border">
-                        <table className="min-w-[1320px] w-full text-xs">
+                        <table className="min-w-[920px] w-full text-xs">
                           <thead className="bg-sgn-blue text-white">
                             <tr>
                               <th className="p-2 text-left">Empleado</th>
                               <th className="p-2 text-center">Tipo</th>
                               <th className="p-2 text-center">Antigüed.</th>
                               <th className="p-2 text-right">Sueldo</th>
-                              <th className="p-2 text-center">TAP</th>
-                              <th className="p-2 text-center">TPE</th>
-                              <th className="p-2 text-center">IEA</th>
-                              <th className="p-2 text-center">Tard.</th>
-                              <th className="p-2 text-center">S/Marc.</th>
-                              <th className="p-2 text-right">KPI%</th>
                               <th className="p-2 text-right">Bono Exp.</th>
                               <th className="p-2 text-right">Bono Compromiso</th>
                               <th className="p-2 text-right">Horas Extras</th>
@@ -759,12 +756,6 @@ export default function AdminDashboard() {
                                 <td className="p-2 text-center">{row.tipo}</td>
                                 <td className="p-2 text-center">{row.antiguedad} años</td>
                                 <td className="p-2 text-right">{formatMoney(row.sueldoNeto)}</td>
-                                <td className="p-2 text-center">{metricRatio(row.tapPres, row.tapTotal)}</td>
-                                <td className="p-2 text-center">{metricRatio(row.tpeOk, row.tpeTotal)}</td>
-                                <td className="p-2 text-center">{metricRatio(row.ieaOk, row.ieaTotal)}</td>
-                                <td className="p-2 text-center">{row.tardanzas}</td>
-                                <td className="p-2 text-center">{row.sinMarca}</td>
-                                <td className="p-2 text-right">{formatPct(row.kpiPct)}</td>
                                 <td className="p-2 text-right">{formatMoney(row.bonoExperiencia)}</td>
                                 <td className="p-2 text-right">{formatMoney(row.bonoKpi)}</td>
                                 <td className="p-2 text-right">{formatMoney(row.bonoDesarrollo)}</td>
@@ -779,12 +770,6 @@ export default function AdminDashboard() {
                               <td className="p-2" />
                               <td className="p-2" />
                               <td className="p-2" />
-                              <td className="p-2" />
-                              <td className="p-2" />
-                              <td className="p-2" />
-                              <td className="p-2" />
-                              <td className="p-2" />
-                              <td className="p-2" />
                               <td className="p-2 text-right">{formatMoney(calculoTotals?.bonoExperiencia || 0)}</td>
                               <td className="p-2 text-right">{formatMoney(calculoTotals?.bonoKpi || 0)}</td>
                               <td className="p-2 text-right">{formatMoney(calculoTotals?.bonoDesarrollo || 0)}</td>
@@ -793,6 +778,30 @@ export default function AdminDashboard() {
                             </tr>
                           </tfoot>
                         </table>
+                      </div>
+                      <div className="rounded-md border border-gray-200 bg-gray-50 p-3">
+                        <p className="text-sm font-medium text-sgn-dark mb-2">Archivos generados</p>
+                        <div className="flex flex-wrap gap-2">
+                          {calculoData.calculo.resumenPdfPath ? (
+                            <a href={calculoData.calculo.resumenPdfPath} target="_blank" rel="noopener noreferrer">
+                              <Button type="button" size="sm" variant="outline">PDF Resumen</Button>
+                            </a>
+                          ) : null}
+                          {calculoData.calculo.planillaExcelPath ? (
+                            <a href={calculoData.calculo.planillaExcelPath} target="_blank" rel="noopener noreferrer">
+                              <Button type="button" size="sm" variant="outline">Excel Contadora</Button>
+                            </a>
+                          ) : null}
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {calculoData.calculo.empleados
+                            .filter((row) => row.htmlPath)
+                            .map((row) => (
+                              <a key={row.empleado} href={row.htmlPath} target="_blank" rel="noopener noreferrer">
+                                <Button type="button" size="sm" variant="outline">HTML {row.empleado}</Button>
+                              </a>
+                            ))}
+                        </div>
                       </div>
                     </div>
                   ) : null}

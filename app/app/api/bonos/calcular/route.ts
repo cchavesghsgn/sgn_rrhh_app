@@ -33,14 +33,23 @@ const detailString = (detail: unknown, key: string) => {
   return typeof value === 'string' ? value : '';
 };
 
+const detailObject = (detail: unknown, key: string): Record<string, unknown> | null => {
+  const value = getDetailValue(detail, key);
+  return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : null;
+};
+
 const serializeCalculo = (calculo: Awaited<ReturnType<typeof getBonosCalculo>>) => {
   if (!calculo) return null;
+  const reportes = detailObject(calculo.detalleJson, 'reportes');
   return {
     id: calculo.id,
     mesAnio: calculo.mesAnio,
     estado: calculo.estado,
     totalEmpleados: calculo.totalEmpleados,
     totalBonos: calculo.totalBonos,
+    resumenPdfPath: calculo.resumenPdfPath,
+    planillaExcelPath: calculo.planillaExcelPath,
+    htmlEmpleados: Array.isArray(reportes?.htmlEmpleados) ? reportes.htmlEmpleados : [],
     generadoAt: calculo.generadoAt,
     empleados: calculo.empleados.map((row) => {
       const detail = row.detalleJson;
@@ -65,7 +74,8 @@ const serializeCalculo = (calculo: Awaited<ReturnType<typeof getBonosCalculo>>) 
         bonoDesarrollo: row.bonoDesarrollo,
         bonoCumplimiento: row.bonoCumplimiento,
         totalBono: row.totalBono,
-        horasExtras: row.horasExtras
+        horasExtras: row.horasExtras,
+        htmlPath: detailString(detail, 'htmlPath')
       };
     })
   };

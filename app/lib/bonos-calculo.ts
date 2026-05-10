@@ -1,6 +1,9 @@
 import { randomUUID } from 'crypto';
 import { DayShift, LeaveRequestType } from '@prisma/client';
 import type { PrismaClient } from '@prisma/client';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import * as XLSX from 'xlsx';
+import { buildKey, putObject } from './s3';
 
 const MES_REGEX = /^(\d{4})-(0[1-9]|1[0-2])$/;
 
@@ -29,6 +32,61 @@ export type BonosValidation = {
     totalBonos?: number;
     generadoAt?: Date;
   };
+};
+
+type CumplimientoDetalle = {
+  semana: string;
+  tickets: number;
+  min: number;
+  pct: number;
+  bono: number;
+};
+
+type CalculoEmpleadoResult = {
+  empleadoId: string;
+  empleadoNombre: string;
+  sueldoNeto: number;
+  expPct: number;
+  bonoExperiencia: number;
+  kpiPct: number;
+  bonoKpi: number;
+  horasExtras: number;
+  valorHora: number;
+  bonoDesarrollo: number;
+  bonoCumplimiento: number;
+  totalBono: number;
+  htmlResumen: string;
+  detalleJson: {
+    empleado: string;
+    tipo: string;
+    area?: string | null;
+    antiguedad: number;
+    sueldoNeto: number;
+    expPct: number;
+    tapPres: number;
+    tapTotal: number;
+    tapPct: number;
+    tpeOk: number;
+    tpePct: number;
+    ieaOk: number;
+    ieaPct: number;
+    tardanzas: number;
+    sinMarca: number;
+    sinMarcaExtra: number;
+    tardanzasEfectivas: number;
+    kpiPct: number;
+    horasExtras: number;
+    valorHora: number;
+    cumplimientoDetalle: CumplimientoDetalle[];
+    licenciasDias: number;
+    htmlPath?: string;
+  };
+};
+
+type ReportLinks = {
+  resumenPdfPath: string;
+  planillaExcelPath: string;
+  htmlEmpleados: Array<{ empleadoId: string; empleado: string; path: string }>;
 };
 
 const normalize = (value: string): string =>
@@ -103,6 +161,22 @@ const escapeHtml = (value: unknown) =>
 
 const money = (value: number) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
+
+const pct = (value: number) => `${((value || 0) * 100).toFixed(1)}%`;
+
+const monthLabel = (mesAnio: string) => {
+  const { year, month } = parseMesAnio(mesAnio);
+  const labels = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  return `${labels[month]} ${year}`;
+};
+
+const safeFileName = (value: string) =>
+  normalize(value)
+    .replace(/\s+/g, '_')
+    .replace(/[^a-z0-9_]/g, '')
+    || 'empleado';
+
+const filePathForKey = (subpath: string) => `/api/files/${subpath}`;
 
 const yearsOfService = (hireDate: Date, at: Date) => {
   let years = at.getUTCFullYear() - hireDate.getUTCFullYear();
@@ -197,35 +271,200 @@ export async function validateBonosCalculo(prisma: PrismaClient | PrismaTx, mesA
   };
 }
 
-const buildEmployeeHtml = (data: {
-  empleado: string;
-  mesAnio: string;
-  sueldoNeto: number;
-  bonoExperiencia: number;
-  bonoKpi: number;
-  bonoDesarrollo: number;
-  bonoCumplimiento: number;
-  totalBono: number;
-  tapPct: number;
-  tpePct: number;
-  ieaPct: number;
-  horasExtras: number;
-}) => `
-  <section>
-    <h1>Bono ${escapeHtml(data.mesAnio)} - ${escapeHtml(data.empleado)}</h1>
-    <p><strong>Sueldo neto base:</strong> ${money(data.sueldoNeto)}</p>
-    <table>
-      <tbody>
-        <tr><td>Bono experiencia</td><td>${money(data.bonoExperiencia)}</td></tr>
-        <tr><td>Bono compromiso</td><td>${money(data.bonoKpi)}</td></tr>
-        <tr><td>Horas extras</td><td>${money(data.bonoDesarrollo)} (${data.horasExtras} hs)</td></tr>
-        <tr><td>Bono cumplimiento</td><td>${money(data.bonoCumplimiento)}</td></tr>
-        <tr><td><strong>Total bono</strong></td><td><strong>${money(data.totalBono)}</strong></td></tr>
-      </tbody>
-    </table>
-    <p>KPI: TAP ${(data.tapPct * 100).toFixed(1)}% · TPE ${(data.tpePct * 100).toFixed(1)}% · IEA ${(data.ieaPct * 100).toFixed(1)}%</p>
-  </section>
-`;
+const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) => {
+  const detail = data.detalleJson;
+  const cumplimientoRows = detail.cumplimientoDetalle
+    .map((row) => `
+      <tr>
+        <td>${escapeHtml(row.semana)}</td>
+        <td>${row.tickets}</td>
+        <td>${pct(row.pct)}</td>
+        <td>${row.min} tkts</td>
+        <td>${money(row.bono)}</td>
+      </tr>
+    `)
+    .join('');
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body{font-family:Calibri,Arial,sans-serif;color:#333;max-width:720px;margin:0 auto;padding:16px;}
+    h2{color:#1F4E79;border-bottom:2px solid #1F4E79;padding-bottom:6px;margin-bottom:4px;}
+    h3{color:#1F4E79;margin:18px 0 6px;font-size:14px;}
+    table{border-collapse:collapse;width:100%;margin-bottom:12px;font-size:13px;}
+    th{background:#1F4E79;color:#fff;padding:7px 10px;text-align:left;}
+    td{padding:6px 10px;border:1px solid #ddd;}
+    tr:nth-child(even){background:#f5f9ff;}
+    .ok{color:#375623;font-weight:bold;}
+    .warn{color:#843C0C;font-weight:bold;}
+    .total-row{background:#E2EFDA;font-weight:bold;font-size:14px;}
+    .indicator-row{color:#555;font-style:italic;font-size:12px;}
+    .ref-table th,.ref-table td{font-size:12px;padding:5px 8px;}
+    .footer{font-size:11px;color:#888;margin-top:20px;border-top:1px solid #eee;padding-top:10px;}
+  </style>
+</head>
+<body>
+  <h2>Detalle de Bonos - ${escapeHtml(monthLabel(data.mesAnio))}</h2>
+  <p>Estimado/a <strong>${escapeHtml(data.empleadoNombre.split(' ')[0])}</strong>, a continuación el detalle de tu liquidación de bonos correspondiente a <strong>${escapeHtml(monthLabel(data.mesAnio))}</strong>.</p>
+
+  <h3>KPIs de Compromiso</h3>
+  <table>
+    <tr><th>Indicador</th><th>Resultado</th><th>Porcentaje</th><th>Bono</th></tr>
+    <tr><td>TPE - Puntualidad Estricta</td><td>${detail.tpeOk} / ${detail.tapTotal} días</td><td class="${detail.tpePct >= 0.8 ? 'ok' : 'warn'}">${pct(detail.tpePct)}</td><td>${pct(pctToBonus(detail.tpePct))}</td></tr>
+    <tr><td>TAP - Tasa de Asistencia</td><td>${detail.tapPres} / ${detail.tapTotal} días</td><td class="${detail.tapPct >= 0.8 ? 'ok' : 'warn'}">${pct(detail.tapPct)}</td><td>${pct(detail.tardanzasEfectivas >= 4 ? 0 : pctToBonus(detail.tapPct))}</td></tr>
+    <tr><td>IEA - Esfuerzo Adicional</td><td>${detail.ieaOk} / ${detail.tapTotal} días</td><td class="${detail.ieaPct >= 0.4 ? 'ok' : 'warn'}">${pct(detail.ieaPct)}</td><td>${pct(ieaToBonus(detail.ieaPct))}</td></tr>
+    <tr class="indicator-row"><td>Tardanzas efectivas</td><td>${detail.tardanzas} reales + ${detail.sinMarcaExtra} por marcas faltantes</td><td colspan="2">${detail.tardanzasEfectivas}</td></tr>
+    <tr class="indicator-row"><td>Sin Marcar</td><td colspan="3">${detail.sinMarca} marcas faltantes</td></tr>
+  </table>
+
+  <h3>Liquidación de Bonos</h3>
+  <table>
+    <tr><th>Concepto</th><th>Detalle</th><th>Monto</th></tr>
+    <tr><td>Bono Experiencia (${pct(data.expPct)})</td><td>Antigüedad ${detail.antiguedad} años - ${escapeHtml(detail.tipo)}</td><td>${money(data.bonoExperiencia)}</td></tr>
+    <tr><td>Horas Extras</td><td>${data.horasExtras.toFixed(1)} hs x ${money(data.valorHora)}/h</td><td>${money(data.bonoDesarrollo)}</td></tr>
+    <tr><td>Bono Compromiso (${pct(data.kpiPct)})</td><td>TPE + TAP + IEA</td><td>${money(data.bonoKpi)}</td></tr>
+    <tr><td>Bono Cumplimiento</td><td>${detail.cumplimientoDetalle.filter((row) => row.bono > 0).length}/${detail.cumplimientoDetalle.length} semanas calificadas</td><td>${money(data.bonoCumplimiento)}</td></tr>
+    <tr class="total-row"><td colspan="2"><strong>TOTAL BONOS ${escapeHtml(monthLabel(data.mesAnio))}</strong></td><td><strong>${money(data.totalBono)}</strong></td></tr>
+  </table>
+
+  <h3>Detalle Bono Cumplimiento</h3>
+  <table>
+    <tr><th>Semana</th><th>Tickets</th><th>Cumplimiento</th><th>Mínimo</th><th>Bono</th></tr>
+    ${cumplimientoRows}
+  </table>
+
+  <h3>Tabla de Referencia - Bono Experiencia</h3>
+  <table class="ref-table">
+    <tr><th>Tipo</th><th>&lt;1 año</th><th>1-3 años</th><th>3-6 años</th><th>6-10 años</th><th>&gt;=10 años</th></tr>
+    <tr><td>Desarrollo</td><td>10%</td><td>20%</td><td>30%</td><td>40%</td><td>50%</td></tr>
+    <tr><td>Soporte/Admin/Gerente</td><td>5%</td><td>10%</td><td>15%</td><td>20%</td><td>30%</td></tr>
+  </table>
+
+  <h3>Tabla de Referencia - Bono Compromiso</h3>
+  <table class="ref-table">
+    <tr><th>KPI</th><th>Mayor o igual 90%</th><th>Mayor o igual 80%</th><th>Menor 80%</th></tr>
+    <tr><td>TPE / TAP</td><td>3.33%</td><td>1.66%</td><td>0%</td></tr>
+    <tr><td>IEA</td><td>3.33% desde 50%</td><td>1.66% desde 40%</td><td>0%</td></tr>
+  </table>
+
+  <div class="footer">
+    Este detalle es informativo. Ante cualquier consulta comunicarse con Administración.<br>
+    <em>Soft SRL - Sistema Automático de Gestión de RRHH</em>
+  </div>
+</body>
+</html>`;
+};
+
+const drawText = (page: any, text: string, x: number, y: number, size: number, font: any, color = rgb(0, 0, 0)) => {
+  page.drawText(String(text ?? '').slice(0, 70), { x, y, size, font, color });
+};
+
+const generateResumenPdf = async (mesAnio: string, results: CalculoEmpleadoResult[], totalBonos: number) => {
+  const pdfDoc = await PDFDocument.create();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const page = pdfDoc.addPage([842, 595]);
+  const { height } = page.getSize();
+  let y = height - 40;
+
+  page.drawLine({ start: { x: 30, y: height - 20 }, end: { x: 812, y: height - 20 }, thickness: 2, color: rgb(0.12, 0.31, 0.47) });
+  drawText(page, `Resumen de Bonos - ${monthLabel(mesAnio)}`, 30, y, 18, bold, rgb(0.12, 0.31, 0.47));
+  y -= 28;
+  drawText(page, `Total empleados: ${results.length}   Total bonos: ${money(totalBonos)}`, 30, y, 11, font);
+  y -= 24;
+
+  const cols = [
+    { label: 'Empleado', x: 34, w: 150 },
+    { label: 'Tipo', x: 185, w: 75 },
+    { label: 'Ant.', x: 265, w: 45 },
+    { label: 'Sueldo', x: 315, w: 85 },
+    { label: 'B. Exp.', x: 405, w: 80 },
+    { label: 'Compromiso', x: 490, w: 85 },
+    { label: 'Hs Extras', x: 580, w: 80 },
+    { label: 'Cumpl.', x: 665, w: 75 },
+    { label: 'Total', x: 745, w: 75 }
+  ];
+
+  page.drawRectangle({ x: 30, y: y - 6, width: 782, height: 22, color: rgb(0.12, 0.31, 0.47) });
+  cols.forEach((col) => drawText(page, col.label, col.x, y, 9, bold, rgb(1, 1, 1)));
+  y -= 18;
+
+  results.forEach((row, idx) => {
+    if (idx % 2 === 1) page.drawRectangle({ x: 30, y: y - 5, width: 782, height: 18, color: rgb(0.94, 0.94, 0.94) });
+    drawText(page, row.empleadoNombre, cols[0].x, y, 8, font);
+    drawText(page, row.detalleJson.tipo, cols[1].x, y, 8, font);
+    drawText(page, `${row.detalleJson.antiguedad}a`, cols[2].x, y, 8, font);
+    drawText(page, money(row.sueldoNeto), cols[3].x, y, 8, font);
+    drawText(page, money(row.bonoExperiencia), cols[4].x, y, 8, font);
+    drawText(page, money(row.bonoKpi), cols[5].x, y, 8, font);
+    drawText(page, money(row.bonoDesarrollo), cols[6].x, y, 8, font);
+    drawText(page, money(row.bonoCumplimiento), cols[7].x, y, 8, font);
+    drawText(page, money(row.totalBono), cols[8].x, y, 8, bold);
+    y -= 18;
+  });
+
+  y -= 4;
+  page.drawRectangle({ x: 30, y: y - 5, width: 782, height: 20, color: rgb(0.84, 0.9, 0.95) });
+  drawText(page, 'TOTAL', 34, y, 9, bold);
+  drawText(page, money(results.reduce((sum, row) => sum + row.bonoExperiencia, 0)), cols[4].x, y, 9, bold);
+  drawText(page, money(results.reduce((sum, row) => sum + row.bonoKpi, 0)), cols[5].x, y, 9, bold);
+  drawText(page, money(results.reduce((sum, row) => sum + row.bonoDesarrollo, 0)), cols[6].x, y, 9, bold);
+  drawText(page, money(results.reduce((sum, row) => sum + row.bonoCumplimiento, 0)), cols[7].x, y, 9, bold);
+  drawText(page, money(totalBonos), cols[8].x, y, 9, bold);
+
+  return Buffer.from(await pdfDoc.save());
+};
+
+const generateContadoraXlsx = (mesAnio: string, results: CalculoEmpleadoResult[]) => {
+  const total = results.reduce((sum, row) => sum + row.totalBono, 0);
+  const rows = [
+    [`PLANILLA BONOS - ${monthLabel(mesAnio).toUpperCase()}`],
+    [`Generado: ${new Date().toLocaleString('es-AR')}   |   Para: Contadora`],
+    ['Empleado', 'Bono Adicional ($)', 'Presentismo', 'Lic.(Días)', 'Cobra Bono por Recibo', 'Observación'],
+    ...results.map((row) => [
+      row.empleadoNombre,
+      row.totalBono,
+      row.detalleJson.tardanzasEfectivas >= 4 ? 'No' : 'Si',
+      row.detalleJson.licenciasDias || '-',
+      'Si',
+      ''
+    ]),
+    ['TOTAL', total, '', '', '', '']
+  ];
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch: 28 }, { wch: 18 }, { wch: 14 }, { wch: 12 }, { wch: 22 }, { wch: 42 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Planilla Contadora');
+  return Buffer.from(XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' }));
+};
+
+const generateAndUploadReports = async (mesAnio: string, results: CalculoEmpleadoResult[], totalBonos: number): Promise<ReportLinks> => {
+  const base = `bonos/${mesAnio}`;
+  const resumenSubpath = `${base}/Resumen_Bonos_${mesAnio}.pdf`;
+  const planillaSubpath = `${base}/Planilla_Contadora_${mesAnio}.xlsx`;
+
+  const pdfBuffer = await generateResumenPdf(mesAnio, results, totalBonos);
+  const xlsxBuffer = generateContadoraXlsx(mesAnio, results);
+
+  await putObject(buildKey(resumenSubpath), pdfBuffer, 'application/pdf');
+  await putObject(buildKey(planillaSubpath), xlsxBuffer, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+  const htmlEmpleados: ReportLinks['htmlEmpleados'] = [];
+  for (const row of results) {
+    const htmlSubpath = `${base}/empleados/email_${safeFileName(row.empleadoNombre)}.html`;
+    await putObject(buildKey(htmlSubpath), row.htmlResumen, 'text/html; charset=utf-8');
+    row.detalleJson.htmlPath = filePathForKey(htmlSubpath);
+    htmlEmpleados.push({ empleadoId: row.empleadoId, empleado: row.empleadoNombre, path: filePathForKey(htmlSubpath) });
+  }
+
+  return {
+    resumenPdfPath: filePathForKey(resumenSubpath),
+    planillaExcelPath: filePathForKey(planillaSubpath),
+    htmlEmpleados
+  };
+};
 
 export async function calcularBonos(
   prisma: PrismaClient,
@@ -317,7 +556,7 @@ export async function calcularBonos(
     licenciasByEmpleado.set(leave.employeeId, set);
   }
 
-  const results = employees
+  const results: CalculoEmpleadoResult[] = employees
     .filter((emp) => recibosByEmpleado.has(emp.id))
     .map((emp) => {
       const recibo = recibosByEmpleado.get(emp.id)!;
@@ -410,7 +649,7 @@ export async function calcularBonos(
         licenciasDias: licenciaSet.size
       };
 
-      return {
+      const result: CalculoEmpleadoResult = {
         empleadoId: emp.id,
         empleadoNombre,
         sueldoNeto: sueldo,
@@ -423,27 +662,17 @@ export async function calcularBonos(
         bonoDesarrollo,
         bonoCumplimiento,
         totalBono,
-        htmlResumen: buildEmployeeHtml({
-          empleado: empleadoNombre,
-          mesAnio,
-          sueldoNeto: sueldo,
-          bonoExperiencia,
-          bonoKpi,
-          bonoDesarrollo,
-          bonoCumplimiento,
-          totalBono,
-          tapPct,
-          tpePct,
-          ieaPct,
-          horasExtras
-        }),
+        htmlResumen: '',
         detalleJson: detail
       };
+      result.htmlResumen = buildEmployeeHtml({ ...result, mesAnio });
+      return result;
     });
 
   const totalBonos = results.reduce((sum, r) => sum + r.totalBono, 0);
   const calculoId = randomUUID();
   const missingRecibos = employees.filter((e) => !recibosByEmpleado.has(e.id)).map((e) => `${e.firstName} ${e.lastName}`.replace(/\s+/g, ' ').trim());
+  const reportLinks = await generateAndUploadReports(mesAnio, results, totalBonos);
 
   await prisma.$transaction(async (tx) => {
     await tx.bonos_calculos.deleteMany({ where: { mesAnio } });
@@ -454,12 +683,15 @@ export async function calcularBonos(
         estado: 'CALCULADO',
         totalEmpleados: results.length,
         totalBonos,
+        resumenPdfPath: reportLinks.resumenPdfPath,
+        planillaExcelPath: reportLinks.planillaExcelPath,
         generadoPor,
         updatedAt: new Date(),
         detalleJson: {
           recibosMesAnio,
           diasHabiles: diasHabiles.length,
           empleadosSinRecibo: missingRecibos,
+          reportes: reportLinks,
           generatedByVersion: 1
         },
         empleados: {
@@ -491,6 +723,7 @@ export async function calcularBonos(
     recibosMesAnio,
     totalEmpleados: results.length,
     totalBonos,
+    reportes: reportLinks,
     empleadosSinRecibo: missingRecibos,
     empleados: results.sort((a, b) => b.totalBono - a.totalBono)
   };
