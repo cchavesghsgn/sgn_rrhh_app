@@ -277,10 +277,10 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
     .map((row) => `
       <tr>
         <td>${escapeHtml(row.semana)}</td>
-        <td class="num">${row.tickets}</td>
-        <td class="num">${pct(row.pct)}</td>
-        <td class="num">${row.min} tkts</td>
-        <td class="num">${money(row.bono)}</td>
+        <td class="num" style="text-align:right">${row.tickets}</td>
+        <td class="num" style="text-align:right">${pct(row.pct)}</td>
+        <td class="num" style="text-align:right">${row.min} tkts</td>
+        <td class="num" style="text-align:right">${money(row.bono)}</td>
       </tr>
     `)
     .join('');
@@ -296,8 +296,8 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
     table{border-collapse:collapse;width:100%;margin-bottom:12px;font-size:13px;}
     th{background:#1F4E79;color:#fff;padding:7px 10px;text-align:left;}
     td{padding:6px 10px;border:1px solid #ddd;}
-    .num{text-align:right;}
-    th.num{text-align:right;}
+    .num{text-align:right !important;}
+    th.num{text-align:right !important;}
     tr:nth-child(even){background:#f5f9ff;}
     .ok{color:#375623;font-weight:bold;}
     .warn{color:#843C0C;font-weight:bold;}
@@ -311,44 +311,44 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
   <h2>Detalle de Bonos - ${escapeHtml(monthLabel(data.mesAnio))}</h2>
   <p>Estimado/a <strong>${escapeHtml(data.empleadoNombre.split(' ')[0])}</strong>, a continuación el detalle de tu liquidación de bonos correspondiente a <strong>${escapeHtml(monthLabel(data.mesAnio))}</strong>.</p>
 
-  <h3>KPIs de Compromiso</h3>
-  <table>
-    <tr><th>Indicador</th><th class="num">Resultado</th><th class="num">Porcentaje</th><th class="num">Bono</th></tr>
-    <tr><td>TPE - Puntualidad Estricta</td><td class="num">${detail.tpeOk} / ${detail.tapTotal} días</td><td class="num ${detail.tpePct >= 0.8 ? 'ok' : 'warn'}">${pct(detail.tpePct)}</td><td class="num">${pct(pctToBonus(detail.tpePct))}</td></tr>
-    <tr><td>TAP - Tasa de Asistencia</td><td class="num">${detail.tapPres} / ${detail.tapTotal} días</td><td class="num ${detail.tapPct >= 0.8 ? 'ok' : 'warn'}">${pct(detail.tapPct)}</td><td class="num">${pct(detail.tardanzasEfectivas >= 4 ? 0 : pctToBonus(detail.tapPct))}</td></tr>
-    <tr><td>IEA - Esfuerzo Adicional</td><td class="num">${detail.ieaOk} / ${detail.tapTotal} días</td><td class="num ${detail.ieaPct >= 0.4 ? 'ok' : 'warn'}">${pct(detail.ieaPct)}</td><td class="num">${pct(ieaToBonus(detail.ieaPct))}</td></tr>
-    <tr class="indicator-row"><td>Tardanzas efectivas</td><td>${detail.tardanzas} reales + ${detail.sinMarcaExtra} por marcas faltantes</td><td colspan="2" class="num">${detail.tardanzasEfectivas}</td></tr>
-    <tr class="indicator-row"><td>Sin Marcar</td><td colspan="3" class="num">${detail.sinMarca} marcas faltantes</td></tr>
-  </table>
-
   <h3>Liquidación de Bonos</h3>
   <table>
-    <tr><th>Concepto</th><th>Detalle</th><th class="num">Monto</th></tr>
-    <tr><td>Bono Experiencia (${pct(data.expPct)})</td><td>Antigüedad ${detail.antiguedad} años - ${escapeHtml(detail.tipo)}</td><td class="num">${money(data.bonoExperiencia)}</td></tr>
-    <tr><td>Horas Extras</td><td>${data.horasExtras.toFixed(1)} hs x ${money(data.valorHora)}/h</td><td class="num">${money(data.bonoDesarrollo)}</td></tr>
-    <tr><td>Bono Compromiso (${pct(data.kpiPct)})</td><td>TPE + TAP + IEA</td><td class="num">${money(data.bonoKpi)}</td></tr>
-    <tr><td>Bono Cumplimiento</td><td>${detail.cumplimientoDetalle.filter((row) => row.bono > 0).length}/${detail.cumplimientoDetalle.length} semanas calificadas</td><td class="num">${money(data.bonoCumplimiento)}</td></tr>
-    <tr class="total-row"><td colspan="2"><strong>TOTAL BONOS ${escapeHtml(monthLabel(data.mesAnio))}</strong></td><td class="num"><strong>${money(data.totalBono)}</strong></td></tr>
+    <tr><th>Concepto</th><th>Detalle</th><th class="num" style="text-align:right">Monto</th></tr>
+    <tr><td>Bono Experiencia (${pct(data.expPct)})</td><td>Antigüedad ${detail.antiguedad} años - ${escapeHtml(detail.tipo)}</td><td class="num" style="text-align:right">${money(data.bonoExperiencia)}</td></tr>
+    <tr><td>Horas Extras</td><td>${data.horasExtras.toFixed(1)} hs x ${money(data.valorHora)}/h</td><td class="num" style="text-align:right">${money(data.bonoDesarrollo)}</td></tr>
+    <tr><td>Bono Compromiso (${pct(data.kpiPct)})</td><td>TPE + TAP + IEA</td><td class="num" style="text-align:right">${money(data.bonoKpi)}</td></tr>
+    <tr><td>Bono Cumplimiento</td><td>${detail.cumplimientoDetalle.filter((row) => row.bono > 0).length}/${detail.cumplimientoDetalle.length} semanas calificadas</td><td class="num" style="text-align:right">${money(data.bonoCumplimiento)}</td></tr>
+    <tr class="total-row"><td colspan="2"><strong>TOTAL BONOS ${escapeHtml(monthLabel(data.mesAnio))}</strong></td><td class="num" style="text-align:right"><strong>${money(data.totalBono)}</strong></td></tr>
+  </table>
+
+  <h3>KPIs de Compromiso</h3>
+  <table>
+    <tr><th>Indicador</th><th class="num" style="text-align:right">Resultado</th><th class="num" style="text-align:right">Porcentaje</th><th class="num" style="text-align:right">Bono</th></tr>
+    <tr><td>TPE - Puntualidad Estricta</td><td class="num" style="text-align:right">${detail.tpeOk} / ${detail.tapTotal} días</td><td class="num ${detail.tpePct >= 0.8 ? 'ok' : 'warn'}" style="text-align:right">${pct(detail.tpePct)}</td><td class="num" style="text-align:right">${pct(pctToBonus(detail.tpePct))}</td></tr>
+    <tr><td>TAP - Tasa de Asistencia</td><td class="num" style="text-align:right">${detail.tapPres} / ${detail.tapTotal} días</td><td class="num ${detail.tapPct >= 0.8 ? 'ok' : 'warn'}" style="text-align:right">${pct(detail.tapPct)}</td><td class="num" style="text-align:right">${pct(detail.tardanzasEfectivas >= 4 ? 0 : pctToBonus(detail.tapPct))}</td></tr>
+    <tr><td>IEA - Esfuerzo Adicional</td><td class="num" style="text-align:right">${detail.ieaOk} / ${detail.tapTotal} días</td><td class="num ${detail.ieaPct >= 0.4 ? 'ok' : 'warn'}" style="text-align:right">${pct(detail.ieaPct)}</td><td class="num" style="text-align:right">${pct(ieaToBonus(detail.ieaPct))}</td></tr>
+    <tr class="indicator-row"><td>Tardanzas efectivas</td><td>${detail.tardanzas} reales + ${detail.sinMarcaExtra} por marcas faltantes</td><td colspan="2" class="num" style="text-align:right">${detail.tardanzasEfectivas}</td></tr>
+    <tr class="indicator-row"><td>Sin Marcar</td><td colspan="3" class="num" style="text-align:right">${detail.sinMarca} marcas faltantes</td></tr>
   </table>
 
   <h3>Detalle Bono Cumplimiento</h3>
   <table>
-    <tr><th>Semana</th><th class="num">Tickets</th><th class="num">Cumplimiento</th><th class="num">Mínimo</th><th class="num">Bono</th></tr>
+    <tr><th>Semana</th><th class="num" style="text-align:right">Tickets</th><th class="num" style="text-align:right">Cumplimiento</th><th class="num" style="text-align:right">Mínimo</th><th class="num" style="text-align:right">Bono</th></tr>
     ${cumplimientoRows}
   </table>
 
   <h3>Tabla de Referencia - Bono Experiencia</h3>
   <table class="ref-table">
     <tr><th>Tipo</th><th>&lt;1 año</th><th>1-3 años</th><th>3-6 años</th><th>6-10 años</th><th>&gt;=10 años</th></tr>
-    <tr><td>Desarrollo</td><td class="num">10%</td><td class="num">20%</td><td class="num">30%</td><td class="num">40%</td><td class="num">50%</td></tr>
-    <tr><td>Soporte/Admin/Gerente</td><td class="num">5%</td><td class="num">10%</td><td class="num">15%</td><td class="num">20%</td><td class="num">30%</td></tr>
+    <tr><td>Desarrollo</td><td class="num" style="text-align:right">10%</td><td class="num" style="text-align:right">20%</td><td class="num" style="text-align:right">30%</td><td class="num" style="text-align:right">40%</td><td class="num" style="text-align:right">50%</td></tr>
+    <tr><td>Soporte/Admin/Gerente</td><td class="num" style="text-align:right">5%</td><td class="num" style="text-align:right">10%</td><td class="num" style="text-align:right">15%</td><td class="num" style="text-align:right">20%</td><td class="num" style="text-align:right">30%</td></tr>
   </table>
 
   <h3>Tabla de Referencia - Bono Compromiso</h3>
   <table class="ref-table">
     <tr><th>KPI</th><th>Mayor o igual 90%</th><th>Mayor o igual 80%</th><th>Menor 80%</th></tr>
-    <tr><td>TPE / TAP</td><td class="num">3.33%</td><td class="num">1.66%</td><td class="num">0%</td></tr>
-    <tr><td>IEA</td><td class="num">3.33% desde 50%</td><td class="num">1.66% desde 40%</td><td class="num">0%</td></tr>
+    <tr><td>TPE / TAP</td><td class="num" style="text-align:right">3.33%</td><td class="num" style="text-align:right">1.66%</td><td class="num" style="text-align:right">0%</td></tr>
+    <tr><td>IEA</td><td class="num" style="text-align:right">3.33% desde 50%</td><td class="num" style="text-align:right">1.66% desde 40%</td><td class="num" style="text-align:right">0%</td></tr>
   </table>
 
   <div class="footer">
@@ -367,6 +367,18 @@ const drawTextRight = (page: any, text: string, rightX: number, y: number, size:
   const value = String(text ?? '').slice(0, 70);
   const width = font.widthOfTextAtSize(value, size);
   page.drawText(value, { x: rightX - width, y, size, font, color });
+};
+
+const drawSectionTitle = (page: any, title: string, x: number, y: number, font: any) => {
+  drawText(page, title, x, y, 13, font, rgb(0.12, 0.31, 0.47));
+};
+
+const drawTableHeader = (page: any, y: number, headers: Array<{ label: string; x: number; right?: number }>, font: any) => {
+  page.drawRectangle({ x: 40, y: y - 6, width: 762, height: 20, color: rgb(0.12, 0.31, 0.47) });
+  headers.forEach((h) => {
+    if (h.right) drawTextRight(page, h.label, h.right, y, 9, font, rgb(1, 1, 1));
+    else drawText(page, h.label, h.x, y, 9, font, rgb(1, 1, 1));
+  });
 };
 
 const generateResumenPdf = async (mesAnio: string, results: CalculoEmpleadoResult[], totalBonos: number) => {
@@ -424,6 +436,96 @@ const generateResumenPdf = async (mesAnio: string, results: CalculoEmpleadoResul
   drawTextRight(page, money(results.reduce((sum, row) => sum + row.bonoDesarrollo, 0)), cols[6].right, y, 9, bold);
   drawTextRight(page, money(results.reduce((sum, row) => sum + row.bonoCumplimiento, 0)), cols[7].right, y, 9, bold);
   drawTextRight(page, money(totalBonos), cols[8].right, y, 9, bold);
+
+  for (const row of results) {
+    const detail = row.detalleJson;
+    const detailPage = pdfDoc.addPage([842, 595]);
+    const pageHeight = detailPage.getSize().height;
+    let dy = pageHeight - 45;
+
+    detailPage.drawLine({ start: { x: 40, y: pageHeight - 24 }, end: { x: 802, y: pageHeight - 24 }, thickness: 2, color: rgb(0.12, 0.31, 0.47) });
+    drawText(detailPage, `Detalle de Bonos - ${monthLabel(mesAnio)}`, 40, dy, 20, bold, rgb(0.12, 0.31, 0.47));
+    dy -= 30;
+    drawText(detailPage, `Empleado: ${row.empleadoNombre}`, 40, dy, 12, bold);
+    drawText(detailPage, `Tipo: ${detail.tipo}   Antigüedad: ${detail.antiguedad} años`, 280, dy, 11, font);
+    dy -= 30;
+
+    drawSectionTitle(detailPage, 'Liquidación de Bonos', 40, dy, bold);
+    dy -= 18;
+    const liqHeaders = [
+      { label: 'Concepto', x: 54 },
+      { label: 'Detalle', x: 270 },
+      { label: 'Monto', x: 700, right: 785 }
+    ];
+    drawTableHeader(detailPage, dy, liqHeaders, bold);
+    dy -= 18;
+    const liqRows = [
+      [`Bono Experiencia (${pct(row.expPct)})`, `Antigüedad ${detail.antiguedad} años - ${detail.tipo}`, money(row.bonoExperiencia)],
+      ['Horas Extras', `${row.horasExtras.toFixed(1)} hs x ${money(row.valorHora)}/h`, money(row.bonoDesarrollo)],
+      [`Bono Compromiso (${pct(row.kpiPct)})`, 'TPE + TAP + IEA', money(row.bonoKpi)],
+      ['Bono Cumplimiento', `${detail.cumplimientoDetalle.filter((r) => r.bono > 0).length}/${detail.cumplimientoDetalle.length} semanas calificadas`, money(row.bonoCumplimiento)]
+    ];
+    liqRows.forEach((r, idx) => {
+      if (idx % 2 === 0) detailPage.drawRectangle({ x: 40, y: dy - 5, width: 762, height: 18, color: rgb(0.95, 0.97, 1) });
+      drawText(detailPage, r[0], 54, dy, 9, font);
+      drawText(detailPage, r[1], 270, dy, 9, font);
+      drawTextRight(detailPage, r[2], 785, dy, 9, font);
+      dy -= 18;
+    });
+    detailPage.drawRectangle({ x: 40, y: dy - 5, width: 762, height: 20, color: rgb(0.9, 0.94, 0.98) });
+    drawText(detailPage, `TOTAL BONOS ${monthLabel(mesAnio)}`, 54, dy, 10, bold);
+    drawTextRight(detailPage, money(row.totalBono), 785, dy, 10, bold);
+    dy -= 36;
+
+    drawSectionTitle(detailPage, 'KPIs de Compromiso', 40, dy, bold);
+    dy -= 18;
+    const kpiHeaders = [
+      { label: 'Indicador', x: 54 },
+      { label: 'Resultado', x: 340, right: 450 },
+      { label: 'Porcentaje', x: 540, right: 635 },
+      { label: 'Bono', x: 720, right: 785 }
+    ];
+    drawTableHeader(detailPage, dy, kpiHeaders, bold);
+    dy -= 18;
+    const tapBonus = detail.tardanzasEfectivas >= 4 ? 0 : pctToBonus(detail.tapPct);
+    const kpiRows = [
+      ['TPE - Puntualidad Estricta', `${detail.tpeOk} / ${detail.tapTotal} días`, pct(detail.tpePct), pct(pctToBonus(detail.tpePct))],
+      ['TAP - Tasa de Asistencia', `${detail.tapPres} / ${detail.tapTotal} días`, pct(detail.tapPct), pct(tapBonus)],
+      ['IEA - Esfuerzo Adicional', `${detail.ieaOk} / ${detail.tapTotal} días`, pct(detail.ieaPct), pct(ieaToBonus(detail.ieaPct))],
+      ['Tardanzas efectivas', `${detail.tardanzas} reales + ${detail.sinMarcaExtra} por marcas faltantes`, String(detail.tardanzasEfectivas), ''],
+      ['Sin Marcar', `${detail.sinMarca} marcas faltantes`, '', '']
+    ];
+    kpiRows.forEach((r, idx) => {
+      if (idx % 2 === 0) detailPage.drawRectangle({ x: 40, y: dy - 5, width: 762, height: 18, color: rgb(0.95, 0.97, 1) });
+      drawText(detailPage, r[0], 54, dy, 9, idx >= 3 ? bold : font);
+      drawTextRight(detailPage, r[1], 450, dy, 9, font);
+      drawTextRight(detailPage, r[2], 635, dy, 9, font);
+      drawTextRight(detailPage, r[3], 785, dy, 9, font);
+      dy -= 18;
+    });
+    dy -= 18;
+
+    drawSectionTitle(detailPage, 'Detalle Bono Cumplimiento', 40, dy, bold);
+    dy -= 18;
+    const cumpHeaders = [
+      { label: 'Semana', x: 54 },
+      { label: 'Tickets', x: 250, right: 310 },
+      { label: 'Cumplimiento', x: 410, right: 500 },
+      { label: 'Mínimo', x: 590, right: 650 },
+      { label: 'Bono', x: 720, right: 785 }
+    ];
+    drawTableHeader(detailPage, dy, cumpHeaders, bold);
+    dy -= 18;
+    detail.cumplimientoDetalle.forEach((r, idx) => {
+      if (idx % 2 === 0) detailPage.drawRectangle({ x: 40, y: dy - 5, width: 762, height: 18, color: rgb(0.95, 0.97, 1) });
+      drawText(detailPage, r.semana, 54, dy, 9, font);
+      drawTextRight(detailPage, String(r.tickets), 310, dy, 9, font);
+      drawTextRight(detailPage, pct(r.pct), 500, dy, 9, font);
+      drawTextRight(detailPage, `${r.min} tkts`, 650, dy, 9, font);
+      drawTextRight(detailPage, money(r.bono), 785, dy, 9, font);
+      dy -= 18;
+    });
+  }
 
   return Buffer.from(await pdfDoc.save());
 };
