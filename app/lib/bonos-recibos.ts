@@ -26,36 +26,57 @@ const normalize = (value: string) =>
     .toLowerCase()
     .trim();
 
+const normalizeName = (value: string) =>
+  normalize(value)
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const tokenizeName = (value: string) => normalizeName(value).split(/\s+/).filter(Boolean);
+
 const extractEmployeeName = (pageText: string): string | null => {
   const lines = pageText.split('\n').map((l) => l.trim()).filter(Boolean);
   for (const line of lines) {
     const m = line.match(/^\d+\s+(.+?)\s+\d{2}-\d{8}-\d\b/);
     if (m) return m[1].trim();
   }
+
+  const legajoIdx = lines.findIndex((line) => line.toLowerCase() === 'legajo');
+  if (legajoIdx > 0 && lines[legajoIdx - 1]?.includes(',')) {
+    return lines[legajoIdx - 1].replace(/\s*,\s*/g, ', ').trim();
+  }
+
+  const periodoIdx = lines.findIndex((line) => line.toLowerCase() === 'período' || line.toLowerCase() === 'periodo');
+  if (periodoIdx >= 0 && lines[periodoIdx + 1]?.includes(',')) {
+    return lines[periodoIdx + 1].replace(/\s*,\s*/g, ', ').trim();
+  }
+
   return null;
 };
 
 const findEmployeeByPdfName = (rawName: string, employees: EmployeeLite[]) => {
-  const normalizedRaw = normalize(rawName);
-  const rawParts = normalizedRaw.split(/\s+/).filter(Boolean);
+  const normalizedRaw = normalizeName(rawName);
+  const rawParts = tokenizeName(rawName);
 
-  let exact = employees.find((e) => normalize(`${e.lastName} ${e.firstName}`) === normalizedRaw);
+  let exact = employees.find((e) => normalizeName(`${e.lastName} ${e.firstName}`) === normalizedRaw);
   if (exact) return exact;
 
-  exact = employees.find((e) => normalize(`${e.firstName} ${e.lastName}`) === normalizedRaw);
+  exact = employees.find((e) => normalizeName(`${e.firstName} ${e.lastName}`) === normalizedRaw);
   if (exact) return exact;
-
-  const rawLast = rawParts.length > 0 ? rawParts[0] : '';
-  const rawFirst = rawParts.length > 1 ? rawParts.slice(1).join(' ') : '';
 
   let partial = employees.find((e) => {
-    const l = normalize(e.lastName);
-    const f = normalize(e.firstName);
-    return rawLast === l && rawFirst.includes(f);
+    const lastParts = tokenizeName(e.lastName);
+    const firstParts = tokenizeName(e.firstName);
+    return (
+      lastParts.length > 0 &&
+      firstParts.length > 0 &&
+      lastParts.every((part) => rawParts.includes(part)) &&
+      firstParts.every((part) => rawParts.includes(part))
+    );
   });
   if (partial) return partial;
 
-  partial = employees.find((e) => rawParts.includes(normalize(e.lastName)));
+  partial = employees.find((e) => tokenizeName(e.lastName).every((part) => rawParts.includes(part)));
   return partial || null;
 };
 
