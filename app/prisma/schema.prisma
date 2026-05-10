@@ -230,13 +230,22 @@ model bonos_tickets_horas {
   id                    String        @id
   uploadId              String
   mesAnio               String        @db.Char(7)
-  nroTicket             String?       @db.VarChar(100)
   semana                String?       @db.VarChar(50)
   responsableRaw        String        @db.VarChar(255)
   responsableNormApe    String        @db.VarChar(255)
-  asunto                String?       @db.VarChar(500)
-  tipo                  String?       @db.VarChar(100)
+  cumplimientoTickets   Int?
+  cumplimientoTotal     Int?
+  cumplimientoPct       Float?
+  calidadTickets        Int?
+  calidadTotal          Int?
+  calidadPct            Float?
+  horasConTicket        Float?
+  horasSinTicket        Float?
+  horasInternas         Float?
+  horasNoLaborales      Float?
   horasExtras           Float
+  horasTotales          Float?
+  fechaCargaHoras       DateTime?
   rowNumber             Int
   createdAt             DateTime      @default(now())
   bonos_uploads         bonos_uploads @relation(fields: [uploadId], references: [id], onDelete: Cascade)
@@ -265,6 +274,7 @@ model bonos_recibos_sueldo {
   uploadId      String
   empleadoId    String
   mesAnio       String        @db.Char(7)
+  sueldoNeto    Int           @default(0)
   filePath      String        @db.VarChar(1000)
   fileName      String        @db.VarChar(500)
   originalName  String        @db.VarChar(500)

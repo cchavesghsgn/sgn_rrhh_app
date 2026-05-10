@@ -16,6 +16,7 @@ type SplitResult = {
   fileName: string;
   buffer: Buffer;
   checksum: string;
+  sueldoNeto: number;
   pageCount: number;
 };
 
@@ -33,6 +34,51 @@ const normalizeName = (value: string) =>
     .trim();
 
 const tokenizeName = (value: string) => normalizeName(value).split(/\s+/).filter(Boolean);
+
+const parseMoney = (value: string): number | null => {
+  const raw = value.trim();
+  const normalized = raw.includes('.') && raw.includes(',')
+    ? raw.replace(/,/g, '')
+    : raw.includes('.') && /\.\d{2}$/.test(raw)
+      ? raw
+      : raw.replace(/\./g, '').replace(',', '.');
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const extractMoneyNear = (lines: string[], startIdx: number, direction: -1 | 1): number | null => {
+  for (let offset = 1; offset <= 4; offset++) {
+    const line = lines[startIdx + offset * direction];
+    if (!line) continue;
+    const matches = line.match(/\d{1,3}(?:,\d{3})*(?:\.\d{2})|\d+(?:\.\d{2})/g);
+    if (!matches) continue;
+    const parsed = parseMoney(matches[matches.length - 1]);
+    if (parsed !== null) return parsed;
+  }
+  return null;
+};
+
+const extractSueldoNeto = (pageText: string): number => {
+  const lines = pageText.split('\n').map((l) => l.trim()).filter(Boolean);
+  let totalNeto: number | null = null;
+  let bono471 = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/total\s+neto/i.test(line)) {
+      const sameLine = line.match(/total\s+neto\s*:?\s*([\d,.]+)/i);
+      totalNeto = sameLine ? parseMoney(sameLine[1]) : extractMoneyNear(lines, i, -1);
+    }
+
+    if (line === '471' || /bono\s+adicional\s+no\s+rem/i.test(line)) {
+      const nearby = extractMoneyNear(lines, i, 1);
+      if (nearby !== null) bono471 = nearby;
+    }
+  }
+
+  if (totalNeto === null) return 0;
+  return Math.max(0, Math.round(totalNeto - bono471));
+};
 
 const extractEmployeeName = (pageText: string): string | null => {
   const lines = pageText.split('\n').map((l) => l.trim()).filter(Boolean);
@@ -102,7 +148,7 @@ export async function splitRecibosByEmpleado(
   const src = await PDFDocument.load(pdfBuffer);
   const recibos: SplitResult[] = [];
   const unmatchedPages: number[] = [];
-  const pagesByEmployee = new Map<string, { emp: EmployeeLite; pages: number[] }>();
+  const pagesByEmployee = new Map<string, { emp: EmployeeLite; pages: number[]; sueldos: number[] }>();
 
   for (let pageIdx = 0; pageIdx < src.getPageCount(); pageIdx++) {
     const txt = pageTexts[pageIdx] || '';
@@ -119,14 +165,16 @@ export async function splitRecibosByEmpleado(
     }
 
     const current = pagesByEmployee.get(emp.id);
+    const sueldoNeto = extractSueldoNeto(txt);
     if (current) {
       current.pages.push(pageIdx);
+      if (sueldoNeto > 0) current.sueldos.push(sueldoNeto);
     } else {
-      pagesByEmployee.set(emp.id, { emp, pages: [pageIdx] });
+      pagesByEmployee.set(emp.id, { emp, pages: [pageIdx], sueldos: sueldoNeto > 0 ? [sueldoNeto] : [] });
     }
   }
 
-  for (const { emp, pages } of pagesByEmployee.values()) {
+  for (const { emp, pages, sueldos } of pagesByEmployee.values()) {
     const one = await PDFDocument.create();
     const copiedPages = await one.copyPages(src, pages);
     for (const p of copiedPages) one.addPage(p);
@@ -142,6 +190,7 @@ export async function splitRecibosByEmpleado(
       fileName,
       buffer: outBuffer,
       checksum,
+      sueldoNeto: sueldos.length > 0 ? Math.max(...sueldos) : 0,
       pageCount: pages.length
     });
   }

@@ -20,13 +20,22 @@ type HorarioRow = {
 type TicketRow = {
   id: string;
   mesAnio: string;
-  nroTicket: string | null;
   semana: string | null;
   responsableRaw: string;
   responsableNormApe: string;
-  asunto: string | null;
-  tipo: string | null;
+  cumplimientoTickets: number | null;
+  cumplimientoTotal: number | null;
+  cumplimientoPct: number | null;
+  calidadTickets: number | null;
+  calidadTotal: number | null;
+  calidadPct: number | null;
+  horasConTicket: number | null;
+  horasSinTicket: number | null;
+  horasInternas: number | null;
+  horasNoLaborales: number | null;
   horasExtras: number;
+  horasTotales: number | null;
+  fechaCargaHoras: Date | null;
   rowNumber: number;
 };
 
@@ -57,6 +66,21 @@ const findHeaderIndex = (headers: unknown[], candidates: string[], fallback: num
   return idx >= 0 ? idx : fallback;
 };
 
+const findOptionalHeaderIndex = (headers: unknown[], candidates: string[]): number | null => {
+  const normalizedCandidates = candidates.map(normalizeHeader);
+  const idx = headers.findIndex((header) => normalizedCandidates.includes(normalizeHeader(header)));
+  return idx >= 0 ? idx : null;
+};
+
+const findPercentHeaderIndex = (headers: unknown[], label: string, fallback: number): number => {
+  const normalizedLabel = normalizeHeader(label);
+  const idx = headers.findIndex((header) => {
+    const raw = String(header ?? '');
+    return raw.includes('%') && normalizeHeader(raw).includes(normalizedLabel);
+  });
+  return idx >= 0 ? idx : fallback;
+};
+
 const parseDecimal = (value: unknown): number => {
   if (typeof value === 'number') return value;
   const raw = String(value ?? '').trim();
@@ -71,6 +95,40 @@ const parseDecimal = (value: unknown): number => {
     .trim();
 
   return Number(cleaned);
+};
+
+const parseCompletion = (value: unknown): { tickets: number | null; total: number | null } => {
+  const raw = String(value ?? '').trim().replace(/^="?/, '').replace(/"?$/, '');
+  const m = raw.match(/(\d+)\s*\/\s*(\d+)/);
+  if (!m) return { tickets: null, total: null };
+  return { tickets: Number(m[1]), total: Number(m[2]) };
+};
+
+const parsePercent = (value: unknown): number | null => {
+  const parsed = parseDecimal(String(value ?? '').replace('%', ''));
+  if (!Number.isFinite(parsed)) return null;
+  return parsed > 1 ? parsed / 100 : parsed;
+};
+
+const parseOptionalDecimal = (value: unknown): number | null => {
+  const parsed = parseDecimal(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const getOptionalDecimal = (row: unknown[], idx: number | null): number | null =>
+  idx === null ? null : parseOptionalDecimal(row[idx]);
+
+const parseDateTime = (value: unknown): Date | null => {
+  const raw = String(value ?? '').trim();
+  if (!raw || raw === '-') return null;
+  const m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?$/);
+  if (!m) return null;
+  const d = Number(m[1]);
+  const mo = Number(m[2]) - 1;
+  const y = Number(m[3]);
+  const h = Number(m[4] ?? 0);
+  const mi = Number(m[5] ?? 0);
+  return new Date(Date.UTC(y, mo, d, h, mi, 0, 0));
 };
 
 const normalizeTime = (value: unknown): string | null => {
@@ -197,10 +255,17 @@ export const parseTicketsWorkbook = (bytes: ArrayBuffer, mesAnio: string): Ticke
   const headers = rows[0] || [];
   const responsableIdx = findHeaderIndex(headers, ['Responsable'], 2);
   const semanaIdx = findHeaderIndex(headers, ['Semana'], 1);
-  const ticketIdx = findHeaderIndex(headers, ['Nro Ticket', 'Ticket'], 0);
-  const asuntoIdx = findHeaderIndex(headers, ['Asunto'], 3);
-  const tipoIdx = findHeaderIndex(headers, ['Tipo'], 6);
+  const cumplimientoIdx = findHeaderIndex(headers, ['Cumplimiento'], 2);
+  const cumplimientoPctIdx = findPercentHeaderIndex(headers, 'Cumplimiento', 3);
+  const calidadIdx = findOptionalHeaderIndex(headers, ['Calidad']);
+  const calidadPctIdx = findPercentHeaderIndex(headers, 'Calidad', -1);
+  const horasConTicketIdx = findOptionalHeaderIndex(headers, ['Hs c/TKT', 'Hs con TKT', 'Horas con Ticket']);
+  const horasSinTicketIdx = findOptionalHeaderIndex(headers, ['Hs s/TKT', 'Hs sin TKT', 'Horas sin Ticket']);
+  const horasInternasIdx = findOptionalHeaderIndex(headers, ['Hs Internas', 'Horas Internas']);
+  const horasNoLaboralesIdx = findOptionalHeaderIndex(headers, ['Hs NL', 'Horas NL', 'Horas No Laborales']);
   const horasExtrasIdx = findHeaderIndex(headers, ['Hs Extras', 'Horas Extras'], 10);
+  const horasTotalesIdx = findOptionalHeaderIndex(headers, ['Hs Totales', 'Horas Totales']);
+  const fechaCargaHorasIdx = findOptionalHeaderIndex(headers, ['Fecha Carga Hs', 'Fecha Carga Horas']);
 
   const out: TicketRow[] = [];
   for (let i = 1; i < rows.length; i++) {
@@ -209,6 +274,8 @@ export const parseTicketsWorkbook = (bytes: ArrayBuffer, mesAnio: string): Ticke
     if (!responsableRaw) continue;
 
     const semana = String(row[semanaIdx] ?? '').trim();
+    const cumplimiento = parseCompletion(row[cumplimientoIdx]);
+    const calidad = calidadIdx === null ? { tickets: null, total: null } : parseCompletion(row[calidadIdx]);
     const horas = parseDecimal(row[horasExtrasIdx]);
     if (!Number.isFinite(horas) || horas < 0) continue;
 
@@ -218,13 +285,22 @@ export const parseTicketsWorkbook = (bytes: ArrayBuffer, mesAnio: string): Ticke
     out.push({
       id: randomUUID(),
       mesAnio,
-      nroTicket: String(row[ticketIdx] ?? '').trim() || null,
       semana: semana || null,
       responsableRaw,
       responsableNormApe: normalize(apellido),
-      asunto: String(row[asuntoIdx] ?? '').trim() || null,
-      tipo: String(row[tipoIdx] ?? '').trim() || null,
+      cumplimientoTickets: cumplimiento.tickets,
+      cumplimientoTotal: cumplimiento.total,
+      cumplimientoPct: parsePercent(row[cumplimientoPctIdx]),
+      calidadTickets: calidad.tickets,
+      calidadTotal: calidad.total,
+      calidadPct: calidadPctIdx >= 0 ? parsePercent(row[calidadPctIdx]) : null,
+      horasConTicket: getOptionalDecimal(row, horasConTicketIdx),
+      horasSinTicket: getOptionalDecimal(row, horasSinTicketIdx),
+      horasInternas: getOptionalDecimal(row, horasInternasIdx),
+      horasNoLaborales: getOptionalDecimal(row, horasNoLaboralesIdx),
       horasExtras: horas,
+      horasTotales: getOptionalDecimal(row, horasTotalesIdx),
+      fechaCargaHoras: fechaCargaHorasIdx === null ? null : parseDateTime(row[fechaCargaHorasIdx]),
       rowNumber: i + 1
     });
   }

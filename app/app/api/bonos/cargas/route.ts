@@ -230,6 +230,7 @@ async function replaceRecibos(
           uploadId: upload.id,
           empleadoId: rec.empleadoId,
           mesAnio,
+          sueldoNeto: rec.sueldoNeto,
           filePath,
           fileName: rec.fileName,
           originalName: fileName,
@@ -239,6 +240,7 @@ async function replaceRecibos(
         },
         update: {
           uploadId: upload.id,
+          sueldoNeto: rec.sueldoNeto,
           filePath,
           fileName: rec.fileName,
           originalName: fileName,
