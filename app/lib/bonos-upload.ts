@@ -209,10 +209,8 @@ export const parseTicketsWorkbook = (bytes: ArrayBuffer, mesAnio: string): Ticke
     if (!responsableRaw) continue;
 
     const semana = String(row[semanaIdx] ?? '').trim();
-    if (semana.toLowerCase() === 'total') continue;
-
     const horas = parseDecimal(row[horasExtrasIdx]);
-    if (!Number.isFinite(horas) || horas <= 0) continue;
+    if (!Number.isFinite(horas) || horas < 0) continue;
 
     const respParts = responsableRaw.split(/\s+/);
     const apellido = respParts.length > 0 ? respParts[respParts.length - 1] : responsableRaw;
