@@ -35,6 +35,17 @@ const normalizeName = (value: string) =>
 
 const tokenizeName = (value: string) => normalizeName(value).split(/\s+/).filter(Boolean);
 
+const tokenMatches = (left: string, right: string) => {
+  if (left === right) return true;
+  if (left.length > 2 && right.length > 2 && left.slice(0, -1) === right.slice(0, -1)) {
+    return (left.endsWith('s') && right.endsWith('z')) || (left.endsWith('z') && right.endsWith('s'));
+  }
+  return false;
+};
+
+const includesToken = (tokens: string[], expected: string) =>
+  tokens.some((token) => tokenMatches(token, expected));
+
 const parseMoney = (value: string): number | null => {
   const raw = value.trim();
   const normalized = raw.includes('.') && raw.includes(',')
@@ -116,13 +127,13 @@ const findEmployeeByPdfName = (rawName: string, employees: EmployeeLite[]) => {
     return (
       lastParts.length > 0 &&
       firstParts.length > 0 &&
-      lastParts.every((part) => rawParts.includes(part)) &&
-      firstParts.every((part) => rawParts.includes(part))
+      lastParts.every((part) => includesToken(rawParts, part)) &&
+      firstParts.every((part) => includesToken(rawParts, part))
     );
   });
   if (partial) return partial;
 
-  partial = employees.find((e) => tokenizeName(e.lastName).every((part) => rawParts.includes(part)));
+  partial = employees.find((e) => tokenizeName(e.lastName).every((part) => includesToken(rawParts, part)));
   return partial || null;
 };
 
