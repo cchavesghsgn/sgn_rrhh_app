@@ -3,12 +3,14 @@ import { randomUUID } from 'crypto';
 import { BonosArchivoTipo } from '@prisma/client';
 import { getServerAuthSession } from '../../../../lib/auth';
 import { prisma } from '../../../../lib/prisma';
+import { buildKey, putObject } from '../../../../lib/s3';
 import {
   computeFileHash,
   parseFeriadosCsv,
   parseHorariosWorkbook,
   parseTicketsWorkbook
 } from '../../../../lib/bonos-upload';
+import { splitRecibosByEmpleado } from '../../../../lib/bonos-recibos';
 
 export const dynamic = 'force-dynamic';
 
@@ -163,6 +165,93 @@ async function replaceFeriados(
   return rows.length;
 }
 
+async function replaceRecibos(
+  mesAnio: string,
+  fileName: string,
+  fileHash: string,
+  loadedBy: string,
+  bytes: ArrayBuffer
+) {
+  const employees = await prisma.employees.findMany({
+    select: { id: true, firstName: true, lastName: true }
+  });
+  const pdfBuffer = Buffer.from(bytes);
+  const split = await splitRecibosByEmpleado(pdfBuffer, fileName, employees, mesAnio);
+
+  const upload = await prisma.bonos_uploads.upsert({
+    where: {
+      mesAnio_tipoArchivo: {
+        mesAnio,
+        tipoArchivo: BonosArchivoTipo.RECIBOS_PDF
+      }
+    },
+    create: {
+      id: randomUUID(),
+      mesAnio,
+      tipoArchivo: BonosArchivoTipo.RECIBOS_PDF,
+      fileName,
+      fileHash,
+      recordsCount: split.recibos.length,
+      loadedBy,
+      updatedAt: new Date()
+    },
+    update: {
+      fileName,
+      fileHash,
+      recordsCount: split.recibos.length,
+      loadedBy,
+      loadedAt: new Date(),
+      updatedAt: new Date()
+    }
+  });
+
+  for (const rec of split.recibos) {
+    const key = buildKey(`recibos/${mesAnio}/${rec.fileName}`);
+    await putObject(key, rec.buffer, 'application/pdf');
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.bonos_recibos_sueldo.deleteMany({ where: { mesAnio } });
+    for (const rec of split.recibos) {
+      const filePath = `/api/files/recibos/${mesAnio}/${rec.fileName}`;
+      await tx.bonos_recibos_sueldo.upsert({
+        where: {
+          empleadoId_mesAnio: {
+            empleadoId: rec.empleadoId,
+            mesAnio
+          }
+        },
+        create: {
+          id: randomUUID(),
+          uploadId: upload.id,
+          empleadoId: rec.empleadoId,
+          mesAnio,
+          filePath,
+          fileName: rec.fileName,
+          originalName: fileName,
+          pageCount: rec.pageCount,
+          checksum: rec.checksum,
+          updatedAt: new Date()
+        },
+        update: {
+          uploadId: upload.id,
+          filePath,
+          fileName: rec.fileName,
+          originalName: fileName,
+          pageCount: rec.pageCount,
+          checksum: rec.checksum,
+          updatedAt: new Date()
+        }
+      });
+    }
+  });
+
+  return {
+    rows: split.recibos.length,
+    unmatchedPages: split.unmatchedPages
+  };
+}
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerAuthSession();
@@ -185,14 +274,16 @@ export async function POST(request: NextRequest) {
     const horariosFile = formData.get('horarios_file');
     const ticketsFile = formData.get('tickets_file');
     const feriadosFile = formData.get('feriados_file');
+    const recibosFile = formData.get('recibos_file');
 
     if (
       (!horariosFile || typeof horariosFile === 'string') &&
       (!ticketsFile || typeof ticketsFile === 'string') &&
-      (!feriadosFile || typeof feriadosFile === 'string')
+      (!feriadosFile || typeof feriadosFile === 'string') &&
+      (!recibosFile || typeof recibosFile === 'string')
     ) {
       return NextResponse.json(
-        { error: 'Debes subir al menos un archivo: horarios_file, tickets_file o feriados_file.' },
+        { error: 'Debes subir al menos un archivo: horarios_file, tickets_file, feriados_file o recibos_file.' },
         { status: 400 }
       );
     }
@@ -242,6 +333,26 @@ export async function POST(request: NextRequest) {
         bytes
       );
       response.feriados = { replaced: true, fileName: feriadosFile.name, rows };
+    }
+
+    if (recibosFile && typeof recibosFile !== 'string') {
+      if (!recibosFile.name.toLowerCase().endsWith('.pdf')) {
+        return NextResponse.json({ error: 'Recibos debe ser .pdf' }, { status: 400 });
+      }
+      const bytes = await recibosFile.arrayBuffer();
+      const result = await replaceRecibos(
+        mesAnio,
+        recibosFile.name,
+        computeFileHash(bytes),
+        session.user.id,
+        bytes
+      );
+      response.recibos = {
+        replaced: true,
+        fileName: recibosFile.name,
+        rows: result.rows,
+        unmatchedPages: result.unmatchedPages
+      };
     }
 
     return NextResponse.json(response);

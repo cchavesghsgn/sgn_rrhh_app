@@ -50,6 +50,7 @@ export default function AdminDashboard() {
   const [bonosHorariosFile, setBonosHorariosFile] = useState<File | null>(null);
   const [bonosTicketsFile, setBonosTicketsFile] = useState<File | null>(null);
   const [bonosFeriadosFile, setBonosFeriadosFile] = useState<File | null>(null);
+  const [bonosRecibosFile, setBonosRecibosFile] = useState<File | null>(null);
   const [bonosLoadingStatus, setBonosLoadingStatus] = useState(false);
   const [bonosSubmitting, setBonosSubmitting] = useState(false);
   const [bonosError, setBonosError] = useState<string | null>(null);
@@ -58,6 +59,7 @@ export default function AdminDashboard() {
     horarios: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
     ticketsHoras: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
     feriados: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
+    recibos: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
   } | null>(null);
 
   useEffect(() => {
@@ -218,7 +220,7 @@ export default function AdminDashboard() {
       return;
     }
 
-    if (!bonosHorariosFile && !bonosTicketsFile && !bonosFeriadosFile) {
+    if (!bonosHorariosFile && !bonosTicketsFile && !bonosFeriadosFile && !bonosRecibosFile) {
       setBonosError('Debes seleccionar al menos un archivo.');
       return;
     }
@@ -233,6 +235,7 @@ export default function AdminDashboard() {
       if (bonosHorariosFile) formData.append('horarios_file', bonosHorariosFile);
       if (bonosTicketsFile) formData.append('tickets_file', bonosTicketsFile);
       if (bonosFeriadosFile) formData.append('feriados_file', bonosFeriadosFile);
+      if (bonosRecibosFile) formData.append('recibos_file', bonosRecibosFile);
 
       const res = await fetch('/api/bonos/cargas', {
         method: 'POST',
@@ -247,10 +250,12 @@ export default function AdminDashboard() {
       if (data.horarios?.replaced) mensajes.push(`Horarios: ${data.horarios.rows} filas`);
       if (data.ticketsHoras?.replaced) mensajes.push(`Tickets-Horas: ${data.ticketsHoras.rows} filas`);
       if (data.feriados?.replaced) mensajes.push(`Feriados: ${data.feriados.rows} filas`);
+      if (data.recibos?.replaced) mensajes.push(`Recibos: ${data.recibos.rows} empleados`);
       setBonosSuccess(`Carga aplicada para ${selectedBonosMonth}. ${mensajes.join(' · ')}`);
       setBonosHorariosFile(null);
       setBonosTicketsFile(null);
       setBonosFeriadosFile(null);
+      setBonosRecibosFile(null);
       await loadBonosStatus(selectedBonosMonth);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error inesperado al subir archivos.';
@@ -557,7 +562,7 @@ export default function AdminDashboard() {
                 <DialogHeader>
                   <DialogTitle>Carga de Archivos de Bonos</DialogTitle>
                   <DialogDescription>
-                    Selecciona mes-año, consulta estado actual y carga Horarios, Tickets-Horas y Calendario Feriados.
+                    Selecciona mes-año y carga Horarios, Tickets-Horas, Calendario Feriados y Recibos Sueldo.
                   </DialogDescription>
                 </DialogHeader>
 
@@ -583,6 +588,7 @@ export default function AdminDashboard() {
                         {renderUploadStatus('Horarios', bonosStatus?.horarios)}
                         {renderUploadStatus('Tickets-Horas', bonosStatus?.ticketsHoras)}
                         {renderUploadStatus('Calendario Feriados', bonosStatus?.feriados)}
+                        {renderUploadStatus('Recibos PDF', bonosStatus?.recibos)}
                       </>
                     )}
                   </div>
@@ -623,6 +629,18 @@ export default function AdminDashboard() {
                     />
                   </div>
 
+                  <div className="space-y-2">
+                    <label htmlFor="bonos-recibos-file" className="text-sm font-medium text-sgn-dark">
+                      Recibos Sueldo (.pdf)
+                    </label>
+                    <Input
+                      id="bonos-recibos-file"
+                      type="file"
+                      accept=".pdf,application/pdf"
+                      onChange={(e) => setBonosRecibosFile(e.target.files?.[0] ?? null)}
+                    />
+                  </div>
+
                   {bonosError ? <p className="text-sm text-red-600">{bonosError}</p> : null}
                   {bonosSuccess ? <p className="text-sm text-green-700">{bonosSuccess}</p> : null}
                 </div>
@@ -631,7 +649,7 @@ export default function AdminDashboard() {
                   <Button
                     type="button"
                     onClick={handleUploadBonosFiles}
-                    disabled={bonosSubmitting || (!bonosHorariosFile && !bonosTicketsFile && !bonosFeriadosFile)}
+                    disabled={bonosSubmitting || (!bonosHorariosFile && !bonosTicketsFile && !bonosFeriadosFile && !bonosRecibosFile)}
                   >
                     {bonosSubmitting ? 'Guardando carga...' : 'Guardar Carga'}
                   </Button>

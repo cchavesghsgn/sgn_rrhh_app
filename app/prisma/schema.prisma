@@ -127,6 +127,7 @@ model employees {
   createdAt           DateTime             @default(now())
   updatedAt           DateTime
   employee_documents  employee_documents[]
+  bonos_recibos       bonos_recibos_sueldo[]
   Area                Area                 @relation(fields: [areaId], references: [id])
   User                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   leave_requests      leave_requests[]
@@ -182,6 +183,7 @@ enum BonosArchivoTipo {
   HORARIOS
   TICKETS_HORAS
   FERIADOS
+  RECIBOS_PDF
 }
 
 model bonos_uploads {
@@ -197,6 +199,7 @@ model bonos_uploads {
   horarios     bonos_horarios[]
   tickets      bonos_tickets_horas[]
   feriados     bonos_feriados[]
+  recibos      bonos_recibos_sueldo[]
   User         User              @relation(fields: [loadedBy], references: [id], onDelete: Restrict)
 
   @@unique([mesAnio, tipoArchivo])
@@ -255,4 +258,23 @@ model bonos_feriados {
 
   @@index([mesAnio])
   @@index([fecha])
+}
+
+model bonos_recibos_sueldo {
+  id            String        @id
+  uploadId      String
+  empleadoId    String
+  mesAnio       String        @db.Char(7)
+  filePath      String        @db.VarChar(1000)
+  fileName      String        @db.VarChar(500)
+  originalName  String        @db.VarChar(500)
+  pageCount     Int           @default(1)
+  checksum      String?       @db.VarChar(64)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime
+  bonos_uploads bonos_uploads @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  employees     employees     @relation(fields: [empleadoId], references: [id], onDelete: Cascade)
+
+  @@unique([empleadoId, mesAnio])
+  @@index([mesAnio])
 }

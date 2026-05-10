@@ -47,7 +47,8 @@ export async function GET(request: NextRequest) {
       mesAnio,
       horarios: byTipo.HORARIOS || { loaded: false },
       ticketsHoras: byTipo.TICKETS_HORAS || { loaded: false },
-      feriados: byTipo.FERIADOS || { loaded: false }
+      feriados: byTipo.FERIADOS || { loaded: false },
+      recibos: byTipo.RECIBOS_PDF || { loaded: false }
     });
   } catch (error) {
     console.error('Bonos status error:', error);
