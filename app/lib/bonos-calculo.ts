@@ -42,6 +42,18 @@ type CumplimientoDetalle = {
   bono: number;
 };
 
+type TardanzaDetalle = {
+  fecha: string;
+  turno: string;
+  hora: string;
+  minutos: number;
+};
+
+type SinMarcaDetalle = {
+  fecha: string;
+  marca: string;
+};
+
 type CalculoEmpleadoResult = {
   empleadoId: string;
   empleadoNombre: string;
@@ -78,6 +90,8 @@ type CalculoEmpleadoResult = {
     horasExtras: number;
     valorHora: number;
     cumplimientoDetalle: CumplimientoDetalle[];
+    tardanzasDetalle: TardanzaDetalle[];
+    sinMarcaDetalle: SinMarcaDetalle[];
     licenciasDias: number;
     htmlPath?: string;
   };
@@ -119,6 +133,9 @@ const parseMesAnio = (mesAnio: string) => {
 };
 
 const dateKey = (date: Date) => date.toISOString().slice(0, 10);
+
+const displayDate = (date: Date) =>
+  new Intl.DateTimeFormat('es-AR', { weekday: 'long', day: '2-digit', month: 'long', timeZone: 'UTC' }).format(date);
 
 const monthEnd = (year: number, month: number) => new Date(Date.UTC(year, month, 0));
 
@@ -280,10 +297,26 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
         <td class="num" style="text-align:right">${row.tickets}</td>
         <td class="num" style="text-align:right">${pct(row.pct)}</td>
         <td class="num" style="text-align:right">${row.min} tkts</td>
-        <td class="num" style="text-align:right">${money(row.bono)}</td>
+        <td class="num" style="text-align:right">${money(row.bono)}${row.bono === 0 && row.tickets < row.min ? ' <span class="warn">min. no alcanzado</span>' : ''}</td>
       </tr>
     `)
     .join('');
+  const tardanzasRows = detail.tardanzasDetalle.length > 0
+    ? detail.tardanzasDetalle.map((row) => `
+      <tr>
+        <td>${escapeHtml(row.fecha)}</td>
+        <td>${escapeHtml(row.turno)} - ${escapeHtml(row.hora)} (+${row.minutos} min)</td>
+      </tr>
+    `).join('')
+    : '<tr><td colspan="2">Sin tardanzas registradas</td></tr>';
+  const sinMarcaRows = detail.sinMarcaDetalle.length > 0
+    ? detail.sinMarcaDetalle.map((row) => `
+      <tr>
+        <td>${escapeHtml(row.fecha)}</td>
+        <td>${escapeHtml(row.marca)}</td>
+      </tr>
+    `).join('')
+    : '<tr><td colspan="2">Sin marcas faltantes registradas</td></tr>';
 
   return `<!DOCTYPE html>
 <html>
@@ -337,6 +370,25 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
     ${cumplimientoRows}
   </table>
 
+  <h3>Detalle de Tardanzas</h3>
+  <table>
+    <tr><th>Día</th><th>Turno / Hora ingreso</th></tr>
+    ${tardanzasRows}
+  </table>
+
+  <h3>Detalle de Marcas Faltantes</h3>
+  <table>
+    <tr><th>Día</th><th>Marcas sin registrar</th></tr>
+    ${sinMarcaRows}
+  </table>
+
+  <h3>Detalle Horas Extras</h3>
+  <table>
+    <tr><th>Concepto</th><th class="num" style="text-align:right">Total</th></tr>
+    <tr><td>Horas extras importadas desde Tickets-Horas</td><td class="num" style="text-align:right">${data.horasExtras.toFixed(1)} hs</td></tr>
+  </table>
+  <p style="font-size:11px;color:#666">El detalle por ticket quedará disponible cuando agreguemos el archivo específico de horas extras.</p>
+
   <h3>Tabla de Referencia - Bono Experiencia</h3>
   <table class="ref-table">
     <tr><th>Tipo</th><th>&lt;1 año</th><th>1-3 años</th><th>3-6 años</th><th>6-10 años</th><th>&gt;=10 años</th></tr>
@@ -350,6 +402,35 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
     <tr><td>TPE / TAP</td><td class="num" style="text-align:right">3.33%</td><td class="num" style="text-align:right">1.66%</td><td class="num" style="text-align:right">0%</td></tr>
     <tr><td>IEA</td><td class="num" style="text-align:right">3.33% desde 50%</td><td class="num" style="text-align:right">1.66% desde 40%</td><td class="num" style="text-align:right">0%</td></tr>
   </table>
+
+  <h3>Tabla de Referencia - Bono Cumplimiento</h3>
+  <table class="ref-table">
+    <tr><th>Cumplimiento semanal</th><th>Mínimo tickets</th><th class="num" style="text-align:right">% sobre valor semanal</th></tr>
+    <tr><td>Mayor o igual 90%</td><td>4 tkts (3 si hay feriado)</td><td class="num" style="text-align:right">10%</td></tr>
+    <tr><td>Mayor o igual 80%</td><td>4 tkts (3 si hay feriado)</td><td class="num" style="text-align:right">5%</td></tr>
+    <tr><td>Menor 80%</td><td>-</td><td class="num" style="text-align:right">0%</td></tr>
+  </table>
+  <p style="font-size:11px;color:#666">Valor semanal = Sueldo Neto dividido por semanas del mes. Semanas sin mínimo de tickets no califican independientemente del porcentaje.</p>
+
+  <h3>Detalle de fórmulas</h3>
+  <table class="ref-table">
+    <tr><th>Indicador</th><th>Fórmula</th><th>Observaciones</th></tr>
+    <tr><td>TPE</td><td>Días puntuales / días hábiles</td><td>Puntual = entrada mañana menor o igual 08:00 y tarde menor o igual 14:00.</td></tr>
+    <tr><td>TAP</td><td>Días presentes / días hábiles</td><td>Licencias aprobadas no suman ni restan. El denominador no se reduce.</td></tr>
+    <tr><td>IEA</td><td>Salidas tarde mayor 17:05 / días hábiles</td><td>Cuenta extensión activa al finalizar la jornada.</td></tr>
+    <tr><td>Tardanzas</td><td>Entradas con más de 10 min de tolerancia</td><td>Mañana mayor 08:10. Tarde mayor 14:10.</td></tr>
+    <tr><td>Sin Marcar</td><td>Entradas/salidas sin registro</td><td>Se toleran 2 olvidos mensuales; desde el tercero equivalen a tardanza.</td></tr>
+    <tr><td>B. Experiencia</td><td>Sueldo Neto x porcentaje por antigüedad</td><td>Según tipo Desarrollo u otros.</td></tr>
+    <tr><td>Horas Extras</td><td>Horas extras x (Sueldo Neto / 90)</td><td>90 = horas mensuales de referencia.</td></tr>
+    <tr><td>B. Compromiso</td><td>Sueldo Neto x (bTPE + bTAP + bIEA)</td><td>Máximo 9.99%.</td></tr>
+    <tr><td>B. Cumplimiento</td><td>(Sueldo Neto / semanas) x porcentaje semanal</td><td>Mínimo 4 tickets, o 3 si la semana tiene feriado.</td></tr>
+  </table>
+
+  <h3>Reglamento de Asistencia</h3>
+  <div style="font-size:12px;color:#444;line-height:1.6;">
+    <p><strong>Registro de asistencia</strong><br>Se utiliza sistema de reconocimiento dactilar para marcar entrada y salida. Se permiten hasta 2 olvidos de registros; a partir del tercero será computado como tardanza.</p>
+    <p><strong>Tardanzas</strong><br>Se considera tardanza al ingreso posterior a las 08:10 hs y 14:10 hs. Se permiten hasta 3 tardanzas por mes; desde la cuarta se pierde el componente de presentismo.</p>
+  </div>
 
   <div class="footer">
     Este detalle es informativo. Ante cualquier consulta comunicarse con Administración.<br>
@@ -686,6 +767,8 @@ export async function calcularBonos(
       let ieaOk = 0;
       let tardanzas = 0;
       let sinMarca = 0;
+      const tardanzasDetalle: TardanzaDetalle[] = [];
+      const sinMarcaDetalle: SinMarcaDetalle[] = [];
 
       for (const d of diasHabiles) {
         const key = dateKey(d);
@@ -698,9 +781,25 @@ export async function calcularBonos(
         const ao = marks.afternoon?.horaSalida ?? null;
         const miM = timeToMin(mi);
         const aiM = timeToMin(ai);
-        if (miM !== null && miM > 8 * 60 + 10) tardanzas++;
-        if (aiM !== null && aiM > 14 * 60 + 10) tardanzas++;
-        for (const v of [mi, mo, ai, ao]) if (!v) sinMarca++;
+        if (miM !== null && miM > 8 * 60 + 10) {
+          tardanzas++;
+          tardanzasDetalle.push({ fecha: displayDate(d), turno: 'Mañana', hora: mi, minutos: miM - 8 * 60 });
+        }
+        if (aiM !== null && aiM > 14 * 60 + 10) {
+          tardanzas++;
+          tardanzasDetalle.push({ fecha: displayDate(d), turno: 'Tarde', hora: ai, minutos: aiM - 14 * 60 });
+        }
+        for (const item of [
+          { label: 'Mañana entrada', value: mi },
+          { label: 'Mañana salida', value: mo },
+          { label: 'Tarde entrada', value: ai },
+          { label: 'Tarde salida', value: ao }
+        ]) {
+          if (!item.value) {
+            sinMarca++;
+            sinMarcaDetalle.push({ fecha: displayDate(d), marca: item.label });
+          }
+        }
         if (miM !== null && miM <= 8 * 60 && aiM !== null && aiM <= 14 * 60) tpeOk++;
         const aoM = timeToMin(ao);
         if (aoM !== null && aoM > 17 * 60 + 5) ieaOk++;
@@ -759,6 +858,8 @@ export async function calcularBonos(
         horasExtras,
         valorHora,
         cumplimientoDetalle,
+        tardanzasDetalle,
+        sinMarcaDetalle,
         licenciasDias: licenciaSet.size
       };
 
