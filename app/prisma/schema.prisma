@@ -61,6 +61,7 @@ model User {
   Session       Session[]
   employees     employees?
   bonosUploads  bonos_uploads[]
+  bonosCalculos bonos_calculos[]
 }
 
 model VerificationToken {
@@ -128,6 +129,7 @@ model employees {
   updatedAt           DateTime
   employee_documents  employee_documents[]
   bonos_recibos       bonos_recibos_sueldo[]
+  bonos_calculos      bonos_calculo_empleados[]
   Area                Area                 @relation(fields: [areaId], references: [id])
   User                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   leave_requests      leave_requests[]
@@ -286,5 +288,50 @@ model bonos_recibos_sueldo {
   employees     employees     @relation(fields: [empleadoId], references: [id], onDelete: Cascade)
 
   @@unique([empleadoId, mesAnio])
+  @@index([mesAnio])
+}
+
+model bonos_calculos {
+  id                    String                    @id
+  mesAnio               String                    @unique @db.Char(7)
+  estado                String                    @default("CALCULADO") @db.VarChar(50)
+  totalEmpleados        Int                       @default(0)
+  totalBonos            Int                       @default(0)
+  resumenPdfPath        String?                   @db.VarChar(1000)
+  planillaExcelPath     String?                   @db.VarChar(1000)
+  detalleJson           Json?
+  generadoPor           String
+  generadoAt            DateTime                  @default(now())
+  updatedAt             DateTime
+  User                  User                      @relation(fields: [generadoPor], references: [id], onDelete: Restrict)
+  empleados             bonos_calculo_empleados[]
+
+  @@index([mesAnio])
+  @@index([generadoPor])
+}
+
+model bonos_calculo_empleados {
+  id                 String          @id
+  calculoId          String
+  empleadoId         String
+  mesAnio            String          @db.Char(7)
+  sueldoNeto         Int             @default(0)
+  expPct             Float           @default(0)
+  bonoExperiencia    Int             @default(0)
+  kpiPct             Float           @default(0)
+  bonoKpi            Int             @default(0)
+  horasExtras        Float           @default(0)
+  valorHora          Float           @default(0)
+  bonoDesarrollo     Int             @default(0)
+  bonoCumplimiento   Int             @default(0)
+  totalBono          Int             @default(0)
+  htmlResumen        String          @db.Text
+  detalleJson        Json?
+  generadoAt         DateTime        @default(now())
+  bonos_calculos     bonos_calculos  @relation(fields: [calculoId], references: [id], onDelete: Cascade)
+  employees          employees       @relation(fields: [empleadoId], references: [id], onDelete: Cascade)
+
+  @@unique([empleadoId, mesAnio])
+  @@index([calculoId])
   @@index([mesAnio])
 }

@@ -24,7 +24,8 @@ import {
   Building2,
   Plus,
   Eye,
-  Download
+  Download,
+  Calculator
 } from 'lucide-react';
 import Link from 'next/link';
 import { Employee, LeaveRequest, Area, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS, DAY_SHIFT_LABELS } from '../lib/types';
@@ -60,6 +61,36 @@ export default function AdminDashboard() {
     ticketsHoras: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
     feriados: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
     recibos: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
+  } | null>(null);
+  const [selectedCalculoMonth, setSelectedCalculoMonth] = useState(() => new Date().toISOString().slice(0, 7));
+  const [calculoLoading, setCalculoLoading] = useState(false);
+  const [calculoSubmitting, setCalculoSubmitting] = useState(false);
+  const [calculoError, setCalculoError] = useState<string | null>(null);
+  const [calculoData, setCalculoData] = useState<{
+    validation?: {
+      canCalculate: boolean;
+      missing: string[];
+      recibosMesAnio: string;
+      items: Array<{ key: string; label: string; loaded: boolean; rows: number; mesAnio?: string }>;
+      existing: { exists: boolean; totalEmpleados?: number; totalBonos?: number; generadoAt?: string };
+    };
+    calculo?: {
+      id: string;
+      mesAnio: string;
+      totalEmpleados: number;
+      totalBonos: number;
+      generadoAt: string;
+      empleados: Array<{
+        empleado: string;
+        sueldoNeto: number;
+        bonoExperiencia: number;
+        bonoKpi: number;
+        bonoDesarrollo: number;
+        bonoCumplimiento: number;
+        totalBono: number;
+        horasExtras: number;
+      }>;
+    } | null;
   } | null>(null);
 
   useEffect(() => {
@@ -283,6 +314,65 @@ export default function AdminDashboard() {
         {info.loadedAt ? new Date(info.loadedAt).toLocaleString('es-AR') : '-'} · {info.loadedBy || '-'}
       </div>
     );
+  };
+
+  const formatMoney = (value: number) =>
+    new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value || 0);
+
+  const loadCalculoStatus = async (month: string) => {
+    if (!month) return;
+    setCalculoLoading(true);
+    setCalculoError(null);
+    try {
+      const res = await fetch(`/api/bonos/calcular?mes=${month}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'No se pudo consultar el cálculo.');
+      setCalculoData(data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error inesperado consultando cálculo.';
+      setCalculoError(message);
+      setCalculoData(null);
+    } finally {
+      setCalculoLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCalculoStatus(selectedCalculoMonth);
+  }, [selectedCalculoMonth]);
+
+  const handleCalcularBonos = async (force = false) => {
+    if (!selectedCalculoMonth) {
+      setCalculoError('Debes seleccionar un mes y año.');
+      return;
+    }
+    setCalculoSubmitting(true);
+    setCalculoError(null);
+    try {
+      const res = await fetch('/api/bonos/calcular', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mes_anio: selectedCalculoMonth, force })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'No se pudo calcular bonos.');
+      setCalculoData({
+        validation: {
+          canCalculate: true,
+          missing: [],
+          recibosMesAnio: data.result.recibosMesAnio,
+          items: [],
+          existing: { exists: true, totalEmpleados: data.result.totalEmpleados, totalBonos: data.result.totalBonos }
+        },
+        calculo: data.calculo
+      });
+      await loadCalculoStatus(selectedCalculoMonth);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error inesperado calculando bonos.';
+      setCalculoError(message);
+    } finally {
+      setCalculoSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -546,6 +636,121 @@ export default function AdminDashboard() {
                     disabled={isDownloadingLicenses || !selectedMonth}
                   >
                     {isDownloadingLicenses ? 'Generando archivo...' : 'Descargar Excel'}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full h-16 flex-col gap-2">
+                  <Calculator className="h-6 w-6" />
+                  Calcular Bonos
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Calcular Bonos del Mes</DialogTitle>
+                  <DialogDescription>
+                    Selecciona el período, valida las cargas requeridas y genera el cálculo para revisión.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label htmlFor="bonos-calculo-month" className="text-sm font-medium text-sgn-dark">
+                      Mes - Año
+                    </label>
+                    <Input
+                      id="bonos-calculo-month"
+                      type="month"
+                      value={selectedCalculoMonth}
+                      onChange={(e) => setSelectedCalculoMonth(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="rounded-md border border-gray-200 p-3 space-y-2 bg-gray-50">
+                    <p className="text-sm font-medium text-sgn-dark">Validación de datos</p>
+                    {calculoLoading ? (
+                      <p className="text-sm text-gray-600">Consultando datos...</p>
+                    ) : calculoData?.validation ? (
+                      <>
+                        {calculoData.validation.items.map((item) => (
+                          <div key={item.key} className="text-sm text-gray-700">
+                            <span className="font-medium">{item.label}:</span>{' '}
+                            {item.loaded ? `${item.rows} filas (${item.mesAnio})` : `Falta (${item.mesAnio})`}
+                          </div>
+                        ))}
+                        {calculoData.validation.existing.exists ? (
+                          <p className="text-sm text-amber-700">
+                            Ya existe cálculo: {calculoData.validation.existing.totalEmpleados} empleados ·{' '}
+                            {formatMoney(calculoData.validation.existing.totalBonos || 0)}
+                          </p>
+                        ) : null}
+                        {!calculoData.validation.canCalculate ? (
+                          <p className="text-sm text-red-600">
+                            Faltan: {calculoData.validation.missing.join(', ')}
+                          </p>
+                        ) : null}
+                      </>
+                    ) : (
+                      <p className="text-sm text-gray-600">Sin datos consultados</p>
+                    )}
+                  </div>
+
+                  {calculoData?.calculo ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium text-sgn-dark">
+                          Resultado: {calculoData.calculo.totalEmpleados} empleados · {formatMoney(calculoData.calculo.totalBonos)}
+                        </p>
+                      </div>
+                      <div className="overflow-x-auto rounded-md border">
+                        <table className="w-full text-sm">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="p-2 text-left">Empleado</th>
+                              <th className="p-2 text-right">Sueldo</th>
+                              <th className="p-2 text-right">Exp.</th>
+                              <th className="p-2 text-right">KPI</th>
+                              <th className="p-2 text-right">Des.</th>
+                              <th className="p-2 text-right">Cumpl.</th>
+                              <th className="p-2 text-right">Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {calculoData.calculo.empleados.map((row) => (
+                              <tr key={row.empleado} className="border-t">
+                                <td className="p-2">{row.empleado}</td>
+                                <td className="p-2 text-right">{formatMoney(row.sueldoNeto)}</td>
+                                <td className="p-2 text-right">{formatMoney(row.bonoExperiencia)}</td>
+                                <td className="p-2 text-right">{formatMoney(row.bonoKpi)}</td>
+                                <td className="p-2 text-right">{formatMoney(row.bonoDesarrollo)}</td>
+                                <td className="p-2 text-right">{formatMoney(row.bonoCumplimiento)}</td>
+                                <td className="p-2 text-right font-medium">{formatMoney(row.totalBono)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {calculoError ? <p className="text-sm text-red-600">{calculoError}</p> : null}
+                </div>
+
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant={calculoData?.validation?.existing.exists ? 'outline' : 'default'}
+                    onClick={() => handleCalcularBonos(Boolean(calculoData?.validation?.existing.exists))}
+                    disabled={calculoSubmitting || !calculoData?.validation?.canCalculate}
+                  >
+                    {calculoSubmitting
+                      ? 'Calculando...'
+                      : calculoData?.validation?.existing.exists
+                        ? 'Recalcular'
+                        : 'Calcular Bonos'}
                   </Button>
                 </DialogFooter>
               </DialogContent>
