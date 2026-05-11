@@ -1,8 +1,6 @@
 import { randomUUID } from 'crypto';
 import { DayShift, LeaveRequestType } from '@prisma/client';
 import type { PrismaClient } from '@prisma/client';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-import * as XLSX from 'xlsx';
 import { buildKey, putObject } from './s3';
 import { fetchTicketsDetalleApi } from './bonos-tickets-api';
 
@@ -474,210 +472,145 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
 </html>`;
 };
 
-const drawText = (page: any, text: string, x: number, y: number, size: number, font: any, color = rgb(0, 0, 0)) => {
-  page.drawText(String(text ?? '').slice(0, 70), { x, y, size, font, color });
+const reportHtmlShell = (title: string, body: string) => `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body{font-family:Calibri,Arial,sans-serif;color:#333;margin:0;padding:24px;background:#fff;}
+    .page{max-width:1180px;margin:0 auto 28px;page-break-after:always;}
+    .employee-page{max-width:760px;margin:0 auto 28px;page-break-before:always;}
+    h1{color:#1F4E79;border-bottom:3px solid #1F4E79;padding-bottom:8px;margin:0 0 16px;font-size:28px;}
+    h2{color:#1F4E79;border-bottom:2px solid #1F4E79;padding-bottom:6px;margin-bottom:4px;}
+    h3{color:#1F4E79;margin:18px 0 6px;font-size:14px;}
+    table{border-collapse:collapse;width:100%;margin-bottom:12px;font-size:13px;}
+    th{background:#1F4E79;color:#fff;padding:7px 10px;text-align:left;}
+    td{padding:6px 10px;border:1px solid #ddd;}
+    tr:nth-child(even){background:#f5f9ff;}
+    .num{text-align:right !important;}
+    th.num{text-align:right !important;}
+    .ok{color:#375623;font-weight:bold;}
+    .warn{color:#843C0C;font-weight:bold;}
+    .total-row{background:#E2EFDA;font-weight:bold;font-size:14px;}
+    .indicator-row{color:#555;font-style:italic;font-size:12px;}
+    .ref-table th,.ref-table td{font-size:12px;padding:5px 8px;}
+    .meta{font-size:13px;color:#555;margin-bottom:16px;}
+    .footer{font-size:11px;color:#888;margin-top:20px;border-top:1px solid #eee;padding-top:10px;}
+  </style>
+  <title>${escapeHtml(title)}</title>
+</head>
+<body>
+${body}
+</body>
+</html>`;
+
+const htmlBody = (html: string) => {
+  const match = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  return match ? match[1].trim() : html;
 };
 
-const drawTextRight = (page: any, text: string, rightX: number, y: number, size: number, font: any, color = rgb(0, 0, 0)) => {
-  const value = String(text ?? '').slice(0, 70);
-  const width = font.widthOfTextAtSize(value, size);
-  page.drawText(value, { x: rightX - width, y, size, font, color });
+const generateResumenHtml = (mesAnio: string, results: CalculoEmpleadoResult[], totalBonos: number) => {
+  const totals = {
+    sueldo: results.reduce((sum, row) => sum + row.sueldoNeto, 0),
+    exp: results.reduce((sum, row) => sum + row.bonoExperiencia, 0),
+    compromiso: results.reduce((sum, row) => sum + row.bonoKpi, 0),
+    horas: results.reduce((sum, row) => sum + row.bonoDesarrollo, 0),
+    cumplimiento: results.reduce((sum, row) => sum + row.bonoCumplimiento, 0)
+  };
+  const resumenRows = results.map((row) => `
+    <tr>
+      <td>${escapeHtml(row.empleadoNombre)}</td>
+      <td>${escapeHtml(row.detalleJson.tipo)}</td>
+      <td class="num">${row.detalleJson.antiguedad} años</td>
+      <td class="num">${money(row.sueldoNeto)}</td>
+      <td class="num">${money(row.bonoExperiencia)}</td>
+      <td class="num">${money(row.bonoKpi)}</td>
+      <td class="num">${money(row.bonoDesarrollo)}</td>
+      <td class="num">${money(row.bonoCumplimiento)}</td>
+      <td class="num"><strong>${money(row.totalBono)}</strong></td>
+    </tr>
+  `).join('');
+  const employees = results.map((row) => `<section class="employee-page">${htmlBody(row.htmlResumen)}</section>`).join('\n');
+  return reportHtmlShell(
+    `Resumen de Bonos - ${monthLabel(mesAnio)}`,
+    `<section class="page">
+      <h1>Resumen de Bonos - ${escapeHtml(monthLabel(mesAnio))}</h1>
+      <p class="meta">Total empleados: ${results.length} · Total bonos: ${money(totalBonos)} · Generado: ${new Date().toLocaleString('es-AR')}</p>
+      <table>
+        <tr>
+          <th>Empleado</th>
+          <th>Tipo</th>
+          <th class="num">Antigüed.</th>
+          <th class="num">Sueldo</th>
+          <th class="num">Bono Exp.</th>
+          <th class="num">Bono Compr.</th>
+          <th class="num">Horas Extras</th>
+          <th class="num">Bono Cumpl.</th>
+          <th class="num">TOTAL BONO</th>
+        </tr>
+        ${resumenRows}
+        <tr class="total-row">
+          <td>TOTAL</td>
+          <td></td>
+          <td></td>
+          <td class="num">${money(totals.sueldo)}</td>
+          <td class="num">${money(totals.exp)}</td>
+          <td class="num">${money(totals.compromiso)}</td>
+          <td class="num">${money(totals.horas)}</td>
+          <td class="num">${money(totals.cumplimiento)}</td>
+          <td class="num">${money(totalBonos)}</td>
+        </tr>
+      </table>
+    </section>
+    ${employees}`
+  );
 };
 
-const drawSectionTitle = (page: any, title: string, x: number, y: number, font: any) => {
-  drawText(page, title, x, y, 13, font, rgb(0.12, 0.31, 0.47));
-};
-
-const drawTableHeader = (page: any, y: number, headers: Array<{ label: string; x: number; right?: number }>, font: any) => {
-  page.drawRectangle({ x: 40, y: y - 6, width: 762, height: 20, color: rgb(0.12, 0.31, 0.47) });
-  headers.forEach((h) => {
-    if (h.right) drawTextRight(page, h.label, h.right, y, 9, font, rgb(1, 1, 1));
-    else drawText(page, h.label, h.x, y, 9, font, rgb(1, 1, 1));
-  });
-};
-
-const generateResumenPdf = async (mesAnio: string, results: CalculoEmpleadoResult[], totalBonos: number) => {
-  const pdfDoc = await PDFDocument.create();
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  const page = pdfDoc.addPage([842, 595]);
-  const { height } = page.getSize();
-  let y = height - 40;
-
-  page.drawLine({ start: { x: 30, y: height - 20 }, end: { x: 812, y: height - 20 }, thickness: 2, color: rgb(0.12, 0.31, 0.47) });
-  drawText(page, `Resumen de Bonos - ${monthLabel(mesAnio)}`, 30, y, 18, bold, rgb(0.12, 0.31, 0.47));
-  y -= 28;
-  drawText(page, `Total empleados: ${results.length}   Total bonos: ${money(totalBonos)}`, 30, y, 11, font);
-  y -= 24;
-
-  const cols = [
-    { label: 'Empleado', x: 34, w: 150 },
-    { label: 'Tipo', x: 185, w: 75 },
-    { label: 'Ant.', x: 265, w: 45 },
-    { label: 'Sueldo', x: 315, w: 80, right: 395 },
-    { label: 'B. Exp.', x: 405, w: 75, right: 480 },
-    { label: 'B. Compr.', x: 490, w: 85, right: 575 },
-    { label: 'Hs Extras', x: 585, w: 75, right: 660 },
-    { label: 'Cumpl.', x: 670, w: 70, right: 740 },
-    { label: 'Total', x: 748, w: 64, right: 812 }
-  ];
-
-  page.drawRectangle({ x: 30, y: y - 6, width: 782, height: 22, color: rgb(0.12, 0.31, 0.47) });
-  cols.forEach((col) => {
-    if ('right' in col) drawTextRight(page, col.label, col.right, y, 9, bold, rgb(1, 1, 1));
-    else drawText(page, col.label, col.x, y, 9, bold, rgb(1, 1, 1));
-  });
-  y -= 18;
-
-  results.forEach((row, idx) => {
-    if (idx % 2 === 1) page.drawRectangle({ x: 30, y: y - 5, width: 782, height: 18, color: rgb(0.94, 0.94, 0.94) });
-    drawText(page, row.empleadoNombre, cols[0].x, y, 8, font);
-    drawText(page, row.detalleJson.tipo, cols[1].x, y, 8, font);
-    drawText(page, `${row.detalleJson.antiguedad}a`, cols[2].x, y, 8, font);
-    drawTextRight(page, money(row.sueldoNeto), cols[3].right, y, 8, font);
-    drawTextRight(page, money(row.bonoExperiencia), cols[4].right, y, 8, font);
-    drawTextRight(page, money(row.bonoKpi), cols[5].right, y, 8, font);
-    drawTextRight(page, money(row.bonoDesarrollo), cols[6].right, y, 8, font);
-    drawTextRight(page, money(row.bonoCumplimiento), cols[7].right, y, 8, font);
-    drawTextRight(page, money(row.totalBono), cols[8].right, y, 8, bold);
-    y -= 18;
-  });
-
-  y -= 4;
-  page.drawRectangle({ x: 30, y: y - 5, width: 782, height: 20, color: rgb(0.84, 0.9, 0.95) });
-  drawText(page, 'TOTAL', 34, y, 9, bold);
-  drawTextRight(page, money(results.reduce((sum, row) => sum + row.bonoExperiencia, 0)), cols[4].right, y, 9, bold);
-  drawTextRight(page, money(results.reduce((sum, row) => sum + row.bonoKpi, 0)), cols[5].right, y, 9, bold);
-  drawTextRight(page, money(results.reduce((sum, row) => sum + row.bonoDesarrollo, 0)), cols[6].right, y, 9, bold);
-  drawTextRight(page, money(results.reduce((sum, row) => sum + row.bonoCumplimiento, 0)), cols[7].right, y, 9, bold);
-  drawTextRight(page, money(totalBonos), cols[8].right, y, 9, bold);
-
-  for (const row of results) {
-    const detail = row.detalleJson;
-    const detailPage = pdfDoc.addPage([842, 595]);
-    const pageHeight = detailPage.getSize().height;
-    let dy = pageHeight - 45;
-
-    detailPage.drawLine({ start: { x: 40, y: pageHeight - 24 }, end: { x: 802, y: pageHeight - 24 }, thickness: 2, color: rgb(0.12, 0.31, 0.47) });
-    drawText(detailPage, `Detalle de Bonos - ${monthLabel(mesAnio)}`, 40, dy, 20, bold, rgb(0.12, 0.31, 0.47));
-    dy -= 30;
-    drawText(detailPage, `Empleado: ${row.empleadoNombre}`, 40, dy, 12, bold);
-    drawText(detailPage, `Tipo: ${detail.tipo}   Antigüedad: ${detail.antiguedad} años`, 280, dy, 11, font);
-    dy -= 30;
-
-    drawSectionTitle(detailPage, 'Liquidación de Bonos', 40, dy, bold);
-    dy -= 18;
-    const liqHeaders = [
-      { label: 'Concepto', x: 54 },
-      { label: 'Detalle', x: 270 },
-      { label: 'Monto', x: 700, right: 785 }
-    ];
-    drawTableHeader(detailPage, dy, liqHeaders, bold);
-    dy -= 18;
-    const liqRows = [
-      [`Bono Experiencia (${pct(row.expPct)})`, `Antigüedad ${detail.antiguedad} años - ${detail.tipo}`, money(row.bonoExperiencia)],
-      ['Horas Extras', `${row.horasExtras.toFixed(1)} hs x ${money(row.valorHora)}/h`, money(row.bonoDesarrollo)],
-      [`Bono Compromiso (${pct(row.kpiPct)})`, 'TPE + TAP + IEA', money(row.bonoKpi)],
-      ['Bono Cumplimiento', `${detail.cumplimientoDetalle.filter((r) => r.bono > 0).length}/${detail.cumplimientoDetalle.length} semanas calificadas`, money(row.bonoCumplimiento)]
-    ];
-    liqRows.forEach((r, idx) => {
-      if (idx % 2 === 0) detailPage.drawRectangle({ x: 40, y: dy - 5, width: 762, height: 18, color: rgb(0.95, 0.97, 1) });
-      drawText(detailPage, r[0], 54, dy, 9, font);
-      drawText(detailPage, r[1], 270, dy, 9, font);
-      drawTextRight(detailPage, r[2], 785, dy, 9, font);
-      dy -= 18;
-    });
-    detailPage.drawRectangle({ x: 40, y: dy - 5, width: 762, height: 20, color: rgb(0.9, 0.94, 0.98) });
-    drawText(detailPage, `TOTAL BONOS ${monthLabel(mesAnio)}`, 54, dy, 10, bold);
-    drawTextRight(detailPage, money(row.totalBono), 785, dy, 10, bold);
-    dy -= 36;
-
-    drawSectionTitle(detailPage, 'KPIs de Compromiso', 40, dy, bold);
-    dy -= 18;
-    const kpiHeaders = [
-      { label: 'Indicador', x: 54 },
-      { label: 'Resultado', x: 340, right: 450 },
-      { label: 'Porcentaje', x: 540, right: 635 },
-      { label: 'Bono', x: 720, right: 785 }
-    ];
-    drawTableHeader(detailPage, dy, kpiHeaders, bold);
-    dy -= 18;
-    const tapBonus = detail.tardanzasEfectivas >= 4 ? 0 : pctToBonus(detail.tapPct);
-    const kpiRows = [
-      ['TPE - Puntualidad Estricta', `${detail.tpeOk} / ${detail.tapTotal} días`, pct(detail.tpePct), pct(pctToBonus(detail.tpePct))],
-      ['TAP - Tasa de Asistencia', `${detail.tapPres} / ${detail.tapTotal} días`, pct(detail.tapPct), pct(tapBonus)],
-      ['IEA - Esfuerzo Adicional', `${detail.ieaOk} / ${detail.tapTotal} días`, pct(detail.ieaPct), pct(ieaToBonus(detail.ieaPct))],
-      ['Tardanzas efectivas', `${detail.tardanzas} reales + ${detail.sinMarcaExtra} por marcas faltantes`, String(detail.tardanzasEfectivas), ''],
-      ['Sin Marcar', `${detail.sinMarca} marcas faltantes`, '', '']
-    ];
-    kpiRows.forEach((r, idx) => {
-      if (idx % 2 === 0) detailPage.drawRectangle({ x: 40, y: dy - 5, width: 762, height: 18, color: rgb(0.95, 0.97, 1) });
-      drawText(detailPage, r[0], 54, dy, 9, idx >= 3 ? bold : font);
-      drawTextRight(detailPage, r[1], 450, dy, 9, font);
-      drawTextRight(detailPage, r[2], 635, dy, 9, font);
-      drawTextRight(detailPage, r[3], 785, dy, 9, font);
-      dy -= 18;
-    });
-    dy -= 18;
-
-    drawSectionTitle(detailPage, 'Detalle Bono Cumplimiento', 40, dy, bold);
-    dy -= 18;
-    const cumpHeaders = [
-      { label: 'Semana', x: 54 },
-      { label: 'Tickets', x: 250, right: 310 },
-      { label: 'Cumplimiento', x: 410, right: 500 },
-      { label: 'Mínimo', x: 590, right: 650 },
-      { label: 'Bono', x: 720, right: 785 }
-    ];
-    drawTableHeader(detailPage, dy, cumpHeaders, bold);
-    dy -= 18;
-    detail.cumplimientoDetalle.forEach((r, idx) => {
-      if (idx % 2 === 0) detailPage.drawRectangle({ x: 40, y: dy - 5, width: 762, height: 18, color: rgb(0.95, 0.97, 1) });
-      drawText(detailPage, r.semana, 54, dy, 9, font);
-      drawTextRight(detailPage, String(r.tickets), 310, dy, 9, font);
-      drawTextRight(detailPage, pct(r.pct), 500, dy, 9, font);
-      drawTextRight(detailPage, `${r.min} tkts`, 650, dy, 9, font);
-      drawTextRight(detailPage, money(r.bono), 785, dy, 9, font);
-      dy -= 18;
-    });
-  }
-
-  return Buffer.from(await pdfDoc.save());
-};
-
-const generateContadoraXlsx = (mesAnio: string, results: CalculoEmpleadoResult[]) => {
-  const total = results.reduce((sum, row) => sum + row.totalBono, 0);
-  const rows = [
-    [`PLANILLA BONOS - ${monthLabel(mesAnio).toUpperCase()}`],
-    [`Generado: ${new Date().toLocaleString('es-AR')}   |   Para: Contadora`],
-    ['Empleado', 'Bono Adicional ($)', 'Presentismo', 'Lic.(Días)', 'Cobra Bono por Recibo', 'Observación'],
-    ...results.map((row) => [
-      row.empleadoNombre,
-      row.totalBono,
-      row.detalleJson.tardanzasEfectivas >= 4 ? 'No' : 'Si',
-      row.detalleJson.licenciasDias || '-',
-      'Si',
-      ''
-    ]),
-    ['TOTAL', total, '', '', '', '']
-  ];
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols'] = [{ wch: 28 }, { wch: 18 }, { wch: 14 }, { wch: 12 }, { wch: 22 }, { wch: 42 }];
-  XLSX.utils.book_append_sheet(wb, ws, 'Planilla Contadora');
-  return Buffer.from(XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' }));
+const generateContadoraHtml = (mesAnio: string, results: CalculoEmpleadoResult[]) => {
+  const totalBonos = results.reduce((sum, row) => sum + row.totalBono, 0);
+  const totalLicencias = results.reduce((sum, row) => sum + row.detalleJson.licenciasDias, 0);
+  const rows = results.map((row) => `
+    <tr>
+      <td>${escapeHtml(row.empleadoNombre)}</td>
+      <td class="num">${money(row.totalBono)}</td>
+      <td>SI</td>
+      <td class="num">${row.detalleJson.licenciasDias}</td>
+    </tr>
+  `).join('');
+  return reportHtmlShell(
+    `Planilla Contadora - ${monthLabel(mesAnio)}`,
+    `<section class="page">
+      <h1>Planilla Contadora - ${escapeHtml(monthLabel(mesAnio))}</h1>
+      <p class="meta">Generado: ${new Date().toLocaleString('es-AR')}</p>
+      <table>
+        <tr>
+          <th>Empleado</th>
+          <th class="num">Bono Adicional</th>
+          <th>Presentismo</th>
+          <th class="num">Licencias</th>
+        </tr>
+        ${rows}
+        <tr class="total-row">
+          <td>TOTAL</td>
+          <td class="num">${money(totalBonos)}</td>
+          <td></td>
+          <td class="num">${totalLicencias}</td>
+        </tr>
+      </table>
+    </section>`
+  );
 };
 
 const generateAndUploadReports = async (mesAnio: string, results: CalculoEmpleadoResult[], totalBonos: number): Promise<ReportLinks> => {
   const base = `bonos/${mesAnio}`;
-  const resumenSubpath = `${base}/Resumen_Bonos_${mesAnio}.pdf`;
-  const planillaSubpath = `${base}/Planilla_Contadora_${mesAnio}.xlsx`;
+  const resumenSubpath = `${base}/Resumen_Bonos_${mesAnio}.html`;
+  const planillaSubpath = `${base}/Planilla_Contadora_${mesAnio}.html`;
 
-  const pdfBuffer = await generateResumenPdf(mesAnio, results, totalBonos);
-  const xlsxBuffer = generateContadoraXlsx(mesAnio, results);
+  const resumenHtml = generateResumenHtml(mesAnio, results, totalBonos);
+  const contadoraHtml = generateContadoraHtml(mesAnio, results);
 
-  await putObject(buildKey(resumenSubpath), pdfBuffer, 'application/pdf');
-  await putObject(buildKey(planillaSubpath), xlsxBuffer, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  await putObject(buildKey(resumenSubpath), resumenHtml, 'text/html; charset=utf-8');
+  await putObject(buildKey(planillaSubpath), contadoraHtml, 'text/html; charset=utf-8');
 
   const htmlEmpleados: ReportLinks['htmlEmpleados'] = [];
   for (const row of results) {

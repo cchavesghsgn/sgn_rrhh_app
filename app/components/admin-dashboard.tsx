@@ -813,12 +813,12 @@ export default function AdminDashboard() {
                         <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-2">
                           {calculoData.calculo.resumenPdfPath ? (
                             <a href={calculoData.calculo.resumenPdfPath} target="_blank" rel="noopener noreferrer">
-                              <Button type="button" size="sm" variant="outline" className="w-full">PDF Resumen</Button>
+                              <Button type="button" size="sm" variant="outline" className="w-full">HTML Resumen</Button>
                             </a>
                           ) : null}
                           {calculoData.calculo.planillaExcelPath ? (
                             <a href={calculoData.calculo.planillaExcelPath} target="_blank" rel="noopener noreferrer">
-                              <Button type="button" size="sm" variant="outline" className="w-full">Excel Contadora</Button>
+                              <Button type="button" size="sm" variant="outline" className="w-full">HTML Contadora</Button>
                             </a>
                           ) : null}
                           {calculoData.calculo.empleados
