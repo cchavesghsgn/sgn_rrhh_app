@@ -24,6 +24,38 @@ const validInputFile = (fileName: string) => {
 const getYearFromMesAnio = (mesAnio: string) => Number(mesAnio.slice(0, 4));
 const getFeriadosUploadMesAnio = (mesAnio: string) => `${getYearFromMesAnio(mesAnio)}-01`;
 
+const parseUtilidadPct = (value: FormDataEntryValue | null) => {
+  if (value === null || value === '') return null;
+  if (typeof value !== 'string') {
+    throw new Error('% utilidad mes anterior debe ser numérico.');
+  }
+  const normalized = value.trim().replace(',', '.');
+  if (!normalized) return null;
+  const parsed = Number(normalized);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    throw new Error('% utilidad mes anterior debe ser un número mayor o igual a 0.');
+  }
+  return parsed;
+};
+
+async function upsertParametroMensual(mesAnio: string, utilidadPct: number, updatedBy: string) {
+  await prisma.bonos_parametros_mensuales.upsert({
+    where: { mesAnio },
+    create: {
+      id: randomUUID(),
+      mesAnio,
+      utilidadPct,
+      updatedBy,
+      updatedAt: new Date()
+    },
+    update: {
+      utilidadPct,
+      updatedBy,
+      updatedAt: new Date()
+    }
+  });
+}
+
 async function replaceHorarios(
   mesAnio: string,
   fileName: string,
@@ -281,20 +313,33 @@ export async function POST(request: NextRequest) {
     const ticketsFile = formData.get('tickets_file');
     const feriadosFile = formData.get('feriados_file');
     const recibosFile = formData.get('recibos_file');
+    let utilidadPct: number | null = null;
+    try {
+      utilidadPct = parseUtilidadPct(formData.get('utilidad_mes_anterior'));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Parámetro de utilidad inválido.';
+      return NextResponse.json({ error: message }, { status: 400 });
+    }
 
     if (
       (!horariosFile || typeof horariosFile === 'string') &&
       (!ticketsFile || typeof ticketsFile === 'string') &&
       (!feriadosFile || typeof feriadosFile === 'string') &&
-      (!recibosFile || typeof recibosFile === 'string')
+      (!recibosFile || typeof recibosFile === 'string') &&
+      utilidadPct === null
     ) {
       return NextResponse.json(
-        { error: 'Debes subir al menos un archivo: horarios_file, tickets_file, feriados_file o recibos_file.' },
+        { error: 'Debes subir al menos un archivo o informar % utilidad mes anterior.' },
         { status: 400 }
       );
     }
 
     const response: Record<string, unknown> = { mesAnio };
+
+    if (utilidadPct !== null) {
+      await upsertParametroMensual(mesAnio, utilidadPct, session.user.id);
+      response.utilidad = { saved: true, utilidadPct };
+    }
 
     if (horariosFile && typeof horariosFile !== 'string') {
       if (!validInputFile(horariosFile.name)) {

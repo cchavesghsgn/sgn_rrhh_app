@@ -7,6 +7,11 @@ export const dynamic = 'force-dynamic';
 
 const MES_REGEX = /^\d{4}-(0[1-9]|1[0-2])$/;
 const getFeriadosUploadMesAnio = (mesAnio: string) => `${mesAnio.slice(0, 4)}-01`;
+const isPrismaMissingTableError = (error: unknown) =>
+  typeof error === 'object' &&
+  error !== null &&
+  'code' in error &&
+  (error as { code?: string }).code === 'P2021';
 
 export async function GET(request: NextRequest) {
   try {
@@ -37,6 +42,19 @@ export async function GET(request: NextRequest) {
       include: { User: true }
     });
 
+    let parametro = null;
+    try {
+      parametro = await prisma.bonos_parametros_mensuales.findUnique({
+        where: { mesAnio },
+        include: { User: true }
+      });
+    } catch (error) {
+      if (!isPrismaMissingTableError(error)) {
+        throw error;
+      }
+      console.warn('Bonos profitability table missing; returning upload status without utilidad.');
+    }
+
     const byTipo = Object.fromEntries(
       uploads.map((u) => [
         u.tipoArchivo,
@@ -55,7 +73,15 @@ export async function GET(request: NextRequest) {
       horarios: byTipo.HORARIOS || { loaded: false },
       ticketsHoras: byTipo.TICKETS_HORAS || { loaded: false },
       feriados: byTipo.FERIADOS || { loaded: false },
-      recibos: byTipo.RECIBOS_PDF || { loaded: false }
+      recibos: byTipo.RECIBOS_PDF || { loaded: false },
+      utilidad: parametro
+        ? {
+            loaded: true,
+            utilidadPct: parametro.utilidadPct,
+            updatedAt: parametro.updatedAt,
+            updatedBy: parametro.User.email
+          }
+        : { loaded: false }
     });
   } catch (error) {
     console.error('Bonos status error:', error);

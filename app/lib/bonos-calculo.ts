@@ -29,7 +29,16 @@ export type BonosValidation = {
     exists: boolean;
     totalEmpleados?: number;
     totalBonos?: number;
+    totalBonosBase?: number;
+    utilidadPct?: number;
+    factorUtilidad?: number;
+    totalBonosFinal?: number;
     generadoAt?: Date;
+  };
+  utilidad: {
+    loaded: boolean;
+    utilidadPct?: number;
+    factorUtilidad?: number;
   };
 };
 
@@ -39,6 +48,7 @@ type CumplimientoDetalle = {
   min: number;
   pct: number;
   bono: number;
+  hasTickets?: boolean;
 };
 
 type TardanzaDetalle = {
@@ -46,6 +56,7 @@ type TardanzaDetalle = {
   turno: string;
   hora: string;
   minutos: number;
+  esTardanza: boolean;
 };
 
 type SinMarcaDetalle = {
@@ -72,13 +83,19 @@ type CalculoEmpleadoResult = {
   bonoKpi: number;
   horasExtras: number;
   valorHora: number;
+  bonoCargo: number;
   bonoDesarrollo: number;
   bonoCumplimiento: number;
   totalBono: number;
+  totalBonoBase: number;
+  utilidadPct: number;
+  factorUtilidad: number;
+  totalBonoFinal: number;
   htmlResumen: string;
   detalleJson: {
     empleado: string;
     tipo: string;
+    cargo?: string | null;
     area?: string | null;
     antiguedad: number;
     sueldoNeto: number;
@@ -97,6 +114,16 @@ type CalculoEmpleadoResult = {
     kpiPct: number;
     horasExtras: number;
     valorHora: number;
+    bonoCargo: number;
+    cargoPct: number;
+    bonoExperiencia: number;
+    bonoKpi: number;
+    bonoDesarrollo: number;
+    bonoCumplimiento: number;
+    totalBonoBase: number;
+    utilidadPct: number;
+    factorUtilidad: number;
+    totalBonoFinal: number;
     cumplimientoDetalle: CumplimientoDetalle[];
     tardanzasDetalle: TardanzaDetalle[];
     sinMarcaDetalle: SinMarcaDetalle[];
@@ -167,15 +194,40 @@ const timeToMin = (value: string | null | undefined) => {
   return Number(m[1]) * 60 + Number(m[2]);
 };
 
-const pctToBonus = (pct: number) => {
-  if (pct >= 0.9) return 0.0333;
+export const puntualidadIngreso = (hora: string | null | undefined, limiteMinutos: number) => {
+  const minutosIngreso = timeToMin(hora);
+  if (minutosIngreso === null || minutosIngreso <= limiteMinutos) return null;
+  const minutos = minutosIngreso - limiteMinutos;
+  return {
+    hora: hora || '',
+    minutos,
+    esTardanza: minutos > 10
+  };
+};
+
+export const cargoBonusPct = (position: string | null | undefined) => {
+  const cargo = normalize(position || '');
+  return cargo.includes('jefe') && cargo.includes('proyecto') ? 0.2 : 0;
+};
+
+export const pctToBonus = (pct: number) => {
+  if (pct === 1) return 0.06;
+  if (pct >= 0.9 && pct < 1) return 0.0333;
   if (pct >= 0.8) return 0.0166;
   return 0;
 };
 
-const ieaToBonus = (pct: number) => {
-  if (pct >= 0.5) return 0.0333;
-  if (pct >= 0.4) return 0.0166;
+export const ieaToBonus = (pct: number) => {
+  if (pct >= 0.5) return 0.03;
+  if (pct >= 0.4) return 0.015;
+  return 0;
+};
+
+export const factorUtilidad = (utilidadPct: number) => {
+  if (utilidadPct >= 10 && utilidadPct < 15) return 0.5;
+  if (utilidadPct >= 15 && utilidadPct < 20) return 0.75;
+  if (utilidadPct >= 20 && utilidadPct <= 30) return 1;
+  if (utilidadPct > 30) return 1.2;
   return 0;
 };
 
@@ -270,11 +322,12 @@ export async function validateBonosCalculo(prisma: PrismaClient | PrismaTx, mesA
   const { year } = parseMesAnio(mesAnio);
   const recibosMesAnio = previousMesAnio(mesAnio);
 
-  const [horarios, tickets, feriados, recibos, existing] = await Promise.all([
+  const [horarios, tickets, feriados, recibos, parametro, existing] = await Promise.all([
     prisma.bonos_horarios.count({ where: { mesAnio } }),
     prisma.bonos_tickets_horas.count({ where: { mesAnio } }),
     prisma.bonos_feriados.count({ where: { anio: year } }),
     prisma.bonos_recibos_sueldo.count({ where: { mesAnio: recibosMesAnio } }),
+    prisma.bonos_parametros_mensuales.findUnique({ where: { mesAnio } }),
     prisma.bonos_calculos.findUnique({ where: { mesAnio } })
   ]);
 
@@ -282,10 +335,12 @@ export async function validateBonosCalculo(prisma: PrismaClient | PrismaTx, mesA
     { key: 'horarios', label: 'Horarios del mes', loaded: horarios > 0, rows: horarios, mesAnio },
     { key: 'tickets', label: 'Tickets-Horas del mes', loaded: tickets > 0, rows: tickets, mesAnio },
     { key: 'feriados', label: 'Calendario Feriados del año', loaded: feriados > 0, rows: feriados, mesAnio: String(year) },
-    { key: 'recibos', label: 'Recibos del mes anterior', loaded: recibos > 0, rows: recibos, mesAnio: recibosMesAnio }
+    { key: 'recibos', label: 'Recibos del mes anterior', loaded: recibos > 0, rows: recibos, mesAnio: recibosMesAnio },
+    { key: 'utilidad', label: '% utilidad mes anterior', loaded: Boolean(parametro), rows: parametro ? 1 : 0, mesAnio }
   ];
 
   const missing = items.filter((item) => !item.loaded).map((item) => `${item.label} (${item.mesAnio})`);
+  const utilidadFactor = parametro ? factorUtilidad(parametro.utilidadPct) : undefined;
   return {
     mesAnio,
     recibosMesAnio,
@@ -293,14 +348,27 @@ export async function validateBonosCalculo(prisma: PrismaClient | PrismaTx, mesA
     missing,
     items,
     existing: existing
-      ? { exists: true, totalEmpleados: existing.totalEmpleados, totalBonos: existing.totalBonos, generadoAt: existing.generadoAt }
-      : { exists: false }
+      ? {
+          exists: true,
+          totalEmpleados: existing.totalEmpleados,
+          totalBonos: existing.totalBonos,
+          totalBonosBase: existing.totalBonosBase,
+          utilidadPct: existing.utilidadPct,
+          factorUtilidad: existing.factorUtilidad,
+          totalBonosFinal: existing.totalBonosFinal,
+          generadoAt: existing.generadoAt
+        }
+      : { exists: false },
+    utilidad: parametro
+      ? { loaded: true, utilidadPct: parametro.utilidadPct, factorUtilidad: utilidadFactor }
+      : { loaded: false }
   };
 }
 
 const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) => {
   const detail = data.detalleJson;
   const cumplimientoRows = detail.cumplimientoDetalle
+    .filter((row) => row.hasTickets ?? row.tickets > 0)
     .map((row) => `
       <tr>
         <td>${escapeHtml(row.semana)}</td>
@@ -315,10 +383,10 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
     ? detail.tardanzasDetalle.map((row) => `
       <tr>
         <td>${escapeHtml(row.fecha)}</td>
-        <td>${escapeHtml(row.turno)} - ${escapeHtml(row.hora)} (+${row.minutos} min)</td>
+        <td>${row.esTardanza ? '<span class="late-icon">●</span> ' : ''}${escapeHtml(row.turno)} - ${escapeHtml(row.hora)} (+${row.minutos} min)</td>
       </tr>
     `).join('')
-    : '<tr><td colspan="2">Sin tardanzas registradas</td></tr>';
+    : '<tr><td colspan="2">Sin llegadas fuera de puntualidad estricta registradas</td></tr>';
   const sinMarcaRows = detail.sinMarcaDetalle.length > 0
     ? detail.sinMarcaDetalle.map((row) => `
       <tr>
@@ -359,6 +427,7 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
     tr:nth-child(even){background:#f5f9ff;}
     .ok{color:#375623;font-weight:bold;}
     .warn{color:#843C0C;font-weight:bold;}
+    .late-icon{color:#C00000;font-weight:bold;}
     .total-row{background:#E2EFDA;font-weight:bold;font-size:14px;}
     .indicator-row{color:#555;font-style:italic;font-size:12px;}
     .ref-table th,.ref-table td{font-size:12px;padding:5px 8px;}
@@ -375,8 +444,11 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
     <tr><td>Bono Experiencia (${pct(data.expPct)})</td><td>Antigüedad ${detail.antiguedad} años - ${escapeHtml(detail.tipo)}</td><td class="num" style="text-align:right">${money(data.bonoExperiencia)}</td></tr>
     <tr><td>Horas Extras</td><td>${data.horasExtras.toFixed(1)} hs x ${money(data.valorHora)}/h</td><td class="num" style="text-align:right">${money(data.bonoDesarrollo)}</td></tr>
     <tr><td>Bono Compromiso (${pct(data.kpiPct)})</td><td>TPE + TAP + IEA</td><td class="num" style="text-align:right">${money(data.bonoKpi)}</td></tr>
+    ${detail.bonoCargo > 0 ? `<tr><td>Bono Cargo (${pct(detail.cargoPct)})</td><td>${escapeHtml(detail.cargo || '')}</td><td class="num" style="text-align:right">${money(detail.bonoCargo)}</td></tr>` : ''}
     <tr><td>Bono Cumplimiento</td><td>${detail.cumplimientoDetalle.filter((row) => row.bono > 0).length}/${detail.cumplimientoDetalle.length} semanas calificadas</td><td class="num" style="text-align:right">${money(data.bonoCumplimiento)}</td></tr>
-    <tr class="total-row"><td colspan="2"><strong>TOTAL BONOS ${escapeHtml(monthLabel(data.mesAnio))}</strong></td><td class="num" style="text-align:right"><strong>${money(data.totalBono)}</strong></td></tr>
+    <tr><td>Total base</td><td>Antes de aplicar utilidad</td><td class="num" style="text-align:right">${money(data.totalBonoBase)}</td></tr>
+    <tr><td>Factor utilidad</td><td>Utilidad mes anterior ${data.utilidadPct.toFixed(2)}% x ${(data.factorUtilidad * 100).toFixed(0)}%</td><td class="num" style="text-align:right">${money(data.totalBonoFinal - data.totalBonoBase)}</td></tr>
+    <tr class="total-row"><td colspan="2"><strong>TOTAL A PAGAR ${escapeHtml(monthLabel(data.mesAnio))}</strong></td><td class="num" style="text-align:right"><strong>${money(data.totalBonoFinal)}</strong></td></tr>
   </table>
 
   <h3>KPIs de Compromiso</h3>
@@ -395,7 +467,7 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
     ${cumplimientoRows}
   </table>
 
-  <h3>Detalle de Tardanzas</h3>
+  <h3>Detalle de Llegadas fuera de Puntualidad Estricta</h3>
   <table>
     <tr><th>Día</th><th>Turno / Hora ingreso</th></tr>
     ${tardanzasRows}
@@ -430,9 +502,9 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
 
   <h3>Tabla de Referencia - Bono Compromiso</h3>
   <table class="ref-table">
-    <tr><th>KPI</th><th>Mayor o igual 90%</th><th>Mayor o igual 80%</th><th>Menor 80%</th></tr>
-    <tr><td>TPE / TAP</td><td class="num" style="text-align:right">3.33%</td><td class="num" style="text-align:right">1.66%</td><td class="num" style="text-align:right">0%</td></tr>
-    <tr><td>IEA</td><td class="num" style="text-align:right">3.33% desde 50%</td><td class="num" style="text-align:right">1.66% desde 40%</td><td class="num" style="text-align:right">0%</td></tr>
+    <tr><th>KPI</th><th>Máximo</th><th>Tramo medio</th><th>Tramo inicial</th></tr>
+    <tr><td>TPE / TAP</td><td class="num" style="text-align:right">6% si es 100%</td><td class="num" style="text-align:right">3.33% desde 90%</td><td class="num" style="text-align:right">1.66% desde 80%</td></tr>
+    <tr><td>IEA</td><td class="num" style="text-align:right">3% desde 50%</td><td class="num" style="text-align:right">1.5% desde 40%</td><td class="num" style="text-align:right">0% menor 40%</td></tr>
   </table>
 
   <h3>Tabla de Referencia - Bono Cumplimiento</h3>
@@ -454,7 +526,7 @@ const buildEmployeeHtml = (data: CalculoEmpleadoResult & { mesAnio: string }) =>
     <tr><td>Sin Marcar</td><td>Entradas/salidas sin registro</td><td>Se toleran 2 olvidos mensuales; desde el tercero equivalen a tardanza.</td></tr>
     <tr><td>B. Experiencia</td><td>Sueldo Neto x porcentaje por antigüedad</td><td>Según tipo Desarrollo u otros.</td></tr>
     <tr><td>Horas Extras</td><td>Horas extras x (Sueldo Neto / 90)</td><td>90 = horas mensuales de referencia.</td></tr>
-    <tr><td>B. Compromiso</td><td>Sueldo Neto x (bTPE + bTAP + bIEA)</td><td>Máximo 9.99%.</td></tr>
+    <tr><td>B. Compromiso</td><td>Sueldo Neto x (bTPE + bTAP + bIEA)</td><td>Máximo 15%.</td></tr>
     <tr><td>B. Cumplimiento</td><td>(Sueldo Neto / semanas) x porcentaje semanal</td><td>Mínimo 4 tickets, o 3 si la semana tiene feriado.</td></tr>
   </table>
 
@@ -509,13 +581,15 @@ const htmlBody = (html: string) => {
   return match ? match[1].trim() : html;
 };
 
-const generateResumenHtml = (mesAnio: string, results: CalculoEmpleadoResult[], totalBonos: number) => {
+const generateResumenHtml = (mesAnio: string, results: CalculoEmpleadoResult[], totalBonosBase: number, totalBonosFinal: number, utilidadPct: number, factor: number) => {
   const totals = {
     sueldo: results.reduce((sum, row) => sum + row.sueldoNeto, 0),
     exp: results.reduce((sum, row) => sum + row.bonoExperiencia, 0),
     compromiso: results.reduce((sum, row) => sum + row.bonoKpi, 0),
+    cargo: results.reduce((sum, row) => sum + row.bonoCargo, 0),
     horas: results.reduce((sum, row) => sum + row.bonoDesarrollo, 0),
-    cumplimiento: results.reduce((sum, row) => sum + row.bonoCumplimiento, 0)
+    cumplimiento: results.reduce((sum, row) => sum + row.bonoCumplimiento, 0),
+    final: results.reduce((sum, row) => sum + row.totalBonoFinal, 0)
   };
   const resumenRows = results.map((row) => `
     <tr>
@@ -525,9 +599,11 @@ const generateResumenHtml = (mesAnio: string, results: CalculoEmpleadoResult[], 
       <td class="num">${money(row.sueldoNeto)}</td>
       <td class="num">${money(row.bonoExperiencia)}</td>
       <td class="num">${money(row.bonoKpi)}</td>
+      <td class="num">${money(row.bonoCargo)}</td>
       <td class="num">${money(row.bonoDesarrollo)}</td>
       <td class="num">${money(row.bonoCumplimiento)}</td>
-      <td class="num"><strong>${money(row.totalBono)}</strong></td>
+      <td class="num">${money(row.totalBonoBase)}</td>
+      <td class="num"><strong>${money(row.totalBonoFinal)}</strong></td>
     </tr>
   `).join('');
   const employees = results.map((row) => `<section class="employee-page">${htmlBody(row.htmlResumen)}</section>`).join('\n');
@@ -535,7 +611,7 @@ const generateResumenHtml = (mesAnio: string, results: CalculoEmpleadoResult[], 
     `Resumen de Bonos - ${monthLabel(mesAnio)}`,
     `<section class="page">
       <h1>Resumen de Bonos - ${escapeHtml(monthLabel(mesAnio))}</h1>
-      <p class="meta">Total empleados: ${results.length} · Total bonos: ${money(totalBonos)} · Generado: ${new Date().toLocaleString('es-AR')}</p>
+      <p class="meta">Total empleados: ${results.length} · Total base: ${money(totalBonosBase)} · Utilidad mes anterior: ${utilidadPct.toFixed(2)}% · Factor: ${(factor * 100).toFixed(0)}% · Total a pagar: ${money(totalBonosFinal)} · Generado: ${new Date().toLocaleString('es-AR')}</p>
       <table>
         <tr>
           <th>Empleado</th>
@@ -544,9 +620,11 @@ const generateResumenHtml = (mesAnio: string, results: CalculoEmpleadoResult[], 
           <th class="num">Sueldo</th>
           <th class="num">Bono Exp.</th>
           <th class="num">Bono Compr.</th>
+          <th class="num">Bono Cargo</th>
           <th class="num">Horas Extras</th>
           <th class="num">Bono Cumpl.</th>
-          <th class="num">TOTAL BONO</th>
+          <th class="num">Total base</th>
+          <th class="num">Total a pagar</th>
         </tr>
         ${resumenRows}
         <tr class="total-row">
@@ -556,9 +634,11 @@ const generateResumenHtml = (mesAnio: string, results: CalculoEmpleadoResult[], 
           <td class="num">${money(totals.sueldo)}</td>
           <td class="num">${money(totals.exp)}</td>
           <td class="num">${money(totals.compromiso)}</td>
+          <td class="num">${money(totals.cargo)}</td>
           <td class="num">${money(totals.horas)}</td>
           <td class="num">${money(totals.cumplimiento)}</td>
-          <td class="num">${money(totalBonos)}</td>
+          <td class="num">${money(totalBonosBase)}</td>
+          <td class="num">${money(totals.final)}</td>
         </tr>
       </table>
     </section>
@@ -566,13 +646,15 @@ const generateResumenHtml = (mesAnio: string, results: CalculoEmpleadoResult[], 
   );
 };
 
-const generateContadoraHtml = (mesAnio: string, results: CalculoEmpleadoResult[]) => {
-  const totalBonos = results.reduce((sum, row) => sum + row.totalBono, 0);
+const generateContadoraHtml = (mesAnio: string, results: CalculoEmpleadoResult[], utilidadPct: number, factor: number) => {
+  const totalBonosBase = results.reduce((sum, row) => sum + row.totalBonoBase, 0);
+  const totalBonosFinal = results.reduce((sum, row) => sum + row.totalBonoFinal, 0);
   const totalLicencias = results.reduce((sum, row) => sum + row.detalleJson.licenciasDias, 0);
   const rows = results.map((row) => `
     <tr>
       <td>${escapeHtml(row.empleadoNombre)}</td>
-      <td class="num">${money(row.totalBono)}</td>
+      <td class="num">${money(row.totalBonoBase)}</td>
+      <td class="num">${money(row.totalBonoFinal)}</td>
       <td>SI</td>
       <td class="num">${row.detalleJson.licenciasDias}</td>
     </tr>
@@ -581,18 +663,20 @@ const generateContadoraHtml = (mesAnio: string, results: CalculoEmpleadoResult[]
     `Planilla Contadora - ${monthLabel(mesAnio)}`,
     `<section class="page">
       <h1>Planilla Contadora - ${escapeHtml(monthLabel(mesAnio))}</h1>
-      <p class="meta">Generado: ${new Date().toLocaleString('es-AR')}</p>
+      <p class="meta">Utilidad mes anterior: ${utilidadPct.toFixed(2)}% · Factor: ${(factor * 100).toFixed(0)}% · Generado: ${new Date().toLocaleString('es-AR')}</p>
       <table>
         <tr>
           <th>Empleado</th>
-          <th class="num">Bono Adicional</th>
+          <th class="num">Bono base</th>
+          <th class="num">Bono a pagar</th>
           <th>Presentismo</th>
           <th class="num">Licencias</th>
         </tr>
         ${rows}
         <tr class="total-row">
           <td>TOTAL</td>
-          <td class="num">${money(totalBonos)}</td>
+          <td class="num">${money(totalBonosBase)}</td>
+          <td class="num">${money(totalBonosFinal)}</td>
           <td></td>
           <td class="num">${totalLicencias}</td>
         </tr>
@@ -601,13 +685,13 @@ const generateContadoraHtml = (mesAnio: string, results: CalculoEmpleadoResult[]
   );
 };
 
-const generateAndUploadReports = async (mesAnio: string, results: CalculoEmpleadoResult[], totalBonos: number): Promise<ReportLinks> => {
+const generateAndUploadReports = async (mesAnio: string, results: CalculoEmpleadoResult[], totalBonosBase: number, totalBonosFinal: number, utilidadPct: number, factor: number): Promise<ReportLinks> => {
   const base = `bonos/${mesAnio}`;
   const resumenSubpath = `${base}/Resumen_Bonos_${mesAnio}.html`;
   const planillaSubpath = `${base}/Planilla_Contadora_${mesAnio}.html`;
 
-  const resumenHtml = generateResumenHtml(mesAnio, results, totalBonos);
-  const contadoraHtml = generateContadoraHtml(mesAnio, results);
+  const resumenHtml = generateResumenHtml(mesAnio, results, totalBonosBase, totalBonosFinal, utilidadPct, factor);
+  const contadoraHtml = generateContadoraHtml(mesAnio, results, utilidadPct, factor);
 
   await putObject(buildKey(resumenSubpath), resumenHtml, 'text/html; charset=utf-8');
   await putObject(buildKey(planillaSubpath), contadoraHtml, 'text/html; charset=utf-8');
@@ -644,9 +728,16 @@ export async function calcularBonos(
     (error as Error & { status?: number }).status = 409;
     throw error;
   }
+  if (!validation.utilidad.loaded || validation.utilidad.utilidadPct === undefined) {
+    const error = new Error(`Falta % utilidad mes anterior (${mesAnio})`);
+    (error as Error & { status?: number }).status = 400;
+    throw error;
+  }
 
   const { year, month } = parseMesAnio(mesAnio);
   const recibosMesAnio = validation.recibosMesAnio;
+  const utilidadPct = validation.utilidad.utilidadPct;
+  const factor = factorUtilidad(utilidadPct);
   const periodEnd = monthEnd(year, month);
   const monthStart = new Date(Date.UTC(year, month - 1, 1));
 
@@ -750,6 +841,8 @@ export async function calcularBonos(
       const antiguedad = yearsOfService(emp.hireDate, periodEnd);
       const expPct = experienciaPct(tipo, antiguedad);
       const bonoExperiencia = Math.round(sueldo * expPct);
+      const cargoPct = cargoBonusPct(emp.position);
+      const bonoCargo = Math.round(sueldo * cargoPct);
 
       const licenciaSet = licenciasByEmpleado.get(emp.id) ?? new Set<string>();
       const clock = horariosByName.get(normalize(emp.firstName)) ?? new Map();
@@ -772,13 +865,15 @@ export async function calcularBonos(
         const ao = marks.afternoon?.horaSalida ?? null;
         const miM = timeToMin(mi);
         const aiM = timeToMin(ai);
-        if (miM !== null && miM > 8 * 60 + 10) {
-          tardanzas++;
-          tardanzasDetalle.push({ fecha: displayDate(d), turno: 'Mañana', hora: mi, minutos: miM - 8 * 60 });
+        const llegadaManana = puntualidadIngreso(mi, 8 * 60);
+        if (llegadaManana) {
+          if (llegadaManana.esTardanza) tardanzas++;
+          tardanzasDetalle.push({ fecha: displayDate(d), turno: 'Mañana', ...llegadaManana });
         }
-        if (aiM !== null && aiM > 14 * 60 + 10) {
-          tardanzas++;
-          tardanzasDetalle.push({ fecha: displayDate(d), turno: 'Tarde', hora: ai, minutos: aiM - 14 * 60 });
+        const llegadaTarde = puntualidadIngreso(ai, 14 * 60);
+        if (llegadaTarde) {
+          if (llegadaTarde.esTardanza) tardanzas++;
+          tardanzasDetalle.push({ fecha: displayDate(d), turno: 'Tarde', ...llegadaTarde });
         }
         for (const item of [
           { label: 'Mañana entrada', value: mi },
@@ -831,15 +926,17 @@ export async function calcularBonos(
         const min = week.hasFeriado ? 3 : 4;
         const bonoSemana = ticketsDone < min ? 0 : (sueldo / weeks.length) * (pct >= 0.9 ? 0.1 : pct >= 0.8 ? 0.05 : 0);
         bonoCumplimiento += bonoSemana;
-        return { semana: week.label, tickets: ticketsDone, min, pct, bono: Math.round(bonoSemana) };
+        return { semana: week.label, tickets: ticketsDone, min, pct, bono: Math.round(bonoSemana), hasTickets: Boolean(row) };
       });
       bonoCumplimiento = Math.round(bonoCumplimiento);
 
-      const totalBono = bonoExperiencia + bonoKpi + bonoDesarrollo + bonoCumplimiento;
+      const totalBonoBase = bonoExperiencia + bonoKpi + bonoCargo + bonoDesarrollo + bonoCumplimiento;
+      const totalBonoFinal = Math.round(totalBonoBase * factor);
       const empleadoNombre = `${emp.firstName} ${emp.lastName}`.replace(/\s+/g, ' ').trim();
       const detail = {
         empleado: empleadoNombre,
         tipo,
+        cargo: emp.position,
         area: emp.Area?.name,
         antiguedad,
         sueldoNeto: sueldo,
@@ -858,6 +955,16 @@ export async function calcularBonos(
         kpiPct,
         horasExtras,
         valorHora,
+        bonoCargo,
+        cargoPct,
+        bonoExperiencia,
+        bonoKpi,
+        bonoDesarrollo,
+        bonoCumplimiento,
+        totalBonoBase,
+        utilidadPct,
+        factorUtilidad: factor,
+        totalBonoFinal,
         cumplimientoDetalle,
         tardanzasDetalle,
         sinMarcaDetalle,
@@ -876,9 +983,14 @@ export async function calcularBonos(
         bonoKpi,
         horasExtras,
         valorHora,
+        bonoCargo,
         bonoDesarrollo,
         bonoCumplimiento,
-        totalBono,
+        totalBono: totalBonoFinal,
+        totalBonoBase,
+        utilidadPct,
+        factorUtilidad: factor,
+        totalBonoFinal,
         htmlResumen: '',
         detalleJson: detail
       };
@@ -886,10 +998,11 @@ export async function calcularBonos(
       return result;
     });
 
-  const totalBonos = results.reduce((sum, r) => sum + r.totalBono, 0);
+  const totalBonosBase = results.reduce((sum, r) => sum + r.totalBonoBase, 0);
+  const totalBonosFinal = results.reduce((sum, r) => sum + r.totalBonoFinal, 0);
   const calculoId = randomUUID();
   const missingRecibos = employees.filter((e) => !recibosByEmpleado.has(e.id)).map((e) => `${e.firstName} ${e.lastName}`.replace(/\s+/g, ' ').trim());
-  const reportLinks = await generateAndUploadReports(mesAnio, results, totalBonos);
+  const reportLinks = await generateAndUploadReports(mesAnio, results, totalBonosBase, totalBonosFinal, utilidadPct, factor);
 
   await prisma.$transaction(async (tx) => {
     await tx.bonos_calculos.deleteMany({ where: { mesAnio } });
@@ -899,7 +1012,11 @@ export async function calcularBonos(
         mesAnio,
         estado: 'CALCULADO',
         totalEmpleados: results.length,
-        totalBonos,
+        totalBonos: totalBonosFinal,
+        totalBonosBase,
+        utilidadPct,
+        factorUtilidad: factor,
+        totalBonosFinal,
         resumenPdfPath: reportLinks.resumenPdfPath,
         planillaExcelPath: reportLinks.planillaExcelPath,
         generadoPor,
@@ -908,8 +1025,12 @@ export async function calcularBonos(
           recibosMesAnio,
           diasHabiles: diasHabiles.length,
           empleadosSinRecibo: missingRecibos,
+          utilidadPct,
+          factorUtilidad: factor,
+          totalBonosBase,
+          totalBonosFinal,
           reportes: reportLinks,
-          generatedByVersion: 1
+          generatedByVersion: 2
         },
         empleados: {
           create: results.map((r) => ({
@@ -926,6 +1047,10 @@ export async function calcularBonos(
             bonoDesarrollo: r.bonoDesarrollo,
             bonoCumplimiento: r.bonoCumplimiento,
             totalBono: r.totalBono,
+            totalBonoBase: r.totalBonoBase,
+            utilidadPct: r.utilidadPct,
+            factorUtilidad: r.factorUtilidad,
+            totalBonoFinal: r.totalBonoFinal,
             htmlResumen: r.htmlResumen,
             detalleJson: r.detalleJson
           }))
@@ -939,7 +1064,11 @@ export async function calcularBonos(
     mesAnio,
     recibosMesAnio,
     totalEmpleados: results.length,
-    totalBonos,
+    totalBonos: totalBonosFinal,
+    totalBonosBase,
+    utilidadPct,
+    factorUtilidad: factor,
+    totalBonosFinal,
     reportes: reportLinks,
     empleadosSinRecibo: missingRecibos,
     empleados: results.sort((a, b) => b.totalBono - a.totalBono)

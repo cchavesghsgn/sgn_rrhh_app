@@ -48,20 +48,21 @@ model Session {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model User {
-  id            String     @id
-  email         String     @unique
-  password      String
-  name          String?
-  emailVerified DateTime?
-  image         String?
-  role          UserRole   @default(EMPLOYEE)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime
-  Account       Account[]
-  Session       Session[]
-  employees     employees?
-  bonosUploads  bonos_uploads[]
-  bonosCalculos bonos_calculos[]
+  id              String                       @id
+  email           String                       @unique
+  password        String
+  name            String?
+  emailVerified   DateTime?
+  image           String?
+  role            UserRole                     @default(EMPLOYEE)
+  createdAt       DateTime                     @default(now())
+  updatedAt       DateTime
+  Account         Account[]
+  Session         Session[]
+  employees       employees?
+  bonosUploads    bonos_uploads[]
+  bonosCalculos   bonos_calculos[]
+  bonosParametros bonos_parametros_mensuales[]
 }
 
 model VerificationToken {
@@ -106,9 +107,9 @@ model employee_documents {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model employees {
-  id                  String               @id
-  userId              String               @unique
-  dni                 String               @unique
+  id                  String                    @id
+  userId              String                    @unique
+  dni                 String                    @unique
   firstName           String
   lastName            String
   birthDate           DateTime
@@ -117,21 +118,21 @@ model employees {
   position            String
   phone               String?
   photo               String?
-  vacationDays        Int                  @default(20)
-  personalHours       Int                  @default(96)
-  remoteHours         Int                  @default(96)
-  availableHours      Int                  @default(16)
-  totalVacationDays   Int                  @default(20)
-  totalPersonalHours  Int                  @default(96)
-  totalRemoteHours    Int                  @default(96)
-  totalAvailableHours Int                  @default(16)
-  createdAt           DateTime             @default(now())
+  vacationDays        Int                       @default(20)
+  personalHours       Int                       @default(96)
+  remoteHours         Int                       @default(96)
+  availableHours      Int                       @default(16)
+  totalVacationDays   Int                       @default(20)
+  totalPersonalHours  Int                       @default(96)
+  totalRemoteHours    Int                       @default(96)
+  totalAvailableHours Int                       @default(16)
+  createdAt           DateTime                  @default(now())
   updatedAt           DateTime
   employee_documents  employee_documents[]
   bonos_recibos       bonos_recibos_sueldo[]
   bonos_calculos      bonos_calculo_empleados[]
-  Area                Area                 @relation(fields: [areaId], references: [id])
-  User                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Area                Area                      @relation(fields: [areaId], references: [id])
+  User                User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
   leave_requests      leave_requests[]
 }
 
@@ -189,20 +190,20 @@ enum BonosArchivoTipo {
 }
 
 model bonos_uploads {
-  id           String            @id
-  mesAnio      String            @db.Char(7)
+  id           String                 @id
+  mesAnio      String                 @db.Char(7)
   tipoArchivo  BonosArchivoTipo
-  fileName     String            @db.VarChar(500)
-  fileHash     String?           @db.VarChar(64)
-  recordsCount Int               @default(0)
+  fileName     String                 @db.VarChar(500)
+  fileHash     String?                @db.VarChar(64)
+  recordsCount Int                    @default(0)
   loadedBy     String
-  loadedAt     DateTime          @default(now())
+  loadedAt     DateTime               @default(now())
   updatedAt    DateTime
   horarios     bonos_horarios[]
   tickets      bonos_tickets_horas[]
   feriados     bonos_feriados[]
   recibos      bonos_recibos_sueldo[]
-  User         User              @relation(fields: [loadedBy], references: [id], onDelete: Restrict)
+  User         User                   @relation(fields: [loadedBy], references: [id], onDelete: Restrict)
 
   @@unique([mesAnio, tipoArchivo])
   @@index([mesAnio])
@@ -229,28 +230,28 @@ model bonos_horarios {
 }
 
 model bonos_tickets_horas {
-  id                    String        @id
-  uploadId              String
-  mesAnio               String        @db.Char(7)
-  semana                String?       @db.VarChar(50)
-  responsableRaw        String        @db.VarChar(255)
-  responsableNormApe    String        @db.VarChar(255)
-  cumplimientoTickets   Int?
-  cumplimientoTotal     Int?
-  cumplimientoPct       Float?
-  calidadTickets        Int?
-  calidadTotal          Int?
-  calidadPct            Float?
-  horasConTicket        Float?
-  horasSinTicket        Float?
-  horasInternas         Float?
-  horasNoLaborales      Float?
-  horasExtras           Float
-  horasTotales          Float?
-  fechaCargaHoras       DateTime?
-  rowNumber             Int
-  createdAt             DateTime      @default(now())
-  bonos_uploads         bonos_uploads @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  id                  String        @id
+  uploadId            String
+  mesAnio             String        @db.Char(7)
+  semana              String?       @db.VarChar(50)
+  responsableRaw      String        @db.VarChar(255)
+  responsableNormApe  String        @db.VarChar(255)
+  cumplimientoTickets Int?
+  cumplimientoTotal   Int?
+  cumplimientoPct     Float?
+  calidadTickets      Int?
+  calidadTotal        Int?
+  calidadPct          Float?
+  horasConTicket      Float?
+  horasSinTicket      Float?
+  horasInternas       Float?
+  horasNoLaborales    Float?
+  horasExtras         Float
+  horasTotales        Float?
+  fechaCargaHoras     DateTime?
+  rowNumber           Int
+  createdAt           DateTime      @default(now())
+  bonos_uploads       bonos_uploads @relation(fields: [uploadId], references: [id], onDelete: Cascade)
 
   @@index([mesAnio])
   @@index([responsableNormApe])
@@ -291,45 +292,66 @@ model bonos_recibos_sueldo {
   @@index([mesAnio])
 }
 
+model bonos_parametros_mensuales {
+  id          String   @id
+  mesAnio     String   @unique @db.Char(7)
+  utilidadPct Float    @default(0)
+  updatedBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  User        User     @relation(fields: [updatedBy], references: [id], onDelete: Restrict)
+
+  @@index([mesAnio])
+  @@index([updatedBy])
+}
+
 model bonos_calculos {
-  id                    String                    @id
-  mesAnio               String                    @unique @db.Char(7)
-  estado                String                    @default("CALCULADO") @db.VarChar(50)
-  totalEmpleados        Int                       @default(0)
-  totalBonos            Int                       @default(0)
-  resumenPdfPath        String?                   @db.VarChar(1000)
-  planillaExcelPath     String?                   @db.VarChar(1000)
-  detalleJson           Json?
-  generadoPor           String
-  generadoAt            DateTime                  @default(now())
-  updatedAt             DateTime
-  User                  User                      @relation(fields: [generadoPor], references: [id], onDelete: Restrict)
-  empleados             bonos_calculo_empleados[]
+  id                String                    @id
+  mesAnio           String                    @unique @db.Char(7)
+  estado            String                    @default("CALCULADO") @db.VarChar(50)
+  totalEmpleados    Int                       @default(0)
+  totalBonos        Int                       @default(0)
+  totalBonosBase    Int                       @default(0)
+  utilidadPct       Float                     @default(0)
+  factorUtilidad    Float                     @default(0)
+  totalBonosFinal   Int                       @default(0)
+  resumenPdfPath    String?                   @db.VarChar(1000)
+  planillaExcelPath String?                   @db.VarChar(1000)
+  detalleJson       Json?
+  generadoPor       String
+  generadoAt        DateTime                  @default(now())
+  updatedAt         DateTime
+  User              User                      @relation(fields: [generadoPor], references: [id], onDelete: Restrict)
+  empleados         bonos_calculo_empleados[]
 
   @@index([mesAnio])
   @@index([generadoPor])
 }
 
 model bonos_calculo_empleados {
-  id                 String          @id
-  calculoId          String
-  empleadoId         String
-  mesAnio            String          @db.Char(7)
-  sueldoNeto         Int             @default(0)
-  expPct             Float           @default(0)
-  bonoExperiencia    Int             @default(0)
-  kpiPct             Float           @default(0)
-  bonoKpi            Int             @default(0)
-  horasExtras        Float           @default(0)
-  valorHora          Float           @default(0)
-  bonoDesarrollo     Int             @default(0)
-  bonoCumplimiento   Int             @default(0)
-  totalBono          Int             @default(0)
-  htmlResumen        String          @db.Text
-  detalleJson        Json?
-  generadoAt         DateTime        @default(now())
-  bonos_calculos     bonos_calculos  @relation(fields: [calculoId], references: [id], onDelete: Cascade)
-  employees          employees       @relation(fields: [empleadoId], references: [id], onDelete: Cascade)
+  id               String         @id
+  calculoId        String
+  empleadoId       String
+  mesAnio          String         @db.Char(7)
+  sueldoNeto       Int            @default(0)
+  expPct           Float          @default(0)
+  bonoExperiencia  Int            @default(0)
+  kpiPct           Float          @default(0)
+  bonoKpi          Int            @default(0)
+  horasExtras      Float          @default(0)
+  valorHora        Float          @default(0)
+  bonoDesarrollo   Int            @default(0)
+  bonoCumplimiento Int            @default(0)
+  totalBono        Int            @default(0)
+  totalBonoBase    Int            @default(0)
+  utilidadPct      Float          @default(0)
+  factorUtilidad   Float          @default(0)
+  totalBonoFinal   Int            @default(0)
+  htmlResumen      String         @db.Text
+  detalleJson      Json?
+  generadoAt       DateTime       @default(now())
+  bonos_calculos   bonos_calculos @relation(fields: [calculoId], references: [id], onDelete: Cascade)
+  employees        employees      @relation(fields: [empleadoId], references: [id], onDelete: Cascade)
 
   @@unique([empleadoId, mesAnio])
   @@index([calculoId])

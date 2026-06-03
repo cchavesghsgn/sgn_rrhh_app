@@ -6,6 +6,15 @@ import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from './ui/dialog';
 import { 
   Calendar,
   Clock,
@@ -17,18 +26,44 @@ import {
   Phone,
   MapPin,
   Mail,
-  Building2
+  Building2,
+  BadgeDollarSign
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Employee, LeaveRequest, LEAVE_REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS, DAY_SHIFT_LABELS } from '../lib/types';
 import { formatAvailableTime, getTimeBreakdown, formatYearsOfService, formatHoursOfTotalDays } from '../lib/time-utils';
 
+type EmployeeBonusSummary = {
+  mesAnio: string;
+  bono: {
+    id: string;
+    estado: string;
+    generadoAt: string;
+    sueldoNeto: number;
+    bonoExperiencia: number;
+    bonoCompromiso: number;
+    bonoCargo: number;
+    bonoHorasExtras: number;
+    bonoCumplimiento: number;
+    totalBonoBase: number;
+    utilidadPct: number;
+    factorUtilidad: number;
+    totalBonoFinal: number;
+    htmlPath: string;
+  } | null;
+};
+
 export default function EmployeeDashboard() {
   const { data: session } = useSession();
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [recentRequests, setRecentRequests] = useState<LeaveRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [bonosOpen, setBonosOpen] = useState(false);
+  const [selectedBonosMonth, setSelectedBonosMonth] = useState(() => new Date().toISOString().slice(0, 7));
+  const [bonusSummary, setBonusSummary] = useState<EmployeeBonusSummary | null>(null);
+  const [bonusLoading, setBonusLoading] = useState(false);
+  const [bonusError, setBonusError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchEmployeeData = async () => {
@@ -59,6 +94,31 @@ export default function EmployeeDashboard() {
     }
   }, [session]);
 
+  useEffect(() => {
+    if (!bonosOpen || !session?.user || !selectedBonosMonth) return;
+
+    const fetchBonusSummary = async () => {
+      setBonusLoading(true);
+      setBonusError(null);
+
+      try {
+        const res = await fetch(`/api/bonos/mis-bonos?mes=${selectedBonosMonth}`);
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'No se pudo consultar el resumen de bonos.');
+        }
+        setBonusSummary(data);
+      } catch (error) {
+        setBonusSummary(null);
+        setBonusError(error instanceof Error ? error.message : 'Error inesperado consultando bonos.');
+      } finally {
+        setBonusLoading(false);
+      }
+    };
+
+    fetchBonusSummary();
+  }, [bonosOpen, selectedBonosMonth, session]);
+
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('es-ES', {
       year: 'numeric',
@@ -74,6 +134,12 @@ export default function EmployeeDashboard() {
       default: return 'pending';
     }
   };
+
+  const formatMoney = (value: number) =>
+    new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value || 0);
+
+  const formatPercent = (value: number) =>
+    `${(value || 0).toLocaleString('es-AR', { maximumFractionDigits: 2 })}%`;
 
   // Formatear información adicional de la solicitud (período/horas)
   const formatRequestDetails = (request: LeaveRequest) => {
@@ -336,10 +402,91 @@ export default function EmployeeDashboard() {
               Mi Perfil
             </Button>
 
-            <Button variant="outline" className="w-full h-16 flex-col gap-2" disabled>
-              <Calendar className="h-6 w-6" />
-              Calendario
-            </Button>
+            <Dialog open={bonosOpen} onOpenChange={setBonosOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full h-16 flex-col gap-2">
+                  <BadgeDollarSign className="h-6 w-6" />
+                  Bonos
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-xl">
+                <DialogHeader>
+                  <DialogTitle>Bonos</DialogTitle>
+                  <DialogDescription>
+                    Selecciona el mes-año para consultar tu resumen de bonos.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label htmlFor="employee-bonos-month" className="text-sm font-medium text-sgn-dark">
+                      Mes - Año
+                    </label>
+                    <Input
+                      id="employee-bonos-month"
+                      type="month"
+                      value={selectedBonosMonth}
+                      onChange={(e) => setSelectedBonosMonth(e.target.value)}
+                    />
+                  </div>
+
+                  {bonusLoading ? (
+                    <div className="rounded-md border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
+                      Consultando resumen...
+                    </div>
+                  ) : bonusError ? (
+                    <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                      {bonusError}
+                    </div>
+                  ) : bonusSummary?.bono ? (
+                    <div className="rounded-md border border-gray-200 bg-gray-50 p-4 space-y-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-medium text-sgn-dark">Resumen {bonusSummary.mesAnio}</p>
+                          <p className="text-xs text-gray-600">
+                            Generado: {new Date(bonusSummary.bono.generadoAt).toLocaleString('es-AR')}
+                          </p>
+                        </div>
+                        <Badge variant="approved">{bonusSummary.bono.estado}</Badge>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-gray-600">Base</p>
+                          <p className="font-medium">{formatMoney(bonusSummary.bono.totalBonoBase)}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600">A pagar</p>
+                          <p className="font-medium">{formatMoney(bonusSummary.bono.totalBonoFinal)}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600">Utilidad</p>
+                          <p className="font-medium">{formatPercent(bonusSummary.bono.utilidadPct)}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600">Factor</p>
+                          <p className="font-medium">{formatPercent(bonusSummary.bono.factorUtilidad * 100)}</p>
+                        </div>
+                      </div>
+
+                      {bonusSummary.bono.htmlPath ? (
+                        <a href={bonusSummary.bono.htmlPath} target="_blank" rel="noopener noreferrer">
+                          <Button type="button" className="w-full">
+                            Ver resumen de bonos
+                          </Button>
+                        </a>
+                      ) : (
+                        <p className="text-sm text-gray-600">El resumen HTML todavía no está disponible.</p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="rounded-md border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
+                      No hay resumen de bonos generado para este mes.
+                    </div>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </CardContent>
       </Card>

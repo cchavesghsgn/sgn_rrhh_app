@@ -52,6 +52,7 @@ export default function AdminDashboard() {
   const [bonosTicketsFile, setBonosTicketsFile] = useState<File | null>(null);
   const [bonosFeriadosFile, setBonosFeriadosFile] = useState<File | null>(null);
   const [bonosRecibosFile, setBonosRecibosFile] = useState<File | null>(null);
+  const [bonosUtilidadPct, setBonosUtilidadPct] = useState('');
   const [bonosLoadingStatus, setBonosLoadingStatus] = useState(false);
   const [bonosSubmitting, setBonosSubmitting] = useState(false);
   const [bonosError, setBonosError] = useState<string | null>(null);
@@ -61,6 +62,7 @@ export default function AdminDashboard() {
     ticketsHoras: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
     feriados: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
     recibos: { loaded: boolean; fileName?: string; rows?: number; loadedAt?: string; loadedBy?: string };
+    utilidad: { loaded: boolean; utilidadPct?: number; updatedAt?: string; updatedBy?: string };
   } | null>(null);
   const [selectedCalculoMonth, setSelectedCalculoMonth] = useState(() => new Date().toISOString().slice(0, 7));
   const [calculoLoading, setCalculoLoading] = useState(false);
@@ -73,12 +75,17 @@ export default function AdminDashboard() {
       recibosMesAnio: string;
       items: Array<{ key: string; label: string; loaded: boolean; rows: number; mesAnio?: string }>;
       existing: { exists: boolean; totalEmpleados?: number; totalBonos?: number; generadoAt?: string };
+      utilidad: { loaded: boolean; utilidadPct?: number; factorUtilidad?: number };
     };
     calculo?: {
       id: string;
       mesAnio: string;
       totalEmpleados: number;
       totalBonos: number;
+      totalBonosBase: number;
+      utilidadPct: number;
+      factorUtilidad: number;
+      totalBonosFinal: number;
       generadoAt: string;
       resumenPdfPath?: string | null;
       planillaExcelPath?: string | null;
@@ -101,6 +108,10 @@ export default function AdminDashboard() {
         bonoDesarrollo: number;
         bonoCumplimiento: number;
         totalBono: number;
+        totalBonoBase: number;
+        utilidadPct: number;
+        factorUtilidad: number;
+        totalBonoFinal: number;
         horasExtras: number;
         htmlPath?: string;
       }>;
@@ -246,6 +257,11 @@ export default function AdminDashboard() {
         throw new Error(data.error || 'No se pudo consultar el estado de cargas.');
       }
       setBonosStatus(data);
+      if (data.utilidad?.loaded && typeof data.utilidad.utilidadPct === 'number') {
+        setBonosUtilidadPct(String(data.utilidad.utilidadPct).replace('.', ','));
+      } else {
+        setBonosUtilidadPct('');
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error inesperado consultando estado.';
       setBonosError(message);
@@ -265,8 +281,8 @@ export default function AdminDashboard() {
       return;
     }
 
-    if (!bonosHorariosFile && !bonosTicketsFile && !bonosFeriadosFile && !bonosRecibosFile) {
-      setBonosError('Debes seleccionar al menos un archivo.');
+    if (!bonosHorariosFile && !bonosTicketsFile && !bonosFeriadosFile && !bonosRecibosFile && !bonosUtilidadPct.trim()) {
+      setBonosError('Debes seleccionar al menos un archivo o informar % utilidad mes anterior.');
       return;
     }
 
@@ -277,6 +293,7 @@ export default function AdminDashboard() {
     try {
       const formData = new FormData();
       formData.append('mes_anio', selectedBonosMonth);
+      if (bonosUtilidadPct.trim()) formData.append('utilidad_mes_anterior', bonosUtilidadPct.trim());
       if (bonosHorariosFile) formData.append('horarios_file', bonosHorariosFile);
       if (bonosTicketsFile) formData.append('tickets_file', bonosTicketsFile);
       if (bonosFeriadosFile) formData.append('feriados_file', bonosFeriadosFile);
@@ -296,6 +313,7 @@ export default function AdminDashboard() {
       if (data.ticketsHoras?.replaced) mensajes.push(`Tickets-Horas: ${data.ticketsHoras.rows} filas`);
       if (data.feriados?.replaced) mensajes.push(`Feriados: ${data.feriados.rows} filas`);
       if (data.recibos?.replaced) mensajes.push(`Recibos: ${data.recibos.rows} empleados`);
+      if (data.utilidad?.saved) mensajes.push(`Utilidad: ${Number(data.utilidad.utilidadPct).toLocaleString('es-AR')}%`);
       setBonosSuccess(`Carga aplicada para ${selectedBonosMonth}. ${mensajes.join(' · ')}`);
       setBonosHorariosFile(null);
       setBonosTicketsFile(null);
@@ -366,6 +384,8 @@ export default function AdminDashboard() {
     new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value || 0);
 
   const formatPct = (value: number) => `${((value || 0) * 100).toFixed(2)}%`;
+  const formatPercentValue = (value: number) => `${(value || 0).toLocaleString('es-AR', { maximumFractionDigits: 2 })}%`;
+  const formatFactor = (value: number) => `${((value || 0) * 100).toFixed(0)}%`;
 
   const metricRatio = (value: number, total: number) => `${value || 0}/${total || 0}`;
 
@@ -375,9 +395,11 @@ export default function AdminDashboard() {
       bonoKpi: acc.bonoKpi + row.bonoKpi,
       bonoDesarrollo: acc.bonoDesarrollo + row.bonoDesarrollo,
       bonoCumplimiento: acc.bonoCumplimiento + row.bonoCumplimiento,
-      totalBono: acc.totalBono + row.totalBono
+      totalBonoBase: acc.totalBonoBase + (row.totalBonoBase ?? row.totalBono),
+      totalBono: acc.totalBono + row.totalBono,
+      totalBonoFinal: acc.totalBonoFinal + (row.totalBonoFinal ?? row.totalBono)
     }),
-    { bonoExperiencia: 0, bonoKpi: 0, bonoDesarrollo: 0, bonoCumplimiento: 0, totalBono: 0 }
+    { bonoExperiencia: 0, bonoKpi: 0, bonoDesarrollo: 0, bonoCumplimiento: 0, totalBonoBase: 0, totalBono: 0, totalBonoFinal: 0 }
   );
 
   const loadCalculoStatus = async (month: string) => {
@@ -423,7 +445,12 @@ export default function AdminDashboard() {
           missing: [],
           recibosMesAnio: data.result.recibosMesAnio,
           items: [],
-          existing: { exists: true, totalEmpleados: data.result.totalEmpleados, totalBonos: data.result.totalBonos }
+          existing: { exists: true, totalEmpleados: data.result.totalEmpleados, totalBonos: data.result.totalBonos },
+          utilidad: {
+            loaded: true,
+            utilidadPct: data.result.utilidadPct,
+            factorUtilidad: data.result.factorUtilidad
+          }
         },
         calculo: data.calculo
       });
@@ -748,6 +775,11 @@ export default function AdminDashboard() {
                             {formatMoney(calculoData.validation.existing.totalBonos || 0)}
                           </p>
                         ) : null}
+                        {calculoData.validation.utilidad.loaded ? (
+                          <p className="text-sm text-gray-700">
+                            Utilidad guardada: {formatPercentValue(calculoData.validation.utilidad.utilidadPct || 0)} · Factor {formatFactor(calculoData.validation.utilidad.factorUtilidad || 0)}
+                          </p>
+                        ) : null}
                         {!calculoData.validation.canCalculate ? (
                           <p className="text-sm text-red-600">
                             Faltan: {calculoData.validation.missing.join(', ')}
@@ -763,7 +795,7 @@ export default function AdminDashboard() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium text-sgn-dark">
-                          Resultado: {calculoData.calculo.totalEmpleados} empleados · {formatMoney(calculoData.calculo.totalBonos)}
+                          Resultado: {calculoData.calculo.totalEmpleados} empleados · Base {formatMoney(calculoData.calculo.totalBonosBase || calculoData.calculo.totalBonos)} · Factor {formatFactor(calculoData.calculo.factorUtilidad || 0)} · A pagar {formatMoney(calculoData.calculo.totalBonosFinal || calculoData.calculo.totalBonos)}
                         </p>
                       </div>
                       <div className="overflow-x-auto rounded-md border">
@@ -777,7 +809,8 @@ export default function AdminDashboard() {
                               <th className="p-2 text-right">Bono Compr.</th>
                               <th className="p-2 text-right">Horas Extras</th>
                               <th className="p-2 text-right">Bono Cumpl.</th>
-                              <th className="p-2 text-right">TOTAL BONO</th>
+                              <th className="p-2 text-right">Base</th>
+                              <th className="p-2 text-right">A pagar</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -790,7 +823,8 @@ export default function AdminDashboard() {
                                 <td className="p-2 text-right">{formatMoney(row.bonoKpi)}</td>
                                 <td className="p-2 text-right">{formatMoney(row.bonoDesarrollo)}</td>
                                 <td className="p-2 text-right">{formatMoney(row.bonoCumplimiento)}</td>
-                                <td className="p-2 text-right font-medium">{formatMoney(row.totalBono)}</td>
+                                <td className="p-2 text-right">{formatMoney(row.totalBonoBase ?? row.totalBono)}</td>
+                                <td className="p-2 text-right font-medium">{formatMoney(row.totalBonoFinal ?? row.totalBono)}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -803,7 +837,8 @@ export default function AdminDashboard() {
                               <td className="p-2 text-right">{formatMoney(calculoTotals?.bonoKpi || 0)}</td>
                               <td className="p-2 text-right">{formatMoney(calculoTotals?.bonoDesarrollo || 0)}</td>
                               <td className="p-2 text-right">{formatMoney(calculoTotals?.bonoCumplimiento || 0)}</td>
-                              <td className="p-2 text-right">{formatMoney(calculoTotals?.totalBono || 0)}</td>
+                              <td className="p-2 text-right">{formatMoney(calculoTotals?.totalBonoBase || 0)}</td>
+                              <td className="p-2 text-right">{formatMoney(calculoTotals?.totalBonoFinal || 0)}</td>
                             </tr>
                           </tfoot>
                         </table>
@@ -860,96 +895,120 @@ export default function AdminDashboard() {
                   Carga Archivos para Bonos
                 </Button>
               </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
+              <DialogContent className="max-h-[90vh] max-w-4xl gap-0 overflow-hidden p-0">
+                <DialogHeader className="px-6 pb-3 pt-6">
                   <DialogTitle>Carga de Archivos de Bonos</DialogTitle>
                   <DialogDescription>
                     Selecciona mes-año, carga Horarios, Calendario Feriados y Recibos Sueldo. Tickets-Horas se sincroniza desde SGN Tickets.
                   </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-3">
-                  <div className="space-y-2">
-                    <label htmlFor="bonos-month-year" className="text-sm font-medium text-sgn-dark">
-                      Mes - Año
-                    </label>
-                    <Input
-                      id="bonos-month-year"
-                      type="month"
-                      value={selectedBonosMonth}
-                      onChange={(e) => setSelectedBonosMonth(e.target.value)}
-                    />
+                <div className="max-h-[calc(90vh-9rem)] overflow-y-auto px-6 pb-4">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <label htmlFor="bonos-month-year" className="text-sm font-medium text-sgn-dark">
+                          Mes - Año
+                        </label>
+                        <Input
+                          id="bonos-month-year"
+                          type="month"
+                          value={selectedBonosMonth}
+                          onChange={(e) => setSelectedBonosMonth(e.target.value)}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label htmlFor="bonos-utilidad-pct" className="text-sm font-medium text-sgn-dark">
+                          % utilidad mes anterior
+                        </label>
+                        <Input
+                          id="bonos-utilidad-pct"
+                          type="text"
+                          inputMode="decimal"
+                          value={bonosUtilidadPct}
+                          onChange={(e) => setBonosUtilidadPct(e.target.value)}
+                          placeholder="Ej: 18,5"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="rounded-md border border-gray-200 bg-gray-50 p-3 space-y-2">
+                      <p className="text-sm font-medium text-sgn-dark">Estado del período</p>
+                      {bonosLoadingStatus ? (
+                        <p className="text-sm text-gray-600">Consultando estado...</p>
+                      ) : (
+                        <>
+                          {renderUploadStatus('Horarios', bonosStatus?.horarios)}
+                          {renderUploadStatus('Tickets-Horas', bonosStatus?.ticketsHoras)}
+                          {renderUploadStatus('Calendario Feriados', bonosStatus?.feriados)}
+                          {renderUploadStatus('Recibos PDF', bonosStatus?.recibos)}
+                          <div className="text-sm text-gray-700">
+                            <span className="font-medium">% utilidad mes anterior:</span>{' '}
+                            {bonosStatus?.utilidad?.loaded
+                              ? `${formatPercentValue(bonosStatus.utilidad.utilidadPct || 0)} · ${bonosStatus.utilidad.updatedAt ? new Date(bonosStatus.utilidad.updatedAt).toLocaleString('es-AR') : '-'} · ${bonosStatus.utilidad.updatedBy || '-'}`
+                              : 'Sin dato cargado'}
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="bonos-horarios-file" className="text-sm font-medium text-sgn-dark">
+                        Horarios (.xlsx o .csv)
+                      </label>
+                      <Input
+                        id="bonos-horarios-file"
+                        type="file"
+                        accept=".xlsx,.csv,text/csv"
+                        onChange={(e) => setBonosHorariosFile(e.target.files?.[0] ?? null)}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="bonos-feriados-file" className="text-sm font-medium text-sgn-dark">
+                        Calendario Feriados (.csv)
+                      </label>
+                      <Input
+                        id="bonos-feriados-file"
+                        type="file"
+                        accept=".csv,text/csv"
+                        onChange={(e) => setBonosFeriadosFile(e.target.files?.[0] ?? null)}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="bonos-recibos-file" className="text-sm font-medium text-sgn-dark">
+                        Recibos Sueldo (.pdf)
+                      </label>
+                      <Input
+                        id="bonos-recibos-file"
+                        type="file"
+                        accept=".pdf,application/pdf"
+                        onChange={(e) => setBonosRecibosFile(e.target.files?.[0] ?? null)}
+                      />
+                    </div>
+
+                    <div className="rounded-md border border-gray-200 p-3 space-y-2">
+                      <p className="text-sm font-medium text-sgn-dark">Tickets-Horas</p>
+                      <p className="text-xs text-gray-600">
+                        Sincroniza el resumen desde SGN Tickets para reemplazar la importación manual del CSV.
+                      </p>
+                      <Button type="button" variant="outline" onClick={handleSyncTicketsApi} disabled={bonosSubmitting}>
+                        {bonosSubmitting ? 'Sincronizando...' : 'Sincronizar desde API'}
+                      </Button>
+                    </div>
                   </div>
 
-                  <div className="rounded-md border border-gray-200 p-3 space-y-2 bg-gray-50">
-                    <p className="text-sm font-medium text-sgn-dark">Estado del período</p>
-                    {bonosLoadingStatus ? (
-                      <p className="text-sm text-gray-600">Consultando estado...</p>
-                    ) : (
-                      <>
-                        {renderUploadStatus('Horarios', bonosStatus?.horarios)}
-                        {renderUploadStatus('Tickets-Horas', bonosStatus?.ticketsHoras)}
-                        {renderUploadStatus('Calendario Feriados', bonosStatus?.feriados)}
-                        {renderUploadStatus('Recibos PDF', bonosStatus?.recibos)}
-                      </>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor="bonos-horarios-file" className="text-sm font-medium text-sgn-dark">
-                      Horarios (.xlsx o .csv)
-                    </label>
-                    <Input
-                      id="bonos-horarios-file"
-                      type="file"
-                      accept=".xlsx,.csv,text/csv"
-                      onChange={(e) => setBonosHorariosFile(e.target.files?.[0] ?? null)}
-                    />
-                  </div>
-
-                  <div className="rounded-md border border-gray-200 p-3 space-y-2">
-                    <p className="text-sm font-medium text-sgn-dark">Tickets-Horas</p>
-                    <p className="text-xs text-gray-600">
-                      Sincroniza el resumen desde SGN Tickets para reemplazar la importación manual del CSV.
-                    </p>
-                    <Button type="button" variant="outline" onClick={handleSyncTicketsApi} disabled={bonosSubmitting}>
-                      {bonosSubmitting ? 'Sincronizando...' : 'Sincronizar desde API'}
-                    </Button>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor="bonos-feriados-file" className="text-sm font-medium text-sgn-dark">
-                      Calendario Feriados (.csv)
-                    </label>
-                    <Input
-                      id="bonos-feriados-file"
-                      type="file"
-                      accept=".csv,text/csv"
-                      onChange={(e) => setBonosFeriadosFile(e.target.files?.[0] ?? null)}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor="bonos-recibos-file" className="text-sm font-medium text-sgn-dark">
-                      Recibos Sueldo (.pdf)
-                    </label>
-                    <Input
-                      id="bonos-recibos-file"
-                      type="file"
-                      accept=".pdf,application/pdf"
-                      onChange={(e) => setBonosRecibosFile(e.target.files?.[0] ?? null)}
-                    />
-                  </div>
-
-                  {bonosError ? <p className="text-sm text-red-600">{bonosError}</p> : null}
-                  {bonosSuccess ? <p className="text-sm text-green-700">{bonosSuccess}</p> : null}
+                  {bonosError ? <p className="mt-3 text-sm text-red-600">{bonosError}</p> : null}
+                  {bonosSuccess ? <p className="mt-3 text-sm text-green-700">{bonosSuccess}</p> : null}
                 </div>
 
-                <DialogFooter>
+                <DialogFooter className="border-t bg-background px-6 py-4">
                   <Button
                     type="button"
                     onClick={handleUploadBonosFiles}
-                    disabled={bonosSubmitting || (!bonosHorariosFile && !bonosFeriadosFile && !bonosRecibosFile)}
+                    disabled={bonosSubmitting || (!bonosHorariosFile && !bonosFeriadosFile && !bonosRecibosFile && !bonosUtilidadPct.trim())}
                   >
                     {bonosSubmitting ? 'Guardando carga...' : 'Guardar Carga'}
                   </Button>

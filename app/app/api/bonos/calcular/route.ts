@@ -47,6 +47,10 @@ const serializeCalculo = (calculo: Awaited<ReturnType<typeof getBonosCalculo>>) 
     estado: calculo.estado,
     totalEmpleados: calculo.totalEmpleados,
     totalBonos: calculo.totalBonos,
+    totalBonosBase: calculo.totalBonosBase,
+    utilidadPct: calculo.utilidadPct,
+    factorUtilidad: calculo.factorUtilidad,
+    totalBonosFinal: calculo.totalBonosFinal,
     resumenPdfPath: calculo.resumenPdfPath,
     planillaExcelPath: calculo.planillaExcelPath,
     htmlEmpleados: Array.isArray(reportes?.htmlEmpleados) ? reportes.htmlEmpleados : [],
@@ -74,6 +78,10 @@ const serializeCalculo = (calculo: Awaited<ReturnType<typeof getBonosCalculo>>) 
         bonoDesarrollo: row.bonoDesarrollo,
         bonoCumplimiento: row.bonoCumplimiento,
         totalBono: row.totalBono,
+        totalBonoBase: row.totalBonoBase,
+        utilidadPct: row.utilidadPct,
+        factorUtilidad: row.factorUtilidad,
+        totalBonoFinal: row.totalBonoFinal,
         horasExtras: row.horasExtras,
         htmlPath: detailString(detail, 'htmlPath')
       };
